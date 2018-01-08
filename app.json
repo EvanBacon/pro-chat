@@ -15,7 +15,11 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.evanbacon.bute"
+    },
+    "android": {
+      "package": "com.evanbacon.bute"
     }
   }
 }
