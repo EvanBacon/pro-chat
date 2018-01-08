@@ -5,7 +5,10 @@
     "slug": "bute",
     "privacy": "public",
     "sdkVersion": "24.0.0",
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -16,10 +19,18 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.evanbacon.bute"
+      "bundleIdentifier": "com.evanbacon.bute",
+      "publishBundlePath": "ios/bute/Supporting/shell-app.bundle",
+      "publishManifestPath": "ios/bute/Supporting/shell-app-manifest.json"
     },
     "android": {
       "package": "com.evanbacon.bute"
+    },
+    "isDetached": true,
+    "detach": {
+      "scheme": "expda03597637ef40b18b668276446d5b1a",
+      "iosExpoViewUrl": "https://s3.amazonaws.com/exp-exponent-view-code/ios-v2.2.1-sdk24.0.0-36ff2264-629d-44df-a819-8c982454e5e8.tar.gz",
+      "androidExpoViewUrl": "https://s3.amazonaws.com/exp-exponent-view-code/android-v2.2.0-sdk24.0.0-16620828-4df4-4e2d-b0af-5dc1352b82cb.tar.gz"
     }
   }
 }
