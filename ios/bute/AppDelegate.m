@@ -71,14 +71,14 @@
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(nonnull UILocalNotification *)notification
 {
     [[RNFirebaseNotifications instance] didReceiveLocalNotification:notification];
-    [[ExpoKit sharedInstance] application:application didReceiveLocalNotification:notification];
+//    [[ExpoKit sharedInstance] application:application didReceiveLocalNotification:notification];
 }
 
 - (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(nonnull UIUserNotificationSettings *)notificationSettings
 {
     [[RNFirebaseMessaging instance] didRegisterUserNotificationSettings:notificationSettings];
 
-    [[ExpoKit sharedInstance] application:application didRegisterUserNotificationSettings:notificationSettings];
+//    [[ExpoKit sharedInstance] application:application didRegisterUserNotificationSettings:notificationSettings];
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler

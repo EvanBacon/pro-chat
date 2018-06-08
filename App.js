@@ -114,8 +114,72 @@ export default class App extends React.Component {
     const uid = firebase.auth().currentUser.uid;
     this.setState({ uid });
 
-    this.doAnalyticsStuff(uid);
-    this.doStorageStuff();
+    // this.doCrashStuff();
+    // this.doAnalyticsStuff(uid);
+    this.doNotificationStuff();
+    // this.doStorageStuff();
+  };
+
+  getDeviceToken = async () => {
+    const fcmToken = await firebase.messaging().getToken();
+    if (fcmToken) {
+      // user has a device token
+    } else {
+      // user doesn't have a device token yet
+      console.warn('getDeviceToken: no token yet');
+    }
+    return fcmToken;
+  };
+  componentWillUnmount() {
+    this.messageListener && this.messageListener();
+    this.onTokenRefreshListener && this.onTokenRefreshListener();
+    this.notificationDisplayedListener && this.notificationDisplayedListener();
+    this.notificationListener && this.notificationListener();
+  }
+
+  doNotificationStuff = async () => {
+    try {
+      await firebase.messaging().requestPermission();
+      // User has authorised
+      this.notificationDisplayedListener = firebase
+        .notifications()
+        .onNotificationDisplayed(notification => {
+          console.log('heyheyyouyou: display', notification);
+          // Process your notification as required
+          // ANDROID: Remote notifications do not contain the channel ID. You will have to specify this manually if you'd like to re-display the notification.
+        });
+      this.notificationListener = firebase
+        .notifications()
+        .onNotification(notification => {
+          console.log('heyheyyouyou: process', notification);
+          // Process your notification as required
+        });
+
+      this.onTokenRefreshListener = firebase
+        .messaging()
+        .onTokenRefresh(fcmToken => {
+          // Process your token as required
+          console.log('tokeeen', { fcmToken });
+        });
+
+      this.messageListener = firebase.messaging().onMessage(message => {
+        // Process your message as required
+        console.log('benafflex', { message });
+      });
+
+      let token = await this.getDeviceToken();
+      console.log({ token });
+      // if (token) {
+
+      // }
+    } catch (error) {
+      console.error(error);
+      // User has rejected permissions
+    }
+  };
+
+  doCrashStuff = () => {
+    firebase.crash().setCrashCollectionEnabled(true);
   };
 
   doAnalyticsStuff = uid => {
@@ -159,10 +223,10 @@ export default class App extends React.Component {
       return;
     }
 
-    const { edges } = await CameraRoll.getPhotos({ first: 2 });
+    const { edges } = await CameraRoll.getPhotos({ first: 1 });
     const assetLibraryImage = edges.map(
       ({ node: { image, timestamp } }, index) => image.uri,
-    )[1];
+    )[0];
 
     return assetLibraryImage;
   };
