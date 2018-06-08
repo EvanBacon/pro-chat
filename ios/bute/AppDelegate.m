@@ -33,6 +33,14 @@
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(nullable NSString *)sourceApplication annotation:(id)annotation
 {
     return [[ExpoKit sharedInstance] application:application openURL:url sourceApplication:sourceApplication annotation:annotation];
+    
+    /*
+     // FBSDK
+     return [[FBSDKApplicationDelegate sharedInstance] application:application
+     openURL:url
+     sourceApplication:sourceApplication
+     annotation:annotation];
+     */
 }
 
 - (BOOL)application:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity restorationHandler:(nonnull void (^)(NSArray * _Nullable))restorationHandler
@@ -66,5 +74,56 @@
 {
     [[ExpoKit sharedInstance] application:application didRegisterUserNotificationSettings:notificationSettings];
 }
+
+#pragma mark - RNFBMessages
+
+/*
+ -(void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
+ [RNFirebaseMessaging didReceiveLocalNotification:notification];
+ }
+ 
+ - (void)application:(UIApplication *)application didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo {
+ [RNFirebaseMessaging didReceiveRemoteNotification:userInfo];
+ }
+ 
+ - (void)application:(UIApplication *)application didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo
+ fetchCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHandler{
+ [RNFirebaseMessaging didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
+ }
+ 
+ - (void)userNotificationCenter:(UNUserNotificationCenter *)center
+ willPresentNotification:(UNNotification *)notification
+ withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
+ [RNFirebaseMessaging willPresentNotification:notification withCompletionHandler:completionHandler];
+ }
+ 
+ - (void)userNotificationCenter:(UNUserNotificationCenter *)center
+ didReceiveNotificationResponse:(UNNotificationResponse *)response
+ withCompletionHandler:(void (^)())completionHandler {
+ [RNFirebaseMessaging didReceiveNotificationResponse:response withCompletionHandler:completionHandler];
+ }
+
+ */
+
+#pragma mark - FBSDK
+/*
+ - (BOOL)application:(UIApplication *)application
+ openURL:(NSURL *)url
+ options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+ 
+ BOOL handled = [[FBSDKApplicationDelegate sharedInstance] application:application
+ openURL:url
+ sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
+ annotation:options[UIApplicationOpenURLOptionsAnnotationKey]
+ ];
+ // Add any custom logic here.
+ return handled;
+ }
+ 
+ - (void)applicationDidBecomeActive:(UIApplication *)application {
+ [FBSDKAppEvents activateApp];
+ }
+
+ */
 
 @end
