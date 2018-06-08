@@ -3,6 +3,9 @@
 #import "AppDelegate.h"
 #import "ExpoKit.h"
 #import "EXViewController.h"
+#import "RNFirebaseNotifications.h"
+#import "RNFirebaseMessaging.h"
+
 #import <Firebase.h> /// Import this thing
 
 @interface AppDelegate ()
@@ -16,7 +19,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     [FIRApp configure]; /// Add this at the beginning of the function
-
+    [RNFirebaseNotifications configure];
     _window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     _window.backgroundColor = [UIColor whiteColor];
     [[ExpoKit sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions];
@@ -67,12 +70,20 @@
 
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(nonnull UILocalNotification *)notification
 {
+    [[RNFirebaseNotifications instance] didReceiveLocalNotification:notification];
     [[ExpoKit sharedInstance] application:application didReceiveLocalNotification:notification];
 }
 
 - (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(nonnull UIUserNotificationSettings *)notificationSettings
 {
+    [[RNFirebaseMessaging instance] didRegisterUserNotificationSettings:notificationSettings];
+
     [[ExpoKit sharedInstance] application:application didRegisterUserNotificationSettings:notificationSettings];
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
+{
+    [[RNFirebaseNotifications instance] didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
 }
 
 #pragma mark - RNFBMessages

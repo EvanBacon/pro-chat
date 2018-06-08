@@ -10,7 +10,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../node_modules/react-native-firebase/ios/RNFirebase/storage/RNFirebaseStorage.m"
-            timestampString = "550186149.46304"
+            timestampString = "550192338.820435"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "313"
@@ -26,7 +26,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../node_modules/react-native-firebase/ios/RNFirebase/analytics/RNFirebaseAnalytics.m"
-            timestampString = "550186149.463462"
+            timestampString = "550192338.820644"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "28"
@@ -89,7 +89,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../node_modules/react-native-firebase/ios/RNFirebase/analytics/RNFirebaseAnalytics.m"
-            timestampString = "550186149.463517"
+            timestampString = "550192338.8207771"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "29"
@@ -101,11 +101,11 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../node_modules/react-native-firebase/ios/RNFirebase/storage/RNFirebaseStorage.m"
-            timestampString = "550186149.463567"
+            timestampString = "550192338.820901"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "127"
@@ -121,7 +121,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../node_modules/react-native-firebase/ios/RNFirebase/storage/RNFirebaseStorage.m"
-            timestampString = "550186149.4638"
+            timestampString = "550192338.821025"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "151"
@@ -133,11 +133,11 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../node_modules/react-native-firebase/ios/RNFirebase/storage/RNFirebaseStorage.m"
-            timestampString = "550186149.464026"
+            timestampString = "550192338.821191"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "159"
@@ -149,11 +149,11 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../node_modules/react-native-firebase/ios/RNFirebase/storage/RNFirebaseStorage.m"
-            timestampString = "550186149.4642479"
+            timestampString = "550192338.821323"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "439"
@@ -181,7 +181,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Pods/FirebaseStorage/Firebase/Storage/FIRStorageDownloadTask.m"
@@ -197,7 +197,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Pods/FirebaseStorage/Firebase/Storage/FIRStorageDownloadTask.m"
