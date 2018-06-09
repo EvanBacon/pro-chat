@@ -3,6 +3,8 @@ import { StyleSheet, Platform, Text, View, CameraRoll } from 'react-native';
 import firebase from 'react-native-firebase';
 import Expo, { FileSystem } from 'expo';
 
+const FacebookApiKey = '214548308980520';
+
 function setScreenName(name) {
   const { OS } = Platform;
   if (OS === 'android') {
@@ -95,18 +97,68 @@ export default class App extends React.Component {
   state = {
     uid: null,
   };
+
+  _loginToFacebook = () =>
+    Expo.Facebook.logInWithReadPermissionsAsync(FacebookApiKey, {
+      permissions: ['public_profile', 'email', 'user_friends'],
+      behavior: 'native',
+    });
+
+  _doFacebookLoginFlow = async () => {
+    const { type, token } = await this._loginToFacebook();
+
+    console.log('Facebook sign in', { token, type });
+    if (type === 'success') {
+      // await AsyncStorage.setItem(FBTokenKey, token);
+      this.facebookToken = token;
+      return { token };
+    } else {
+      console.log("couldn't sign in:", { type });
+      // Maybe the user cancelled
+      alert("Couldn't to sign-in :p");
+    }
+  };
+  _firebaseLoginWithFacebookToken = async token => {
+    const credential = firebase.auth.FacebookAuthProvider.credential(token);
+
+    try {
+      // login with credential
+      const currentUser = await firebase
+        .auth()
+        .signInAndRetrieveDataWithCredential(credential);
+
+      console.info(JSON.stringify(currentUser.user.toJSON()));
+    } catch (error) {
+      console.warn('Add Error for login', error);
+      alert('Add Error for login', error);
+    }
+  };
+
+  login = async () => {
+    const { token } = await this._doFacebookLoginFlow();
+
+    if (token) {
+      this._firebaseLoginWithFacebookToken(token);
+    }
+  };
+
+  logout = async () => await firebase.auth().signOut();
+
   observeAuth = () =>
     firebase.auth().onAuthStateChanged(this.onAuthStateChanged);
 
   onAuthStateChanged = user => {
     if (!user) {
-      try {
-        firebase.auth().signInAnonymouslyAndRetrieveData();
-      } catch ({ message }) {
-        alert(message);
-      }
+      console.log('Auth in');
+      this.login();
+      // try {
+      //   // firebase.auth().signInAnonymouslyAndRetrieveData();
+      // } catch ({ message }) {
+      //   alert(message);
+      // }
     } else {
       this.startDoingStuff();
+      // this.logout();
     }
   };
 
