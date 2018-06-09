@@ -3,6 +3,8 @@ import { StyleSheet, Platform, Text, View, CameraRoll } from 'react-native';
 import firebase from 'react-native-firebase';
 import Expo, { FileSystem } from 'expo';
 
+const FacebookApiKey = '214548308980520';
+
 function setScreenName(name) {
   const { OS } = Platform;
   if (OS === 'android') {
@@ -95,19 +97,108 @@ export default class App extends React.Component {
   state = {
     uid: null,
   };
+
+  _loginToFacebook = () =>
+    Expo.Facebook.logInWithReadPermissionsAsync(FacebookApiKey, {
+      permissions: ['public_profile', 'email', 'user_friends'],
+      behavior: 'native',
+    });
+
+  _doFacebookLoginFlow = async () => {
+    const { type, token } = await this._loginToFacebook();
+
+    console.log('Facebook sign in', { token, type });
+    if (type === 'success') {
+      // await AsyncStorage.setItem(FBTokenKey, token);
+      this.facebookToken = token;
+      return { token };
+    } else {
+      console.log("couldn't sign in:", { type });
+      // Maybe the user cancelled
+      alert("Couldn't to sign-in :p");
+    }
+  };
+  _firebaseLoginWithFacebookToken = async token => {
+    const credential = firebase.auth.FacebookAuthProvider.credential(token);
+
+    try {
+      // login with credential
+      const currentUser = await firebase
+        .auth()
+        .signInAndRetrieveDataWithCredential(credential);
+
+      console.info(JSON.stringify(currentUser.user.toJSON()));
+    } catch (error) {
+      console.warn('Add Error for login', error);
+      alert('Add Error for login', error);
+    }
+  };
+
+  login = async () => {
+    const { token } = await this._doFacebookLoginFlow();
+
+    if (token) {
+      this._firebaseLoginWithFacebookToken(token);
+    }
+  };
+
+  doRemoteConfig = async () => {
+    //https://rnfirebase.io/docs/v4.2.x/config/example
+    if (__DEV__) {
+      firebase.config().enableDeveloperMode();
+    }
+
+    // Set default values
+    firebase.config().setDefaults({
+      hasExperimentalFeature: false,
+    });
+
+    firebase
+      .config()
+      .fetch()
+      .then(() => firebase.config().activateFetched())
+      .then(activated => {
+        if (!activated) console.log('Fetched data not activated');
+        return firebase.config().getValue('hasExperimentalFeature');
+      })
+      .then(snapshot => {
+        const hasExperimentalFeature = snapshot.val();
+        console.log('remote info', hasExperimentalFeature);
+        if (hasExperimentalFeature) {
+          this.enableSuperCoolFeature();
+        }
+
+        // continue booting app
+      })
+      .catch(console.error);
+  };
+
+  enableSuperCoolFeature = () => {
+    this.setState({ hasRemoteConfigThing: true });
+  };
+
+  logout = async () => await firebase.auth().signOut();
+
   observeAuth = () =>
     firebase.auth().onAuthStateChanged(this.onAuthStateChanged);
 
   onAuthStateChanged = user => {
     if (!user) {
-      try {
-        firebase.auth().signInAnonymouslyAndRetrieveData();
-      } catch ({ message }) {
-        alert(message);
-      }
+      console.log('Auth in');
+      this.login();
+      // try {
+      //   // firebase.auth().signInAnonymouslyAndRetrieveData();
+      // } catch ({ message }) {
+      //   alert(message);
+      // }
     } else {
       this.startDoingStuff();
+      // this.logout();
     }
+  };
+
+  doPerfStuff = () => {
+    firebase.perf().setPerformanceCollectionEnabled(true);
   };
 
   startDoingStuff = async () => {
@@ -115,7 +206,8 @@ export default class App extends React.Component {
     this.setState({ uid });
 
     // this.doCrashStuff();
-    // this.doAnalyticsStuff(uid);
+    this.doAnalyticsStuff(uid);
+    this.doRemoteConfig();
     this.doNotificationStuff();
     // this.doStorageStuff();
   };
@@ -185,7 +277,9 @@ export default class App extends React.Component {
   doAnalyticsStuff = uid => {
     firebase.analytics().setAnalyticsCollectionEnabled(true); // This is default I think...
     firebase.analytics().setUserId(uid);
-    firebase.analytics().setUserProperty('least_favorite_actor', 'Ben Affleck');
+    firebase
+      .analytics()
+      .setUserProperty('least_favorite_actor', 'keira knightley');
 
     setScreenName('BaconLoveHome');
   };
@@ -237,7 +331,16 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View
+        style={[
+          styles.container,
+          {
+            backgroundColor: this.state.hasRemoteConfigThing
+              ? 'green'
+              : 'white',
+          },
+        ]}
+      >
         <Text>{this.state.uid || 'loading...'}</Text>
       </View>
     );
