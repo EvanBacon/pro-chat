@@ -19,12 +19,12 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.evanbacon.bute",
+      "bundleIdentifier": "com.evanbacon.expo.bute",
       "publishBundlePath": "ios/bute/Supporting/shell-app.bundle",
       "publishManifestPath": "ios/bute/Supporting/shell-app-manifest.json"
     },
     "android": {
-      "package": "com.evanbacon.bute",
+      "package": "com.evanbacon.expo.bute",
       "publishBundlePath": "android/app/src/main/assets/shell-app.bundle",
       "publishManifestPath":
         "android/app/src/main/assets/shell-app-manifest.json"
