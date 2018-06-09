@@ -71,50 +71,20 @@
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(nonnull UILocalNotification *)notification
 {
     [[RNFirebaseNotifications instance] didReceiveLocalNotification:notification];
-//    [[ExpoKit sharedInstance] application:application didReceiveLocalNotification:notification];
+    [[ExpoKit sharedInstance] application:application didReceiveLocalNotification:notification];
 }
 
 - (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(nonnull UIUserNotificationSettings *)notificationSettings
 {
     [[RNFirebaseMessaging instance] didRegisterUserNotificationSettings:notificationSettings];
 
-//    [[ExpoKit sharedInstance] application:application didRegisterUserNotificationSettings:notificationSettings];
+    [[ExpoKit sharedInstance] application:application didRegisterUserNotificationSettings:notificationSettings];
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
     [[RNFirebaseNotifications instance] didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
 }
-
-#pragma mark - RNFBMessages
-
-/*
- -(void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
- [RNFirebaseMessaging didReceiveLocalNotification:notification];
- }
- 
- - (void)application:(UIApplication *)application didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo {
- [RNFirebaseMessaging didReceiveRemoteNotification:userInfo];
- }
- 
- - (void)application:(UIApplication *)application didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo
- fetchCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHandler{
- [RNFirebaseMessaging didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
- }
- 
- - (void)userNotificationCenter:(UNUserNotificationCenter *)center
- willPresentNotification:(UNNotification *)notification
- withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
- [RNFirebaseMessaging willPresentNotification:notification withCompletionHandler:completionHandler];
- }
- 
- - (void)userNotificationCenter:(UNUserNotificationCenter *)center
- didReceiveNotificationResponse:(UNNotificationResponse *)response
- withCompletionHandler:(void (^)())completionHandler {
- [RNFirebaseMessaging didReceiveNotificationResponse:response withCompletionHandler:completionHandler];
- }
-
- */
 
 #pragma mark - FBSDK
 /*
