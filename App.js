@@ -142,6 +142,41 @@ export default class App extends React.Component {
     }
   };
 
+  doRemoteConfig = async () => {
+    //https://rnfirebase.io/docs/v4.2.x/config/example
+    if (__DEV__) {
+      firebase.config().enableDeveloperMode();
+    }
+
+    // Set default values
+    firebase.config().setDefaults({
+      hasExperimentalFeature: false,
+    });
+
+    firebase
+      .config()
+      .fetch()
+      .then(() => firebase.config().activateFetched())
+      .then(activated => {
+        if (!activated) console.log('Fetched data not activated');
+        return firebase.config().getValue('hasExperimentalFeature');
+      })
+      .then(snapshot => {
+        const hasExperimentalFeature = snapshot.val();
+        console.log('remote info', hasExperimentalFeature);
+        if (hasExperimentalFeature) {
+          this.enableSuperCoolFeature();
+        }
+
+        // continue booting app
+      })
+      .catch(console.error);
+  };
+
+  enableSuperCoolFeature = () => {
+    this.setState({ hasRemoteConfigThing: true });
+  };
+
   logout = async () => await firebase.auth().signOut();
 
   observeAuth = () =>
@@ -162,12 +197,17 @@ export default class App extends React.Component {
     }
   };
 
+  doPerfStuff = () => {
+    firebase.perf().setPerformanceCollectionEnabled(true);
+  };
+
   startDoingStuff = async () => {
     const uid = firebase.auth().currentUser.uid;
     this.setState({ uid });
 
     // this.doCrashStuff();
-    // this.doAnalyticsStuff(uid);
+    this.doAnalyticsStuff(uid);
+    this.doRemoteConfig();
     this.doNotificationStuff();
     // this.doStorageStuff();
   };
@@ -237,7 +277,9 @@ export default class App extends React.Component {
   doAnalyticsStuff = uid => {
     firebase.analytics().setAnalyticsCollectionEnabled(true); // This is default I think...
     firebase.analytics().setUserId(uid);
-    firebase.analytics().setUserProperty('least_favorite_actor', 'Ben Affleck');
+    firebase
+      .analytics()
+      .setUserProperty('least_favorite_actor', 'keira knightley');
 
     setScreenName('BaconLoveHome');
   };
@@ -289,7 +331,16 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View
+        style={[
+          styles.container,
+          {
+            backgroundColor: this.state.hasRemoteConfigThing
+              ? 'green'
+              : 'white',
+          },
+        ]}
+      >
         <Text>{this.state.uid || 'loading...'}</Text>
       </View>
     );
