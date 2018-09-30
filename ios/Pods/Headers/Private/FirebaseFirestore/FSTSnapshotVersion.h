@@ -1,1 +1,0 @@
-../../../FirebaseFirestore/Firestore/Source/Core/FSTSnapshotVersion.h
