@@ -2,3 +2,5 @@ node_modules/**/*
 .expo/*
 npm-debug.*
 secret
+ios/fastlane/screenshots/en-US/preview.mp4
+*.sketch

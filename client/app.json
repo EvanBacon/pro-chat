@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "bute",
+    "description": "This project is really great.",
+    "slug": "bute",
+    "privacy": "public",
+    "sdkVersion": "30.0.0",
+    "platforms": ["ios", "android"],
+    "version": "0.0.0",
+    "orientation": "portrait",
+    "primaryColor": "#ffffff",
+    "icon": "./src/assets/icons/expo.png",
+    "facebookScheme": "fb214548308980520",
+    "facebookAppId": "214548308980520",
+    "facebookDisplayName": "Art Alert",
+    "githubUrl": "https://github.com/evanbacon/bute",
+    "splash": {
+      "image": "./src/assets/icons/splash.png",
+      "backgroundColor": "#ffffff",
+      "resizeMode": "cover" 
+    },  
+    "packagerOpts": {
+      "assetExts": ["ttf", "mp4", "otf", "xml", "mp3"]
+    },
+    "assetBundlePatterns": ["src/assets/**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "icon": "./src/assets/icons/ios.png",
+      "supportsTablet": true,
+      "buildNumber": "0",
+      "bundleIdentifier": "com.evanbacon.expo.bute"
+    },
+    "android": {
+      "playStoreUrl": "https://play.google.com/store/apps/details?id=com.evanbacon.expo.bute",
+      "icon": "./src/assets/icons/expo.png",
+      "versionCode": 0,
+      "package": "com.evanbacon.expo.bute"
+    },
+    "scheme": "expf323ea36d115447fa3827c6dcb512227"
+  }
+}
