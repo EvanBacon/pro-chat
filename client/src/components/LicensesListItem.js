@@ -1,8 +1,7 @@
 // @flow
+import { FontAwesome } from '@expo/vector-icons';
 import React from 'react';
 import { Image, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-import { FontAwesome } from '@expo/vector-icons';
 
 export default class LicensesListItem extends React.Component {
   render() {

@@ -8,7 +8,8 @@
     "platforms": ["ios", "android"],
     "version": "0.0.0",
     "orientation": "portrait",
-    "primaryColor": "#ffffff",
+    "primaryColor": "#52416A",
+
     "icon": "./src/assets/icons/expo.png",
     "facebookScheme": "fb214548308980520",
     "facebookAppId": "214548308980520",
@@ -17,12 +18,16 @@
     "splash": {
       "image": "./src/assets/icons/splash.png",
       "backgroundColor": "#ffffff",
-      "resizeMode": "cover" 
-    },  
+      "resizeMode": "cover"
+    },
     "packagerOpts": {
       "assetExts": ["ttf", "mp4", "otf", "xml", "mp3"]
     },
     "assetBundlePatterns": ["src/assets/**/*"],
+    "notification": {
+      "icon": "./assets/icons/notification-icon.png",
+      "color": "#52416A"
+    },
     "ios": {
       "supportsTablet": true,
       "icon": "./src/assets/icons/ios.png",

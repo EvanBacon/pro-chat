@@ -3,9 +3,9 @@ import React from 'react';
 
 class TimeAgo extends React.Component {
   render() {
-    const {
-      children, style, subtext, simple,
-    } = this.props;
+    // const {
+    //   children, style, subtext, simple,
+    // } = this.props;
     // if (!children) {
     return null;
     // }

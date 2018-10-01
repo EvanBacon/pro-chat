@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  ActivityIndicator,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { ActivityIndicator, StatusBar, StyleSheet, Text, View } from 'react-native';
 
 export default class Screen extends React.Component {
   static navigationOptions = { title: 'Loading' };

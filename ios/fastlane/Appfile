@@ -1,4 +1,4 @@
-app_identifier("com.evanbacon.expo.buet") # The bundle identifier of your app
+app_identifier("com.evanbacon.expo.bute") # The bundle identifier of your app
 apple_id("evanjbacon@gmail.com") # Your Apple email address
 
 itc_team_id("118573547") # iTunes Connect Team ID

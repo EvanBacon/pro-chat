@@ -1,10 +1,10 @@
-// @flow
+// https://github.com/FaridSafi/react-native-gifted-chat/blob/master/src/GiftedAvatar.js
+
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Image, Text, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
+import ProgressImage from './ProgressImage';
 
-
-// https://github.com/FaridSafi/react-native-gifted-chat/blob/master/src/GiftedAvatar.js
 const Color = {
   white: 'white',
   carrot: '#e67e22',
@@ -17,13 +17,19 @@ const Color = {
 };
 
 const {
-  carrot, emerald, peterRiver, wisteria, alizarin, turquoise, midnightBlue,
+  carrot,
+  emerald,
+  peterRiver,
+  wisteria,
+  alizarin,
+  turquoise,
+  midnightBlue,
 } = Color;
 // TODO
 // 3 words name initials
 // handle only alpha numeric chars
 
-export default class Avatar extends React.PureComponent {
+export default class AvatarImage extends React.PureComponent {
   setAvatarColor() {
     const userName = this.props.name || '';
     const name = userName.toUpperCase().split(' ');
@@ -42,24 +48,57 @@ export default class Avatar extends React.PureComponent {
 
     // inspired by https://github.com/wbinnssmith/react-user-avatar
     // colors from https://flatuicolors.com/
-    const colors = [carrot, emerald, peterRiver, wisteria, alizarin, turquoise, midnightBlue];
+    const colors = [
+      carrot,
+      emerald,
+      peterRiver,
+      wisteria,
+      alizarin,
+      turquoise,
+      midnightBlue,
+    ];
 
     this.avatarColor = colors[sumChars % colors.length];
   }
 
   renderAvatar() {
+    const indicatorProps = {
+      size: IMAGE_SIZE,
+      borderWidth: 0,
+      color: 'rgba(150, 150, 150, 1)',
+      unfilledColor: 'rgba(200, 200, 200, 0.2)',
+      thickness: 1,
+      progress: this.props.progress,
+    };
+
     if (typeof this.props.avatar === 'function') {
       return this.props.avatar();
     } else if (typeof this.props.avatar === 'string') {
-      return <Image source={{ uri: this.props.avatar }} style={StyleSheet.flatten([styles.avatarStyle, this.props.avatarStyle])} />;
+      return (
+        <ProgressImage
+          indicatorProps={indicatorProps}
+          source={{ uri: this.props.avatar }}
+          style={[styles.avatarStyle, this.props.avatarStyle]}
+        />
+      );
     } else if (typeof this.props.avatar === 'number') {
-      return <Image source={this.props.avatar} style={StyleSheet.flatten([styles.avatarStyle, this.props.avatarStyle])} />;
+      return (
+        <ProgressImage
+          indicatorProps={indicatorProps}
+          source={this.props.avatar}
+          style={[styles.avatarStyle, this.props.avatarStyle]}
+        />
+      );
     }
     return null;
   }
 
   renderInitials() {
-    return <Text style={StyleSheet.flatten([styles.textStyle, this.props.textStyle])}>{this.avatarName}</Text>;
+    return (
+      <Text style={[styles.textStyle, this.props.textStyle]}>
+        {this.avatarName}
+      </Text>
+    );
   }
 
   render() {
@@ -67,7 +106,11 @@ export default class Avatar extends React.PureComponent {
       // render placeholder
       return (
         <View
-          style={StyleSheet.flatten([styles.avatarStyle, styles.avatarTransparent, this.props.avatarStyle])}
+          style={[
+            styles.avatarStyle,
+            styles.avatarTransparent,
+            this.props.avatarStyle,
+          ]}
           accessibilityTraits="image"
         />
       );
@@ -76,7 +119,6 @@ export default class Avatar extends React.PureComponent {
       return (
         <TouchableOpacity
           disabled={!this.props.onPress}
-          style={{ flex: 1 }}
           onPress={() => {
             const { onPress, ...other } = this.props;
             if (this.props.onPress) {
@@ -101,7 +143,11 @@ export default class Avatar extends React.PureComponent {
             this.props.onPress(other);
           }
         }}
-        style={StyleSheet.flatten([styles.avatarStyle, { backgroundColor: this.avatarColor }, this.props.avatarStyle])}
+        style={[
+          styles.avatarStyle,
+          { backgroundColor: this.avatarColor },
+          this.props.avatarStyle,
+        ]}
         accessibilityTraits="image"
       >
         {this.renderInitials()}
@@ -110,14 +156,16 @@ export default class Avatar extends React.PureComponent {
   }
 }
 
+const IMAGE_SIZE = 40;
+
 const styles = {
   avatarStyle: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: 40,
-    height: 40,
-    flex: 1,
-    borderRadius: 20,
+    width: IMAGE_SIZE,
+    height: IMAGE_SIZE,
+    borderRadius: IMAGE_SIZE / 2,
+    overflow: 'hidden',
   },
   avatarTransparent: {
     backgroundColor: '#B8B8B8',
@@ -130,7 +178,7 @@ const styles = {
   },
 };
 
-Avatar.defaultProps = {
+AvatarImage.defaultProps = {
   name: null,
   avatar: null,
   onPress: null,
@@ -138,7 +186,7 @@ Avatar.defaultProps = {
   textStyle: {},
 };
 
-Avatar.propTypes = {
+AvatarImage.propTypes = {
   onPress: PropTypes.func,
   avatarStyle: Image.propTypes.style,
   textStyle: Text.propTypes.style,

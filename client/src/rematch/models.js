@@ -1,447 +1,30 @@
 import { dispatch } from '@rematch/core';
 import firebase from 'firebase';
-import { Alert, AsyncStorage, Dimensions } from 'react-native';
+import { Alert } from 'react-native';
 
 import Settings from '../constants/Settings';
-import Fire from '../ExpoParty/Fire';
-import GameStates from '../Game/GameStates';
-import { Constants, Facebook, takeSnapshotAsync } from '../universal/Expo';
+import Fire from '../Fire';
+import { Constants, Facebook } from '../universal/Expo';
+import PantryStorage from '../universal/PantryStorage';
 import getDeviceInfo from '../utils/getUserInfo';
 
-export const skins = {
-  state: {},
-  reducers: {
-    setBest: (state, best) => ({ ...state, best }),
-    increment: ({
-      current, best, isBest, ...props
-    }) => {},
-  },
-  effects: {
-    sync: () => {},
-    unlock: ({ key }, { skins }) => {
-      if (skins) {
-      }
-    },
-  },
-};
+// import GameStates from '../Game/GameStates';
 
-export const score = {
-  state: {
-    current: 0, best: 0, last: null, isBest: false,
-  },
-  reducers: {
-    setBest: (state, best) => ({ ...state, best }),
-    increment: ({
-      current, best, isBest, ...props
-    }) => {
-      const nextScore = current + 1;
+// function mergeInternal(state, { uid, user }) {
+//   const { [uid]: currentUser, ...otherUsers } = state;
+//   return {
+//     ...otherUsers,
+//     [uid]: { ...(currentUser || {}), ...user },
+//   };
+// }
 
-      return {
-        current: nextScore,
-        best: Math.max(nextScore, best),
-        isBest: nextScore > best,
-        ...props,
-      };
-    },
-    _reset: state => ({
-      ...state,
-      current: 0,
-      last: state.current,
-      isBest: false,
-    }),
-  },
-  effects: {
-    reset: (props, { score }) => {
-      if (Settings.isFirebaseEnabled) {
-        if (Settings.isEveryScoreBest) {
-          dispatch.score.setHighScore(score.current);
-        } else if (score.isBest) {
-          dispatch.score.setHighScore(score.best);
-        }
-      }
-      dispatch.score._reset();
-    },
-    setHighScore: async (highScore, { user: { displayName, photoURL } }) => {
-      console.log('set High score', highScore);
-      const _displayName = parseName(displayName);
-      const docRef = Fire.shared.doc;
-      try {
-        await Fire.shared.db.runTransaction(transaction => transaction.get(docRef).then((doc) => {
-          if (!doc.exists) {
-            throw new Error('Document does not exist!');
-          }
-
-          const data = doc.data();
-          const cloudHighScore = data.score || 0;
-          console.log('cloud score', cloudHighScore);
-          if (Settings.isEveryScoreBest || highScore > cloudHighScore) {
-            transaction.update(docRef, {
-              score: highScore,
-              timestamp: Date.now(),
-              displayName: _displayName,
-              photoURL: photoURL || '',
-            });
-          } else {
-            transaction.update(docRef, {
-              ...data,
-              displayName: _displayName,
-              photoURL: photoURL || '',
-            });
-            dispatch.score.setBest(cloudHighScore);
-          }
-        }));
-        console.log('Successfully wrote score');
-      } catch ({ message }) {
-        console.log('Failed to write score', message);
-        Alert.alert(message);
-      }
-    },
-  },
-};
-
-export const currency = {
-  state: {
-    current: 0,
-  },
-  reducers: {
-    change: ({
-      current, ...props
-    }, value) => {
-      return {
-        current: current + value,
-        ...props
-      };
-    },
-    _reset: state => ({
-      ...state,
-      current: 0,
-    }),
-  },
-  effects: {
-  },
-};
-
-
-export const game = {
-  state: GameStates.Menu,
-  reducers: {
-    play: () => GameStates.Playing,
-    menu: () => GameStates.Menu,
-  },
-  effects: {},
-};
-
-export const muted = {
-  state: false,
-  reducers: {
-    toggle: state => !state,
-  },
-  effects: {},
-};
-
-export const screenshot = {
-  state: null,
-  reducers: {
-    update: (state, uri) => uri,
-  },
-  effects: {
-    updateAsync: async ({ ref }) => {
-      const { width, height } = Dimensions.get('window');
-      const options = {
-        format: 'jpg',
-        quality: 0.3,
-        result: 'file',
-        height,
-        width,
-      };
-      const uri = await takeSnapshotAsync(ref, options);
-      dispatch.screenshot.update(uri);
-    },
-  },
-};
-
-async function incrementDailyReward() {
-  const timestamp = Date.now();
-  return new Promise((res, rej) => {
-    Fire.shared.db
-      .runTransaction(transaction => transaction.get(Fire.shared.doc).then((userDoc) => {
-        if (!userDoc.exists) {
-          throw new Error('Document does not exist!');
-        }
-
-        const data = userDoc.data();
-        const { lastRewardTimestamp } = data;
-
-        const hours = Math.abs(lastRewardTimestamp - timestamp) / 36e5; // 60000;
-
-        if (hours >= 24) {
-          if (hours >= 48) {
-            // console.log('More than a day');
-            // It has been more than 1 day since the last visit - break the streak
-            const newDailyVisits = 0;
-            transaction.update(Fire.shared.doc, {
-              dailyVisits: newDailyVisits,
-              lastRewardTimestamp: timestamp,
-            });
-            // / TODO:EVAN: save timestamp
-            // this.userData.lastRewardTimestamp = timestamp;
-            return newDailyVisits;
-          }
-          // console.log('You were here yesterday');
-          // Perfect! It has been 1 day since the last visit - increment streak and save current time
-
-          const dailyVisits = data.dailyVisits || 0;
-          const newDailyVisits = dailyVisits + 1;
-          transaction.update(Fire.shared.doc, {
-            dailyVisits: newDailyVisits,
-            lastRewardTimestamp: timestamp,
-          });
-          // / TODO:EVAN: save timestamp
-          // this.userData.lastRewardTimestamp = timestamp;
-          return newDailyVisits;
-        }
-        // console.log('Within day');
-        transaction.update(Fire.shared.doc, {
-          dailyVisits: data.dailyVisits || 0,
-          lastRewardTimestamp: data.lastRewardTimestamp || Date.now(),
-        });
-
-        // It hasn't been a day yet - do nothing
-
-        return data.dailyVisits || 0;
-      }))
-      .then(res)
-      .catch(rej);
-  });
-}
-
-export const dailyStreak = {
-  state: 0,
-  reducers: {
-    increment: s => s + 1,
-    set: (s, props) => props,
-    reset: () => 0,
-  },
-  effects: {
-    rewardUser: async (streak) => {
-      console.log('award', streak);
-    },
-    compareDaily: async (props, { user }) => {
-      const dailyVisits = await incrementDailyReward();
-
-      if (dailyVisits !== user.dailyVisits) {
-        // console.log('Yay! You came back, your streak is now at: ' + dailyVisits);
-
-        dispatch.dailyStreak.set(dailyVisits);
-        if (dailyVisits > user.dailyVisits) {
-          dispatch.dailyStreak.rewardUser(dailyVisits);
-        }
-        dispatch.user.update({ dailyVisits });
-        // / Give reward!
-      } else {
-        // console.log('ummmm', dailyVisits);
-      }
-    },
-  },
-};
-
-function mergeInternal(state, { uid, user }) {
-  const { [uid]: currentUser, ...otherUsers } = state;
-  return {
-    ...otherUsers,
-    [uid]: { ...(currentUser || {}), ...user },
-  };
-}
-
-function parseName(inputName, backupName) {
-  let name = inputName || backupName || 'Markipillar';
-  if (typeof name === 'string') {
-    name = name.trim();
-  }
-  return name;
-}
-
-export const leaders = {
-  state: {},
-  reducers: {
-    batchUpdate: (state, users) => {
-      let nextData = state;
-      for (const user of users) {
-        nextData = mergeInternal(nextData, user);
-      }
-      return nextData;
-    },
-    update: (state, { uid, user }) => mergeInternal(state, { uid, user }),
-    set: (state, { uid, user }) => {
-      const { [uid]: currentUser, ...otherUsers } = state;
-      return {
-        ...otherUsers,
-        [uid]: user,
-      };
-    },
-    clear: () => ({}),
-  },
-  effects: {
-    getPagedAsync: async ({ start, size, callback }) => {
-      const collection = firebase
-        .firestore()
-        .collection(Settings.slug)
-        .where('score', '>', 0);
-
-      let ref = collection.orderBy('score', 'desc').limit(size);
-      try {
-        if (start) {
-          ref = ref.startAfter(start);
-        }
-        const querySnapshot = await ref.get();
-
-        const data = [];
-        querySnapshot.forEach((doc) => {
-          if (!doc.exists) {
-            console.log("leaders.getPagedAsync(): Error: data doesn't exist", {
-              size,
-              start,
-            });
-          } else {
-            const _data = doc.data();
-            const uid = doc.id;
-            data.push({
-              uid,
-              user: {
-                key: uid,
-                uid,
-                displayName: parseName(_data.displayName, _data.deviceName),
-                ..._data,
-              },
-            });
-          }
-        });
-        console.log('Batch update', data.length, { data });
-        dispatch.leaders.batchUpdate(data);
-        const cursor = querySnapshot.docs[querySnapshot.docs.length - 1];
-        if (callback) callback({ data, cursor, noMore: data.length < size });
-        return;
-      } catch (error) {
-        console.error('Error getting documents: ', error);
-      }
-      if (callback) callback({});
-    },
-    getAsync: async ({ uid, callback }) => {
-      try {
-        const ref = firebase
-          .firestore()
-          .collection(Settings.slug)
-          .doc(uid);
-        const doc = await ref.get();
-        if (!doc.exists) {
-          if (uid === Fire.shared.uid) {
-            const currentUser = firebase.auth().currentUser || {};
-
-            const _displayName = parseName(
-              currentUser.displayName,
-              Constants.deviceName,
-            );
-
-            const nUser = {
-              rank: 999999,
-              displayName: _displayName,
-              photoURL: currentUser.photoURL || '',
-              score: 0,
-              timestamp: Date.now(),
-            };
-            ref.set(nUser);
-            if (callback) callback(nUser);
-            return;
-          }
-          console.log(`No document: leaders/${uid}`);
-        } else {
-          const user = doc.data();
-          console.log('got leader', user);
-          dispatch.leaders.update({ uid, user });
-          if (callback) callback(user);
-          return;
-        }
-      } catch ({ message }) {
-        console.log('Error: leaders.get', message);
-        alert(message);
-      }
-      if (callback) callback(null);
-    },
-  },
-};
-
-export const players = {
-  state: {},
-  reducers: {
-    update: (state, { uid, user }) => {
-      const { [uid]: currentUser, ...otherUsers } = state;
-      return {
-        ...otherUsers,
-        [uid]: { ...(currentUser || {}), ...user },
-      };
-    },
-    set: (state, { uid, user }) => {
-      const { [uid]: currentUser, ...otherUsers } = state;
-      return {
-        ...otherUsers,
-        [uid]: user,
-      };
-    },
-    clear: () => ({}),
-  },
-  effects: {
-    getAsync: async ({ uid, callback }) => {
-      try {
-        const ref = firebase
-          .firestore()
-          .collection('players')
-          .doc(uid);
-        const doc = await ref.get();
-        if (!doc.exists) {
-          console.log(`No document: players/${uid}`);
-          if (uid === Fire.shared.uid) {
-            const currentUser = firebase.auth().currentUser || {};
-            const _displayName = parseName(
-              currentUser.displayName,
-              Constants.deviceName,
-            );
-
-            const user = {
-              rank: 999999,
-              displayName: _displayName,
-              score: 0,
-              timestamp: Date.now(),
-            };
-            if (currentUser.photoURL) {
-              user.photoURL = currentUser.photoURL;
-            }
-            ref.add(user);
-            dispatch.players.update({ uid, user });
-            if (callback) callback(user);
-          } else {
-            dispatch.leaders.getAsync({
-              uid,
-              callback: (user) => {
-                if (user) {
-                  dispatch.players.update({ uid, user });
-                }
-                if (callback) callback(user);
-              },
-            });
-          }
-        } else {
-          const user = doc.data();
-          console.log('got player', user);
-          dispatch.players.update({ uid, user });
-          if (callback) callback(user);
-        }
-      } catch ({ message }) {
-        console.log('Error: players.get', message);
-        Alert.alert(message);
-      }
-    },
-  },
-};
+// function parseName(inputName, backupName) {
+//   let name = inputName || backupName || 'Markipillar';
+//   if (typeof name === 'string') {
+//     name = name.trim();
+//   }
+//   return name;
+// }
 
 function reduceFirebaseUser(user) {
   const nextUser = user;
@@ -501,22 +84,13 @@ function reduceFirebaseUser(user) {
   };
 }
 
-// import moment from 'moment';
-// const { Localization } = Expo.DangerZone;
 
-export const locale = {
-  state: null,
+export const onBoarding = {
+  state: {},
   reducers: {
+    update: (state, props) => ({ ...state, ...props }),
     set: (state, props) => props,
-  },
-  effects: {
-    getAsync: async () => {
-      // const locale = await Localization.getPreferredLocalesAsync();
-      // const code = locale[0];
-      // dispatch.locale.set(code);
-      // console.log({ locale: code });
-      // moment.locale(code);
-    },
+    clear: () => {},
   },
 };
 
@@ -528,11 +102,9 @@ export const user = {
     clear: () => null,
   },
   effects: {
-    logoutAsync: async (props, { players }) => {
+    logoutAsync: async () => {
       try {
-        const uid = firebase.auth().currentUser.uid;
         await firebase.auth().signOut();
-        // dispatch.leaders.set({ uid, user: null });
       } catch ({ message }) {
         console.log('ERROR: user.logoutAsync: ', message);
         Alert.alert(message);
@@ -546,15 +118,15 @@ export const user = {
         Alert.alert(message);
       }
     },
-    observeAuth: (props) => {
-      firebase.auth().onAuthStateChanged((user) => {
-        if (!user) {
+    observeAuth: () => {
+      firebase.auth().onAuthStateChanged((auth) => {
+        if (!auth) {
           // TODO: Evan: Y tho...
           dispatch.user.clear();
           dispatch.user.signInAnonymously();
         } else {
           dispatch.user.getAsync();
-          dispatch.leaders.getAsync({ uid: user.uid });
+          // dispatch.leaders.getAsync({ uid: user.uid });
         }
       });
     },
@@ -595,9 +167,9 @@ export const user = {
 
       if (Settings.isCacheProfileUpdateActive) {
         const shouldUpdateKey = '@PillarValley/shouldUpdateProfile';
-        const something = await getItemWithExpiration(shouldUpdateKey);
+        const something = await PantryStorage.getItemWithExpiration(shouldUpdateKey);
         if (!something) {
-          const some = await setItemWithExpiration(
+          const some = await PantryStorage.setItemWithExpiration(
             shouldUpdateKey,
             { update: true },
             Settings.shouldDelayFirebaseProfileSyncInMinutes,
@@ -615,7 +187,7 @@ export const user = {
         .firestore()
         .collection('players')
         .doc(Fire.shared.uid);
-      const setWithMerge = doc.set(props, { merge: true });
+      doc.set(props, { merge: true });
     },
     syncLocalToFirebase: async (
       props,
@@ -630,7 +202,7 @@ export const user = {
         .firestore()
         .collection('players')
         .doc(Fire.shared.uid);
-      const setWithMerge = doc.set(otherUserProps, { merge: true });
+      doc.set(otherUserProps, { merge: true });
     },
     setGameData: (props) => {
       const { uid, doc } = Fire.shared;
@@ -638,8 +210,12 @@ export const user = {
         // todo: add error
         return;
       }
-      const setWithMerge = doc.set(props, { merge: true });
+      doc.set(props, { merge: true });
     },
+
+    updateRelationshipWithUser: async ({ uid, type }) => {
+      console.log({ uid, type });
+    }
   },
 };
 
@@ -694,7 +270,7 @@ export const facebook = {
           Settings.facebookLoginProps,
         );
       } catch ({ message }) {
-        alert('Facebook Login Error:', message);
+        Alert.alert('Facebook Login Error:', message);
       }
       if (auth) {
         const { type, expires, token } = auth;
@@ -704,7 +280,7 @@ export const facebook = {
           // do nothing, user cancelled
         } else {
           // unknown type, this should never happen
-          alert('Failed to authenticate', type);
+          Alert.alert('Failed to authenticate', type);
         }
         if (callback) callback(token);
       }
@@ -723,7 +299,7 @@ export const facebook = {
         if (code === 'auth/credential-already-in-use') {
           // Delete current account while signed in
           // TODO: This wont work
-          const uid = Fire.shared.uid;
+          const { uid } = Fire.shared;
           if (uid) {
             console.log('Should delete:', uid);
             await deleteUserAsync(uid);
@@ -761,7 +337,7 @@ export const facebook = {
       }
       const _token = token || facebook.token;
 
-      const paramString = (params || ['id', 'name', 'email', 'picture']).join(',');
+      // const paramString = (params || ['id', 'name', 'email', 'picture']).join(',');
       let results;
       try {
         const response = await fetch(`https://graph.facebook.com/me?access_token=${_token}&fields=${params.join(',')}`);
@@ -769,11 +345,11 @@ export const facebook = {
         dispatch.facebook.setGraphResults(results);
       } catch ({ message }) {
         console.log('Error: callGraphWithToken', message);
-        alert(message);
+        Alert.alert(message);
       }
       if (callback) callback(results);
     },
-    authorized: (user, {}) => {
+    authorized: (user) => {
       console.log('Authorized Facebook', user);
       // dispatch.facebook.setAuth(user);
       let _user = user;
@@ -797,50 +373,318 @@ function signInWithToken(token) {
   return firebase.auth().signInAndRetrieveDataWithCredential(credential);
 }
 
-/**
- *
- * @param urlAsKey
- * @param expireInMinutes
- * @returns {Promise.<*>}
- */
 
-async function setItemWithExpiration(key, value, minutes) {
-  // set expire at
-  value = { value, expireAt: getExpireDate(minutes) };
-  // stringify object
-  const objectToStore = JSON.stringify(value);
-  // store object
-  return AsyncStorage.setItem(key, objectToStore);
+function isValidKey(key) {
+  return key && typeof key === 'string' && key !== '';
 }
 
-async function getItemWithExpiration(urlAsKey) {
-  let data;
-  await AsyncStorage.getItem(urlAsKey, async (err, value) => {
-    data = JSON.parse(value);
+/*
+image, name, message, timestamp, seen, sender, groupId
+*/
+export const messages = {
+  state: {},
+  reducers: {
+    update: (state, payload) => ({ ...state, ...payload }),
+    set: (state, payload) => payload,
+  },
+};
 
-    // there is data in cache && cache is expired
-    if (
-      data !== null &&
-      data.expireAt &&
-      new Date(data.expireAt) < new Date()
-    ) {
-      // clear cache
-      AsyncStorage.removeItem(urlAsKey);
+export const users = {
+  state: {},
+  reducers: {
+    update: (state, { uid, user }) => {
+      const { [uid]: currentUser, ...otherUsers } = state;
+      return {
+        ...otherUsers,
+        [uid]: { ...(currentUser || {}), ...user },
+      };
+    },
+    set: (state, { uid, user }) => {
+      const { [uid]: currentUser, ...otherUsers } = state;
+      return {
+        ...otherUsers,
+        [uid]: user,
+      };
+    },
+    clear: () => ({}),
+  },
+  effects: {
+    update: ({ uid, user }, { users }) => {
+      if (!uid || !user) {
+        console.error('dispatch.users.update: You must pass in a valid uid and user');
+        return;
+      }
+      const currentUser = users[uid] || {};
+      dispatch.users.set({ uid, user: { ...currentUser, ...(user || {}) } });
+    },
+    clearUser: ({ uid }) => dispatch.users.set({ uid, user: null }),
+    getProfileImage: ({ uid, forceUpdate }) => {
+      dispatch.users.getPropertyForUser({ uid, propName: 'photoURL', forceUpdate });
+    },
+    getPropertyForUser: async ({ propName, uid, forceUpdate }, { users }) => {
+      if (!isValidKey(uid)) {
+        console.warn('getPropertyForUser: Invalid Key', { uid });
+        return null;
+      }
 
-      // update res to be null
-      data = null;
-    } else {
-      console.log('read data from cache  ');
-    }
-  });
-  if (data) {
-    return data.value;
-  }
-}
+      console.log('getPropertyForUser', uid, users[uid]);
+      if (
+        forceUpdate === true ||
+        !users[uid] ||
+        Object.keys(users[uid]).length === 0 ||
+        users[uid][propName] == null
+      ) {
+        try {
+          const snapshot = await Fire.shared._getUserInfoAsync({ uid });
 
-function getExpireDate(expireInMinutes) {
-  const now = new Date();
-  const expireTime = new Date(now);
-  expireTime.setMinutes(now.getMinutes() + expireInMinutes);
-  return expireTime;
+          const userData = snapshot.data();
+          if (userData) {
+            dispatch.users.update({
+              uid,
+              user: { [propName]: userData[propName] },
+            });
+          }
+        } catch ({ message }) {
+          throw new Error(`getPropForUser ${message}`);
+        }
+      }
+    },
+  },
+};
+
+// TODO
+export const channelHasMore = {
+  state: {
+
+  },
+  reducers: {
+    update: (state, payload) => ({ ...state, ...payload }),
+  },
+};
+
+export const isLoadingEarlier = {
+  state: {
+
+  },
+  reducers: {
+    update: (state, payload) => ({ ...state, ...payload }),
+  },
+};
+
+export const firstMessage = {
+  state: {
+
+  },
+  reducers: {
+    update: (state, payload) => ({ ...state, ...payload }),
+  },
+};
+
+export const isTyping = {
+  state: {
+
+  },
+  reducers: {
+    update: (state, payload) => ({ ...state, ...payload }),
+  },
+  effects: {
+    setAsync: ({ isTyping, groupId }) => {
+      const route = `${Settings.refs.channels}/${groupId}/is_typing/${Fire.shared.uid}`;
+      if (isTyping) {
+        firebase.database().ref(route).set(isTyping);
+      } else {
+        firebase.database().ref(route).remove();
+      }
+    },
+    observe: ({ groupId, uid }) => {
+      // console.warn("TODO: observeTyping")
+      const route = `${Settings.refs.channels}/${groupId}/is_typing/${uid}`;
+      const ref = firebase.database().ref(route);
+      ref.on('value', (snapshot) => {
+        const isTyping = snapshot && snapshot.val && snapshot.val() ? true : null;
+        dispatch.isTyping.update({ [groupId]: isTyping });
+      });
+
+      const userRoute = `${Settings.refs.channels}/${groupId}/is_typing/${firebase.uid()}`;
+      // Monitor connection state on browser tab
+      firebase
+        .database()
+        .ref('.info/connected')
+        .on('value', (snap) => {
+          if (snap.val()) {
+            // if we lose network then remove this user from the list
+            firebase
+              .database()
+              .ref(userRoute)
+              .onDisconnect()
+              .remove();
+          }
+        });
+    },
+  },
+};
+
+export const chats = {
+  state: {
+    // [groupId]: {}
+  },
+  reducers: {
+    update: (state, payload) => ({ ...state, ...payload }),
+    set: (state, payload) => payload,
+    addMessages: (state, { groupId, messages }) => {
+      if (!groupId || !messages) {
+        return state;
+      }
+
+      const { [groupId]: currentMessages = {}, ...nextState } = state;
+
+      // TODO: So bad, don't sort every time.
+      const nextMessages = { ...currentMessages, ...messages };
+      // .sort(
+      //   (a, b) => a.createdAt < b.createdAt,
+      // );
+      return {
+        ...nextState,
+        [groupId]: nextMessages,
+      };
+    },
+  },
+  effects: {
+    subscribeToChannel: () => { console.warn('TODO: subscribeToChannel'); },
+    deleteMessageFromChannel: ({ groupId, key }) => { console.warn('TODO: deleteMessageFromChannel'); },
+    loadEarlier: () => { console.warn('TODO: loadEarlier'); },
+
+    updatedInputText: () => { console.warn('TODO: updatedInputText'); },
+
+    updatedGifOpened: () => { console.warn('TODO: updatedGifOpened'); },
+    didRecieveMessageKey: () => {
+      console.warn('TODO: didRecieveMessageKey');
+      // / Set the `seen` value
+    },
+    getChannelForUser: () => { console.warn('TODO: getChannelForUser'); },
+
+    _parseMessage: async ({ message, groupId }, { chats }) => {
+      if (chats[groupId] && chats[groupId][message.key]) {
+        // prevent duplicates.
+        // throw new Error('Found duplicated ' + message.key + ' ' + groupId);
+        console.log('FIXME: Duplicate');
+        return;
+      }
+
+      const { uid } = message;
+      if (!uid || uid === '') {
+        throw new Error("Invalid UID, can't parse message");
+      }
+
+      const user = await Fire.shared.getUserAsync({ uid });
+
+      if (user == null) {
+        throw new Error("Invalid User data found, can't parse message");
+      }
+
+      dispatch.chats.addMessages({
+        groupId,
+        messages: {
+          [message.key]: transformMessageForGiftedChat({ message, user }),
+        },
+      });
+    },
+    startChatting: async ({ uids, callback }, { chats }) => {
+      const groupId = Fire.shared.getChatGroupId(uids);
+      console.log('start chatting');
+
+      if (!chats[groupId]) {
+        const exists = await Fire.shared.ensureChatGroupExists(uids);
+        if (exists) {
+          dispatch.chats.update({ [groupId]: {} });
+        }
+      }
+
+      let startAt;
+      if (chats[groupId]) {
+        startAt = Object.keys(chats[groupId]).length;
+      }
+      console.log({ startAt });
+
+      const unsubscribe = Fire.shared.subscribeToChatGroup({
+        groupId,
+        cursor: (cursorCollection[groupId] || {}).ref, // startAt,
+      });
+      callback(unsubscribe);
+    },
+    loadPrevious: async ({ groupId, callback }) => {
+      if (firstCursorCollection[groupId]) {
+        const startBefore = firstCursorCollection[groupId];
+        firstCursorCollection[groupId] = undefined;
+        Fire.shared.loadMoreFromChatGroup({ groupId, callback, startBefore });
+      }
+      // TODO: IDK
+      callback(true);
+    },
+    receivedMessage: async ({ groupId, snapshot }, { chats }) => {
+      if (!chats[groupId]) {
+        // TODO: This seems leaky... make sure receivedMessage is only called from a subscription
+        // const exists = await Fire.shared.ensureChatGroupExists(groupId);
+        // if (exists) {
+        dispatch.chats.update({ [groupId]: {} });
+        // }
+      }
+
+      snapshot.docChanges().forEach(({ type, doc }) => {
+        console.log(
+          'Found message: parseMessagesSnapshot: ',
+          type,
+          doc.id,
+          // doc.data(),
+        );
+        if (type === 'added') {
+          const message = { key: doc.id, ...doc.data() };
+          dispatch.chats._parseMessage({ message, groupId });
+        } else {
+          // removed
+          console.log('TODO: parseMessagesSnapshot: ', type);
+          // TODO: Maybe remove
+        }
+      });
+
+      if (!firstCursorCollection[groupId]) {
+        firstCursorCollection[groupId] = snapshot.docs[0];
+      }
+
+      const lastVisible = snapshot.docs[snapshot.docs.length - 1];
+
+      if (lastVisible) {
+        const lastTimestamp = lastVisible.data().timestamp;
+        if (
+          !cursorCollection[groupId] ||
+          lastTimestamp > cursorCollection[groupId].timestamp
+        ) {
+          cursorCollection[groupId] = {
+            ref: lastVisible,
+            timestamp: lastTimestamp,
+          };
+        }
+      }
+    },
+  },
+};
+
+let firstCursorCollection = {};
+
+let cursorCollection = {};
+
+function transformMessageForGiftedChat({ message, user }) {
+  const {
+    key: _id, uid, timestamp: createdAt,
+  } = message;
+  return {
+    ...message,
+    _id,
+    createdAt,
+    user: {
+      name: user.displayName,
+      avatar: user.photoURL,
+      _id: uid,
+    },
+  };
 }

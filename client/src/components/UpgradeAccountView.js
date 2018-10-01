@@ -1,10 +1,16 @@
 import { dispatch } from '@rematch/core';
-import React, { Component } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Facebook, Logout } from './Button';
 
 export default class UpgradeAccountView extends React.Component {
+  _onPress = () => {
+    dispatch.facebook.upgradeAccount();
+  };
+  _onLogout = () => {
+    dispatch.user.logoutAsync();
+  };
   render() {
     const { canLogout } = this.props;
 
@@ -20,12 +26,6 @@ export default class UpgradeAccountView extends React.Component {
       </View>
     );
   }
-  _onPress = () => {
-    dispatch.facebook.upgradeAccount();
-  };
-  _onLogout = () => {
-    dispatch.user.logoutAsync();
-  };
 }
 
 const styles = StyleSheet.create({

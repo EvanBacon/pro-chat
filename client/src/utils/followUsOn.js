@@ -1,7 +1,7 @@
 import { AppState, Linking } from 'react-native';
 
 function followUsOn(urls, minimumElapsedSeconds = 5) {
-  return new Promise(async (res, rej) => {
+  return new Promise(async (res) => {
     const handleAppStateChange = async (nextAppState) => {
       if (nextAppState === 'active') {
         console.log('App has come to the foreground!'); // eslint-disable-line no-console
@@ -11,11 +11,12 @@ function followUsOn(urls, minimumElapsedSeconds = 5) {
       */
         AppState.removeEventListener('change', handleAppStateChange);
 
-        const elapsedSeconds = Math.abs(this.timestamp.getTime(), new Date().getTime()) / 1000;
+        const elapsedSeconds =
+          Math.abs(this.timestamp.getTime(), new Date().getTime()) / 1000;
         if (elapsedSeconds > minimumElapsedSeconds) {
           res(true);
         } else {
-          rej(`User returned in under ${minimumElapsedSeconds} seconds, trust no one`);
+          throw new Error(`User returned in under ${minimumElapsedSeconds} seconds, trust no one`);
         }
       } else if (nextAppState === 'inactive') {
         console.log('App has left foreground :/'); // eslint-disable-line no-console
@@ -40,7 +41,7 @@ function followUsOn(urls, minimumElapsedSeconds = 5) {
       }
     }
     if (!didAnyWork) {
-      rej("User does not have twitter, or it's blocked");
+      throw new Error("User does not have twitter, or it's blocked");
     }
   });
 }

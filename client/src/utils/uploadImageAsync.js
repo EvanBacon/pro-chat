@@ -5,7 +5,7 @@ async function uploadImageAsync(uri, uploadUri, onProgress) {
   const onStateChanged = ({ bytesTransferred, totalBytes, state }) => {
     const progress = (bytesTransferred || 0) / totalBytes;
     console.log('State Change', state, progress);
-    //Current upload state
+    // Current upload state
     switch (state) {
       case 'running': // or 'running'
         console.log('ProfileImage: Upload is resumed');
@@ -28,12 +28,12 @@ async function uploadImageAsync(uri, uploadUri, onProgress) {
       .on(
         'state_changed',
         onStateChanged,
-        error => {
+        (error) => {
           console.log("uploadPhoto: Error: Couldn't upload image");
           unsubscribe();
           rej(error);
         },
-        uploadedFile => {
+        (uploadedFile) => {
           console.log('uploadPhoto: Image uploaded!', uploadedFile);
           unsubscribe();
           const { downloadURL } = uploadedFile;

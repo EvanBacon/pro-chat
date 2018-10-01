@@ -69,6 +69,12 @@ class Fire {
     });
   };
 
+  _getUserInfoAsync = ({ uid }) =>
+    this.db
+      .collection('users')
+      .doc(uid)
+      .get();
+
   get collection() {
     return this.db.collection(collectionName);
   }

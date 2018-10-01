@@ -1,8 +1,8 @@
 import React from 'react';
 
 import AppNavigator from './AppNavigator';
-import firebase from 'expo-firebase-app';
-import 'expo-firebase-analytics';
+// import firebase from 'expo-firebase-app';
+// import 'expo-firebase-analytics';
 import NavigationService from './NavigationService';
 
 // gets the current screen from navigation state
@@ -20,7 +20,7 @@ function getActiveRouteName(navigationState) {
 
 export default () => (
   <AppNavigator
-    ref={navigatorRef => {
+    ref={(navigatorRef) => {
       NavigationService.setTopLevelNavigator(navigatorRef);
     }}
     onNavigationStateChange={(prevState, currentState) => {
@@ -28,7 +28,7 @@ export default () => (
       const prevScreen = getActiveRouteName(prevState);
       if (prevScreen !== currentScreen) {
         console.log('New Screen', currentScreen);
-        firebase.analytics().setCurrentScreen(currentScreen);
+        // firebase.analytics().setCurrentScreen(currentScreen);
       }
     }}
   />

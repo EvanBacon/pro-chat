@@ -19,6 +19,9 @@ const libsToCompile = [
   '@expo/vector-icons',
   'react-native-platform-touchable',
   'react-native-animatable',
+  'react-native-progress',
+  'react-native-screens',
+  'react-native-image-progress',
 ];
 
 const include = ['src']

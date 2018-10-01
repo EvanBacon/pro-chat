@@ -1,131 +1,110 @@
-// @flow
 import React from 'react';
-import { Linking, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
-import Settings from '../constants/Settings';
-import { ImagePicker, Permissions } from '../universal/Expo';
-import Avatar from './Avatar';
-import EditPhotoButton from './Button/EditPhoto';
+import Colors from '../constants/Colors';
+import Images from '../Images';
+import Button from './Button';
+import Circle from './Circle';
+import LoadingImage from './LoadingImage';
 
 export default class ProfileImage extends React.Component {
-  _getPermission = async (permission) => {
-    const { status } = await Permissions.askAsync(permission);
-    if (status !== 'granted') {
-      Linking.openURL('app-settings:');
-      return false;
-    }
-    return true;
+  state = {
+    progress: null,
   };
-
-  _takePhoto = async () => {
-    const permission = await this._getPermission(Permissions.CAMERA);
-    if (!permission) {
-      return;
-    }
-    const result = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
-    });
-
-    if (!result.cancelled) {
-      this._setNewPhoto(result.uri);
+  onImage = async (image) => {
+    if (image) {
+      try {
+        await ImageProvider.uploadProfileImage(image, progress =>
+          this.setState({ progress }));
+        this.props.onImageUpdated && this.props.onImageUpdated();
+      } catch (error) {
+        // TODO: Handle Image upload failure
+      }
     }
   };
-
-  _setNewPhoto = async (uri) => {
-    alert('TODO: Evan: Add photo upload', uri);
-  };
-
-  _selectPhoto = async () => {
-    const permission = await this._getPermission(Permissions.CAMERA_ROLL);
-    if (!permission) {
-      return;
+  renderImage = (image) => {
+    if (this.props.lightbox) {
+      return (
+        <Lightbox
+          onOpen={_ => this.setState({ isOpen: true })}
+          onClose={_ => this.setState({ isOpen: false })}
+          activeProps={{
+            style: [{ resizeMode: 'contain', flex: 1 }],
+          }}
+          borderRadius={width - 110 / 2}
+          style={{}}
+        >
+          {image}
+        </Lightbox>
+      );
     }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
-    });
-
-    if (!result.cancelled) {
-      this._setNewPhoto(result.uri);
-    }
+    return image;
   };
-
-  _viewProfilePicture = () => {
-    // TODO: Evan: Lightbox
-  };
-
-  onPress = async () => {
-    if (!Settings.canEditPhoto) {
-      return;
-    }
-    if (!this.props.isUser) {
-      this._viewProfilePicture();
-      return;
-    }
-    // Same interface as https://facebook.github.io/react-native/docs/actionsheetios.html
-    const sheetOptions = [
-      {
-        name: 'View Profile Picture',
-        action: this._viewProfilePicture,
-      },
-      {
-        name: 'Take New Photo',
-        action: this._takePhoto,
-      },
-      {
-        name: 'Select New Photo',
-        action: this._selectPhoto,
-      },
-      { name: 'Cancel' },
-    ];
-    const destructiveButtonIndex = 0;
-    const cancelButtonIndex = sheetOptions.length - 1;
-
-    this.props.showActionSheetWithOptions(
-      {
-        options: sheetOptions.map(({ name }) => name),
-        cancelButtonIndex,
-      },
-      (buttonIndex) => {
-        if (buttonIndex !== cancelButtonIndex) {
-          const { action } = sheetOptions[buttonIndex];
-          console.log(buttonIndex, sheetOptions[buttonIndex]);
-          if (action) {
-            action(buttonIndex);
-          }
-        }
-        // Do something here depending on the button index selected
-      },
-    );
-  };
-
   render() {
-    const { image, isUser, name } = this.props;
-    const avatarSize = 128;
-
+    const {
+      source, isUser, isEditing, onEditingChanged,
+    } = this.props;
     return (
       <View
         style={{
-          marginRight: 16,
-          height: avatarSize,
-          minWidth: avatarSize,
-          minHeight: avatarSize,
+          width: width - 110,
+          aspectRatio: 1,
         }}
       >
-        <TouchableOpacity onPress={this.onPress}>
-          <Avatar
-            textStyle={{ fontWeight: 'bold', fontSize: 48 }}
-            avatarStyle={{
-              width: '100%',
-              height: '100%',
-              borderRadius: avatarSize / 2,
-            }}
-            name={name}
-            avatar={image}
-          />
-          {isUser && Settings.canEditPhoto && <EditPhotoButton style={{ position: 'absolute', bottom: 0, right: 0 }} />}
-        </TouchableOpacity>
+        <Circle
+          style={[
+            {
+              flex: 1,
+              borderWidth: StyleSheet.hairlineWidth,
+              borderColor: '#F9F9F9',
+              backgroundColor: 'white',
+            },
+            StyleSheet.absoluteFill,
+          ]}
+        >
+          {this.renderImage(<LoadingImage
+            source={source}
+            style={[
+                {
+                  width: width - 110,
+                  borderRadius: (width - 110) / 2,
+                  overflow: 'hidden',
+                  aspectRatio: 1,
+                },
+              ]}
+          />)}
+        </Circle>
+        {this.state.progress &&
+          this.state.progress != 1 && (
+            <View
+              style={[
+                StyleSheet.absoluteFill,
+                { justifyContent: 'center', alignItems: 'center' },
+              ]}
+            >
+              <Progress.Pie
+                color={Colors.tintColor}
+                progress={this.state.progress}
+                size={80}
+              />
+            </View>
+          )}
+        {isUser &&
+          !this.state.isOpen && (
+            <Animatable.View
+              duration={900}
+              easing="ease-out-back"
+              animation="zoomIn"
+              useNativeDriver
+              style={{ position: 'absolute', top: 0, left: 0 }}
+            >
+              <Button.Edit
+                icon={isEditing ? Images.close : Images.pencil}
+                onPress={onEditingChanged}
+                tint={Colors.tintColor}
+              />
+            </Animatable.View>
+          )}
       </View>
     );
   }

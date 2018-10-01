@@ -1,11 +1,12 @@
 // @flow
 import { MaterialIcons } from '@expo/vector-icons';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
 import PropTypes from 'prop-types';
+import React from 'react';
+import { StyleSheet, Alert, Text, View } from 'react-native';
+
 import ReportList from '../components/ReportList';
 import Offenses from '../constants/Offenses';
-import Fire from '../ExpoParty/Fire';
+import Fire from '../Fire';
 
 export default class ReportScreen extends React.Component {
   static navigationOptions = {
@@ -20,7 +21,7 @@ export default class ReportScreen extends React.Component {
     const { uid } = this.props.navigation.state.params;
     Fire.shared.submitComplaint(uid, name);
     this.props.navigation.goBack();
-    alert('This user will be investigated with surgical precision.');
+    Alert.alert('This user will be investigated with surgical precision.');
   };
 
   render() {

@@ -1,17 +1,15 @@
-import './utils/disableLogs';
-
-import { dispatch } from '@rematch/core';
 import React from 'react';
 import { View } from 'react-native';
+
+import './utils/disableLogs';
 
 import Assets from './Assets';
 import Settings from './constants/Settings';
 import Fire from './Fire';
 import Navigation from './navigation';
 import Gate from './rematch/Gate';
-
-import AssetUtils from './universal/AssetUtils'; // eslint-disable-line
-import { AppLoading } from './universal/Expo'; // eslint-disable-line
+import AssetUtils from './universal/AssetUtils';
+import { AppLoading } from './universal/Expo';
 
 console.ignoredYellowBox = Settings.ignoredYellowBox;
 
@@ -28,7 +26,7 @@ export default class App extends React.Component {
   get screen() {
     return (
       <Gate>
-          <Navigation />
+        <Navigation />
       </Gate>
     );
   }
@@ -57,9 +55,7 @@ export default class App extends React.Component {
     Fire.shared.init();
   }
 
-  componentWillUnmount() {
-
-  }
+  componentWillUnmount() {}
 
   _setupExperienceAsync = async () => {
     await Promise.all([this._preloadAsync()]);

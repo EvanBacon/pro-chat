@@ -15,7 +15,6 @@ export default class ProfileMetaDataView extends React.Component {
       <View style={styles.container}>
         <Text style={styles.paragraph}>{_name}</Text>
         <TimeAgo subtext="Created ">{createdAt}</TimeAgo>
-        {false && <Text style={styles.subtitle}>Plays Nitro Roll, Sunset Cyberspace, and Pillar Valley</Text>}
       </View>
     );
   }
@@ -25,11 +24,6 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'flex-start',
     justifyContent: 'center',
-  },
-  subtitle: {
-    fontSize: 14,
-    marginTop: 2,
-    maxWidth: '80%',
   },
   paragraph: {
     fontSize: 18,
