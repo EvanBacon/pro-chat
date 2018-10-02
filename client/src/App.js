@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, StatusBar } from 'react-native';
 
 import './utils/disableLogs';
 
@@ -55,6 +55,7 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
+    StatusBar.setBarStyle('light-content', true);
     Fire.shared.init();
   }
 

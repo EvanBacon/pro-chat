@@ -1,14 +1,20 @@
+import { Ionicons } from '@expo/vector-icons';
 import { dispatch } from '@rematch/core';
 import firebase from 'firebase';
 import React from 'react';
 import { Alert } from 'react-native';
+import HeaderButtons from 'react-navigation-header-buttons';
 import { connect } from 'react-redux';
 
 import BrowseUsers from '../components/BrowseUsers';
 import Gradient from '../components/Gradient';
 import Meta from '../constants/Meta';
-import { Relationship } from '../provider/RelationshipProvider';
+import Settings from '../constants/Settings';
+import Fire from '../Fire';
+import Relationship from '../models/Relationship';
+import NavigationService from '../navigation/NavigationService';
 import isUnderAge from '../utils/isUnderAge';
+
 
 // [
 //             "0a944021-1ba5-c51a-0e98-fc2dd3834eeb",
@@ -29,8 +35,26 @@ import isUnderAge from '../utils/isUnderAge';
 //             "fd0b9cc5-ff0a-534a-fa52-dadaa51010af",
 //             "ffcac396-4f39-3e39-1cb9-0da2eeee6436"
 //           ]
-
 class HomeScreen extends React.Component {
+  static navigationOptions = () => ({
+    title: 'Bute',
+    headerRight: (
+      <HeaderButtons
+        IconComponent={Ionicons}
+        OverflowIcon={<Ionicons name="ios-more" size={23} color="blue" />}
+        iconSize={23}
+        color="blue"
+      >
+        <HeaderButtons.Item
+            title="add"
+            iconName="md-add"
+            onPress={async () => {
+            }}
+          />
+      </HeaderButtons>
+    ),
+  });
+
   componentWillMount() {
     // this.props.screenProps.getNavigation(this.props.navigation);
     // this.props.navigation.navigate("Map")
@@ -38,6 +62,14 @@ class HomeScreen extends React.Component {
   }
 
   componentDidMount() {
+    if (Settings.debugGoToChat) {
+      if (Fire.shared.uid === 'fHgE92IvgLbUmbG2nU7DOyLsk5e2') {
+        NavigationService.navigate('Chat', { uid: 'pfrNeWLaXxMUnB2LBsG84OeSi732' });
+      } else {
+        NavigationService.navigate('Chat', { uid: 'fHgE92IvgLbUmbG2nU7DOyLsk5e2' });
+      }
+    }
+
     // firebase.messaging().requestPermissions();
     this.checkBanned((this.props.user || {}).isBlocked);
     this.checkUnderage((this.props.user || {}).birthday);
@@ -90,7 +122,7 @@ class HomeScreen extends React.Component {
                 Meta.info_like_subtitle,
                 Meta.info_like_action,
               );
-              firebase.analytics().logEvent('first_like', { uid });
+              if (firebase.analytics) { firebase.analytics().logEvent('first_like', { uid }); }
             }
             dispatch.user.updateRelationshipWithUser({
               uid,
@@ -105,8 +137,7 @@ class HomeScreen extends React.Component {
                 Meta.info_dislike_subtitle,
                 Meta.info_dislike_action,
               );
-
-              firebase.analytics().logEvent('first_dislike', { uid });
+              if (firebase.analytics) { firebase.analytics().logEvent('first_dislike', { uid }); }
             }
             dispatch.user.updateRelationshipWithUser({
               uid,
@@ -121,11 +152,13 @@ class HomeScreen extends React.Component {
                 Meta.meta_info_learn_more_subtitle,
                 Meta.meta_info_learn_more_action,
               );
-              firebase
-                .analytics()
-                .logEvent('user_was_informed_about_tapping_profile_card', {
-                  uid,
-                });
+              if (firebase.analytics) {
+firebase
+                  .analytics()
+                  .logEvent('user_was_informed_about_tapping_profile_card', {
+                    uid,
+                  });
+}
             }
           }}
           navigation={this.props.navigation}

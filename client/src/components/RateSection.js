@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
 
-import { Relationship } from '../provider/RelationshipProvider';
+import Relationship from '../models/Relationship';
 import Footer from './Footer';
 import Section from './Section';
 

@@ -5,6 +5,7 @@ import Image from 'react-native-image-progress';
 
 import Settings from '../constants/Settings';
 
+const apiKey = Settings.giphyAPI.debug;
 export default class GifScroller extends Component {
   constructor(props) {
     super(props);
@@ -16,20 +17,20 @@ export default class GifScroller extends Component {
 
   componentDidMount = () => {
     if (this.props.inputText === '') {
-      this.buildUrl('trending', Settings.apiKey);
+      this.buildUrl('trending', apiKey);
     } else {
       const searchTerm = this.props.inputText;
-      this.buildUrl('search', Settings.apiKey, searchTerm, 5);
+      this.buildUrl('search', apiKey, searchTerm, 5);
     }
   };
 
   componentWillReceiveProps = (nextProps) => {
     this.setState({ gifs: [], offset: 0 });
     if (nextProps.inputText === '') {
-      this.buildUrl('trending', Settings.apiKey);
+      this.buildUrl('trending', apiKey);
     } else {
       const searchTerm = nextProps.inputText;
-      this.buildUrl('search', Settings.apiKey, searchTerm, 5);
+      this.buildUrl('search', apiKey, searchTerm, 5);
     }
   };
 
@@ -41,7 +42,7 @@ export default class GifScroller extends Component {
 
   loadMoreImages = () => {
     this.state.offset += 10;
-    this.buildUrl('search', Settings.apiKey, this.props.inputText, 5, this.state.offset);
+    this.buildUrl('search', apiKey, this.props.inputText, 5, this.state.offset);
   };
 
   buildUrl = (endpoint, apiKey, q, limit, offset) => {
@@ -66,9 +67,12 @@ export default class GifScroller extends Component {
     try {
       const response = await fetch(url);
       const gifs = await response.json();
+      console.log('gifs', { gifs });
       const gifsUrls = gifs.data.map(gif => gif.images.fixed_height_downsampled.url);
       const newGifsUrls = this.state.gifs.concat(gifsUrls);
-      this.setState({ gifs: newGifsUrls });
+      if (newGifsUrls && Array.isArray(newGifsUrls)) {
+        this.setState({ gifs: newGifsUrls });
+      }
     } catch (e) {
       console.log(e);
     }

@@ -1,11 +1,9 @@
-import firebase from 'firebase';
+import { dispatch } from '@rematch/core/typings/rematch';
 import React from 'react';
-import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 
 import Meta from '../constants/Meta';
 import Images from '../Images';
-import * as MessagesProvider from '../provider/MessagesProvider';
 import EmptyListMessage from './EmptyListMessage';
 import MessageRow from './MessageRow';
 import UserList from './UserList';
@@ -37,7 +35,7 @@ class MessageList extends React.Component {
   _onRefresh = async () => {
     this.setState({ refreshing: true });
     const messages = this.props.channels.map(({ uid, channel }) =>
-      MessagesProvider.getLastMessage({ uid, channel }));
+      dispatch.chats.getLastMessage({ uid, channel }));
 
     await Promise.all(messages);
 
@@ -52,7 +50,7 @@ class MessageList extends React.Component {
       key={item.channel}
       message={item || {}}
       onPress={event => this.onPressRow({ item, index, event })}
-      onLongPress={() => MessagesProvider.deleteChannel(item.channel)}
+      onLongPress={() => dispatch.chats.deleteChannel(item.channel)}
     />
   );
 

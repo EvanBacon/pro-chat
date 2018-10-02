@@ -8,10 +8,10 @@ import Fire from '../Fire';
 export const Relationship = {
   like: 'like',
   dislike: 'dislike',
-  match: 'match',
   none: 'none',
-  blocked: 'blocked',
   blocking: 'blocking',
+  match: 'match',
+  blocked: 'blocked',
 };
 
 const isIos = Platform.OS === 'ios';
@@ -35,7 +35,7 @@ export function updateRelationship(uid, type) {
 
   switch (type) {
     case Relationship.blocking:
-      firebase.analytics().logEvent('user_blocked_another_user', { uid });
+      if (firebase.analytics) firebase.analytics().logEvent('user_blocked_another_user', { uid });
       break;
     case Relationship.like:
       if (isIos) Haptic.impact();

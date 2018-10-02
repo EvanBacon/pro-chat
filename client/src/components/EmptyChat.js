@@ -2,14 +2,12 @@
 // Copyright (c) 2017-present, by Evan Bacon. All Rights Reserved.
 // @author Evan Bacon / https://github.com/EvanBacon
 //
+import { dispatch } from '@rematch/core';
 import React, { Component } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 
 import MetaData from '../constants/Meta';
-import * as ImageProvider from '../provider/ImageProvider';
-import * as ProfileProvider from '../provider/ProfileProvider';
-import * as RelationshipProvider from '../provider/RelationshipProvider';
 import Circle from './Circle';
 import LoadingImage from './LoadingImage';
 import Meta from './Meta';
@@ -30,13 +28,22 @@ export default class EmptyChat extends Component {
   loadData = ({ uid }) => {
     (async () => {
       try {
-        const name = await ProfileProvider.getPropertyForUser({
+        dispatch.users.getPropertyForUser({
           uid,
           property: 'first_name',
+          callback: (name) => {
+            if (this.mounted) {
+              this.setState(state => ({ ...state, name }));
+            }
+          },
         });
-        if (this.mounted) {
-          this.setState(state => ({ ...state, name }));
-        }
+        // const name = await ProfileProvider.getPropertyForUser({
+        //   uid,
+        //   property: 'first_name',
+        // });
+        // if (this.mounted) {
+        //   this.setState(state => ({ ...state, name }));
+        // }
       } catch (error) {
         console.warn(error);
       }
@@ -44,7 +51,7 @@ export default class EmptyChat extends Component {
 
     (async () => {
       try {
-        const timestamp = await RelationshipProvider.whenWasUserRated({ uid });
+        const timestamp = await dispatch.relationships.whenWasUserRated({ uid });
         if (this.mounted) {
           this.setState(state => ({ ...state, timestamp }));
         }
@@ -54,15 +61,17 @@ export default class EmptyChat extends Component {
     })();
 
     (async () => {
-      try {
-        const image = await ImageProvider.getProfileImage(uid);
-        if (this.mounted) {
-          // console.warn("bingo", image);
-          this.setState(state => ({ ...state, image }));
-        }
-      } catch (error) {
-        console.warn(error);
-      }
+      dispatch.users.getProfileImage({ uid });
+      // try {
+
+      //   const image = await
+      //   if (this.mounted) {
+      //     // console.warn("bingo", image);
+      //     this.setState(state => ({ ...state, image }));
+      //   }
+      // } catch (error) {
+      //   console.warn(error);
+      // }
     })();
   };
 

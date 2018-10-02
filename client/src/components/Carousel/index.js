@@ -19,7 +19,7 @@ export default class Carousel extends Component {
           horizontal
           style={{ overflow: 'visible' }}
           data={users}
-          keyExtractor={(item, index) => `Carousel-${index}`}
+          keyExtractor={(item, index) => `Carousel-${item || index}`}
           renderItem={({ item, index }) => (
             <Cell uid={item} key={index} onPress={event => navigation.navigate('OtherProfile', { uid: item })} />
           )}

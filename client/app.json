@@ -33,7 +33,13 @@
       "icon": "./src/assets/icons/ios.png",
       "supportsTablet": true,
       "buildNumber": "0",
-      "bundleIdentifier": "com.evanbacon.expo.bute"
+      "bundleIdentifier": "com.evanbacon.expo.bute",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription":  "Send your location to your friends",
+        "NSCameraUsageDescription": "Take pictures to send to your friends",
+        "NSPhotoLibraryUsageDescription": "Send your photos to people you chat with",
+        "NSContactsUsageDescription": "Find your friends who also use this app"
+      }
     },
     "android": {
       "playStoreUrl": "https://play.google.com/store/apps/details?id=com.evanbacon.expo.bute",

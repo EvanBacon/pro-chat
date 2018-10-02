@@ -66,6 +66,7 @@
     "react-native-progress": "^3.5.0",
     "react-native-web": "^0.8.9",
     "react-navigation": "^2.5.2",
+    "react-navigation-header-buttons": "^2.1.0",
     "react-navigation-material-bottom-tabs": "^0.3.0",
     "react-redux": "^5.0.6",
     "react-scripts": "1.0.17",

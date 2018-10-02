@@ -1,10 +1,11 @@
-import { Permissions } from 'expo';
+import { Permissions, Location } from 'expo';
 // import geofire from 'geofire';
 import { Platform } from 'react-native';
 
 import firebase from 'firebase';
 import Settings from '../constants/Settings';
 import Fire from '../Fire';
+import getPermission from '../utils/getPermission';
 
 let geoFire;
 export const configure = (database) => {
@@ -51,21 +52,11 @@ const syncCoords = async (preventServerUpdate = false, coords, timestamp) => {
 };
 
 export const getLocation = async (preventServerUpdate = false) => {
-  const { status } = await Permissions.getAsync(Permissions.LOCATION);
-  if (status !== 'granted') {
-    // /TODO: Throw An Error
-    console.warn(
-      'Location Permissions not allowed, need to change this in settings',
-      status,
-    );
+  const hasit = await getPermission(Permissions.LOCATION);
+  if (!hasit) {
     return null;
   }
-
-  if (Platform.OS === 'android') {
-    return;
-  }
-
-  if (Settings.simulator && Settings.debugging) {
+  if (Settings.simulator && Settings.debuggingLocation) {
     return await syncCoords(
       preventServerUpdate,
       { latitude: 30.14728379721442, longitude: -97.77971597219003 },
@@ -73,7 +64,9 @@ export const getLocation = async (preventServerUpdate = false) => {
     );
   }
 
-  const { coords, timestamp } = await getCurrentPositionAsync(Settings.location);
+  const { coords, timestamp } = await Location.getCurrentPositionAsync({});
+
+  // const { coords, timestamp } = await getCurrentPositionAsync(Settings.location);
 
   return await syncCoords(preventServerUpdate, coords, timestamp);
 };

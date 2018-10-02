@@ -1,6 +1,6 @@
+import faker from 'faker';
 import firebase from 'firebase';
 
-import faker from 'faker';
 import Fire from '../Fire';
 
 export const uploadProfileImage = async (image, onProgress) => {

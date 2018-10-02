@@ -15,12 +15,14 @@ export default ({
   // if (!Subjects.hasOwnProperty(subject)) {
   //     return;
   // }
-  firebase.analytics().logEvent('sent_email_to_support', {
-    subject,
-    cc,
-    bcc,
-    body,
-  });
+  if (firebase.analytics) {
+    firebase.analytics().logEvent('sent_email_to_support', {
+      subject,
+      cc,
+      bcc,
+      body,
+    });
+  }
 
   Communications.email([Settings.email], cc, bcc, subject, body);
 };

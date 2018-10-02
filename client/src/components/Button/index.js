@@ -26,7 +26,18 @@ import Logout from './Logout';
 import Store from './Store';
 import Outline from './Outline';
 
+import Gif from './Gif';
+import Gallery from './Gallery';
+import ShareLocation from './ShareLocation';
+import Camera from './Camera';
+import Chat from './Chat';
+
 export default {
+  Chat,
+  Camera,
+  Gif,
+  Gallery,
+  ShareLocation,
   Home,
   Icon,
   Rate,

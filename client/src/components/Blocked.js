@@ -4,8 +4,8 @@ import { StyleSheet } from 'react-native';
 
 import Meta from '../constants/Meta';
 import Images from '../Images';
-import { Relationship } from '../provider/RelationshipProvider';
 import EmptyListMessage from './EmptyListMessage';
+import Relationship from '../models/Relationship';
 
 export default class Blocked extends Component {
   static propTypes = {

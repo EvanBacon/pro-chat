@@ -43,17 +43,21 @@ export default class Header extends Component {
   );
 
   render() {
-    const { navigation } = this.props.navigation;
+    // const { navigation } = this.props.navigation;
     const { width } = Dimensions.get('window');
+
+
+    // const right = this.props.renderRight({ navigation });
+    // console.log(right);
     return (
       <View
         style={{
-          position: 'absolute',
+          // position: 'absolute',
           paddingHorizontal: 16,
           height: BAR_HEIGHT,
-          top: 0,
-          left: 0,
-          right: 0,
+          // top: 0,
+          // left: 0,
+          // right: 0,
           flexDirection: 'row',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -75,20 +79,6 @@ export default class Header extends Component {
           {this.renderBackground(width)}
           <Use href="#shape" x="0" y="0" fill="url(#grad)" />
         </Svg>
-
-        <View style={{ flex: 1 }}>{this.props.renderLeft({ navigation })}</View>
-        <Text
-          style={{
-            backgroundColor: 'transparent',
-            color: 'white',
-            fontSize: 18,
-            textAlign: 'center',
-          }}
-        >
-          {this.props.title}
-        </Text>
-
-        <View style={{ flex: 1, alignItems: 'flex-end' }}>{this.props.renderRight({ navigation })}</View>
       </View>
     );
   }

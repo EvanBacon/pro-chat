@@ -22,6 +22,8 @@ const fields = [
 const Settings = {
   refs: {
     channels: 'channels',
+    relationships: 'relationships',
+    users: 'users',
   },
   isDetached: false,
   facebookFields: fields,
@@ -75,6 +77,8 @@ const Settings = {
     maximumAge: 2000,
     timeout: 20000,
   },
+  debugGoToChat: false,
+  avatarSize: 96,
   minimumAge: 17,
   email: 'bootyalertapp@gmail.com',
   // testingUID: "KukzZOJZaAefeh334uqElUWDjc92",
@@ -83,8 +87,11 @@ const Settings = {
   /*
       So many of these...
   */
-  user: 'Art', // Booty
-  userPlural: 'Artists', // Bootys
+
+
+  name: 'Būte',
+  user: 'Art', //
+  userPlural: 'Artists', //
   debugging:
     global.isDebuggingInChrome ||
     __DEV__ ||

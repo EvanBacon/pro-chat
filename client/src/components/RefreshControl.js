@@ -3,7 +3,7 @@ import { RefreshControl } from 'react-native';
 
 import Meta from '../constants/Meta';
 
-class BootyRefreshControl extends React.Component {
+class ButeRefreshControl extends React.Component {
   render() {
     const { props } = this;
 
@@ -11,4 +11,4 @@ class BootyRefreshControl extends React.Component {
   }
 }
 
-export default BootyRefreshControl;
+export default ButeRefreshControl;

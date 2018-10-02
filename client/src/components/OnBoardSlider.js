@@ -6,15 +6,14 @@ import { connect } from 'react-redux';
 import Meta from '../constants/Meta';
 import Settings from '../constants/Settings';
 import Images from '../Images';
-import * as ProfileProvider from '../provider/ProfileProvider';
 // import { getLocationPermission } from '../redux/permissions';
 // import { updateUserProfile } from '../redux/profiles';
 import selectImage from '../utils/SelectImage';
 import Button from './Button';
 import Gradient from './Gradient';
 import OnBoardSliderCard from './OnBoardSliderCard';
+import Gender from '../models/Gender';
 
-const { Gender } = ProfileProvider;
 const { width } = Dimensions.get('window');
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
@@ -49,9 +48,8 @@ class Edit extends React.Component {
 
                             this.props.updateProfileImage(image, this.props.onProgress);
                             this.props.onComplete(image.uri || image);
-                            // await ImageProvider.uploadProfileImage(image, this.props.onProgress);
                         } catch (error) {
-                            this.props.onError && this.props.onError(error);
+                            if (this.props.onError) this.props.onError(error);
                             // TODO: Handle Image upload failure
                         }
                     }

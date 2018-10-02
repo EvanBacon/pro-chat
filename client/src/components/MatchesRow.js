@@ -7,7 +7,9 @@ import UserImage from './UserImage';
 export default class MatchesRow extends React.Component {
   static defaultProps = {
     underlayColor: '#ddd',
+    name: 'Nameless Bute',
   };
+
   static propTypes = {
     image: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,

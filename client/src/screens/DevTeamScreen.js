@@ -3,7 +3,7 @@ import React from 'react';
 
 import BrowseUsers from '../components/BrowseUsers';
 import Gradient from '../components/Gradient';
-import { Relationship } from '../provider/RelationshipProvider';
+import Relationship from '../models/Relationship';
 
 class Team extends React.Component {
   render() {

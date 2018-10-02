@@ -17,7 +17,6 @@ import { connect } from 'react-redux';
 import Gradient from '../components/Gradient';
 import Colors from '../constants/Colors';
 import firebase from 'firebase';
-import * as GeoFireProvider from '../provider/GeoFireProvider';
 import Images from '../Images';
 import Meta from '../constants/Meta';
 // import { signOutUser } from '../redux/auth';
@@ -358,7 +357,7 @@ class SettingsScreen extends React.Component {
       this.props.interest &&
       nextProps.interest
     ) {
-      GeoFireProvider.getLocation();
+      dispatch.location.getAsync();
     }
   }
 
@@ -498,7 +497,7 @@ const styles = StyleSheet.create({
 });
 
 const mergeProps = (state, actions, localProps) => {
-  const uid = Fire.shared.uid
+  const uid = Fire.shared.uid;
 
   const { users, ...props } = state;
 

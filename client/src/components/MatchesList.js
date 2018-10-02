@@ -8,6 +8,8 @@ import EmptyListMessage from './EmptyListMessage';
 import MatchesRow from './MatchesRow';
 import UserList from './UserList';
 import Assets from '../Assets';
+import { dispatch } from '@rematch/core';
+import NavigationService from '../navigation/NavigationService';
 
 const Images = Assets.images;
 const EmptyMatchesScreen = ({ goHome }) => (
@@ -19,25 +21,29 @@ const EmptyMatchesScreen = ({ goHome }) => (
     subtitle={Meta.no_matches_subtitle}
   />
 );
-const ConnectedEmptyMatchScreen = connect(
-  () => ({}),
-  {
-    goHome: () => dispatch =>
-      dispatch(NavigationActions.navigate({ routeName: 'Home' })),
-  },
-)(EmptyMatchesScreen);
+// const ConnectedEmptyMatchScreen = connect(
+//   () => ({}),
+//   {
+//     goHome: () => dispatch =>
+//       dispatch(NavigationActions.navigate({ routeName: 'Home' })),
+//   },
+// )(EmptyMatchesScreen);
 
 class MatchesList extends React.PureComponent {
   state = {
     refreshing: false,
   };
 
+  componentDidMount() {
+    dispatch.users.getPaged({ size: 2 });
+  }
+
   _onRefresh = () => {
     this.setState({ refreshing: true });
     this.setState({ refreshing: false });
   };
 
-  onPressRow = async ({ uid }) => this.props.navigate('OtherProfile', { uid });
+  onPressRow = async ({ uid }) => NavigationService.navigate('Chat', { uid });
 
   renderItem = ({ item: key, index }) => {
     const { image, name, uid } = this.props.matches[key];
@@ -53,7 +59,7 @@ class MatchesList extends React.PureComponent {
   render = () => (
     <UserList
       style={this.props.style}
-      ListEmptyComponent={ConnectedEmptyMatchScreen}
+      ListEmptyComponent={EmptyMatchesScreen}
       refreshing={this.state.refreshing}
       onRefresh={this._onRefresh}
       data={Object.keys(this.props.matches)}
@@ -61,6 +67,6 @@ class MatchesList extends React.PureComponent {
     />
   );
 }
-export default connect(({ matches = {} }) => ({
+export default connect(({ users: matches }) => ({
   matches,
 }))(MatchesList);

@@ -1,11 +1,18 @@
+import firebase from 'firebase';
 import React, { Component } from 'react';
 import { View } from 'react-native';
 
-import Button from './Button';
-import firebase from 'firebase';
-import { getLocation } from '../provider/GeoFireProvider';
+import getLocation from '../utils/getLocation';
 import { fromCamera, fromLibrary } from '../utils/SelectImage';
+import Button from './Button';
 
+if (!firebase.analytics) {
+  firebase.analytics = function () {
+    this.logEvent = () => {};
+  };
+} else if (!firebase.analytics.logEvent) {
+  firebase.analytics.logEvent = function () {};
+}
 export default class AccessoryBar extends Component {
   state = {
     showGif: false,
@@ -27,30 +34,30 @@ export default class AccessoryBar extends Component {
         }}
       >
         <Button.Gallery
-          onPress={async (_) => {
+          onPress={async () => {
             const image = await fromLibrary();
             if (image) {
               onSend([{ image }]);
-              firebase.analytics().logEvent('sent_library_picture', { url: image, channel });
+              if (firebase.analytics) firebase.analytics().logEvent('sent_library_picture', { url: image, channel });
             }
           }}
         />
         <Button.Camera
           style={{}}
-          onPress={async (_) => {
+          onPress={async () => {
             const image = await fromCamera();
             if (image) {
               onSend([{ image }]);
-              firebase.analytics().logEvent('sent_camera_picture', { url: image, channel });
+              if (firebase.analytics) firebase.analytics().logEvent('sent_camera_picture', { url: image, channel });
             }
           }}
         />
         <Button.ShareLocation
-          onPress={async (_) => {
+          onPress={async () => {
             const location = await getLocation();
             if (location) {
               onSend([{ location }]);
-              firebase.analytics().logEvent('shared_location', { location, channel });
+              if (firebase.analytics) firebase.analytics().logEvent('shared_location', { location, channel });
             }
           }}
         />
@@ -58,8 +65,8 @@ export default class AccessoryBar extends Component {
           selected={gifActive}
           style={{ opacity: gifDisabled ? 0.5 : 1 }}
           disabled={gifDisabled}
-          onPress={async (_) => {
-            onGif && onGif(!this.props.gifActive);
+          onPress={async () => {
+            if (onGif) onGif(!this.props.gifActive);
           }}
         />
       </View>

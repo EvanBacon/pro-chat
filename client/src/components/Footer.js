@@ -5,10 +5,11 @@ import { Dimensions, View } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 
-import { Relationship } from '../provider/RelationshipProvider';
+import Relationship from '../models/Relationship';
 import reportUser from '../utils/reportUser';
 import shareUser from '../utils/shareUser';
 import AButton from './AButton';
+
 
 const { width } = Dimensions.get('window');
 

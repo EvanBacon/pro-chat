@@ -1,16 +1,10 @@
 import { dispatch } from '@rematch/core';
 import firebase from 'firebase';
 import React from 'react';
-import {
-  Clipboard,
-  InteractionManager,
-  LayoutAnimation,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Clipboard, InteractionManager, LayoutAnimation, StyleSheet, Text, View } from 'react-native';
 import { Bubble, GiftedChat, MessageText } from 'react-native-gifted-chat';
 import { connect } from 'react-redux';
+import { Keyboard } from 'expo';
 
 import AccessoryBar from '../components/AccessoryBar';
 import CustomActions from '../components/chat/Actions';
@@ -20,7 +14,6 @@ import Loading from '../components/Loading';
 import Time from '../components/Time';
 import Meta from '../constants/Meta';
 import Fire from '../Fire';
-import * as MessagesProvider from '../provider/MessagesProvider';
 import CustomView from './CustomView';
 
 class Chat extends React.Component {
@@ -34,7 +27,8 @@ class Chat extends React.Component {
   state = {
     // prefs: {},
     // keyboard: 0,
-    // gifActive: false,
+    gifActive: false,
+    userInput: 'Sailor Moon',
   };
 
   get user() {
@@ -49,10 +43,11 @@ class Chat extends React.Component {
   }
 
   async componentDidMount() {
-    const { groupId, otherUsers, otherUserUid } = this.props;
+    const { otherUserUid, groupId } = this.props;
+    // dispatch.chats.clear({ uid: groupId });
     await Fire.shared.getUserAsync({ uid: otherUserUid });
     dispatch.chats.startChatting({
-      uids: otherUsers,
+      uids: otherUserUid,
       callback: (unsubscribe) => {
         this.unsubscribe = unsubscribe;
         dispatch.isTyping.observe({ groupId, uid: otherUserUid }); // TODO: UNSUB
@@ -70,55 +65,28 @@ class Chat extends React.Component {
     // this.ref(`messages/${channel}/typing/${uid}`).off('value', this.didRecieveTyping)
   }
 
-  onSendMessage = (messages = []) => {
+  onSendMessage = async (messages = []) => {
     this.isUserEditing = false;
     for (const message of messages) {
       const chat = {
-        from: this.uid,
-        // from: `${Fire.user().uid}`,
-        image: message.image || null,
-        timestamp: Date.now(),
-        message: message.text || null,
-        location: message.location || null,
         seen: null,
-        // server_recieved: -1
       };
-
-      (async () => {
-        // console.log("I just bought", chat, Fire.user().uid)
-        const {
-          message: _message,
-          chatKey,
-        } = await MessagesProvider.sendMessage(
-          this.props.channel,
-          this.props.targetUID,
-          chat,
-        );
-
-        const _nMessage = {};
-        for (const key in _message) {
-          const meta = _message[key];
-          if (meta) {
-            _nMessage[key] = meta;
-          }
-        }
-        dispatch.chats.didRecieveMessageKey({
-          chatKey,
-          groupId: this.props.channel,
-          _nMessage,
-        });
-        // this.didRecieveMessageKey(chatKey, _nMessage);
-      })();
+      ['image', 'text', 'location'].forEach((key) => {
+        if (message[key]) chat[key] = message[key];
+      });
+      Fire.shared.sendMessage(
+        chat,
+        this.props.groupId,
+      );
     }
   };
 
   get isUserEditing() {
     return this._isUserEditing;
   }
+
   set isUserEditing(value) {
-    if (this._isUserEditing === value) {
-      return;
-    }
+    if (this._isUserEditing === value) return;
 
     this._isUserEditing = value;
     if (value) {
@@ -127,23 +95,8 @@ class Chat extends React.Component {
       this.userFinishedTyping();
     }
   }
+
   _isUserEditing = false;
-
-  // async componentDidMount() {
-  //   InteractionManager.runAfterInteractions(() => {
-  //     (async () => {
-  //       try {
-  //         if (!this.props.targetName) {
-  //           dispatch.users.getPropertyForUser({ uid: this.props.targetUID, property: 'first_name' });
-  //         }
-  //       } catch ({ message }) {
-  //         console.error(message);
-  //       }
-  //     })();
-  //   });
-
-  //   dispatch.chats.getChannelForUser({ uid: this.props.targetUID, callback: this.loadMessages });
-  // }
 
   ref = route => firebase.database().ref(route);
 
@@ -194,33 +147,18 @@ class Chat extends React.Component {
     // }
     // this.setState({ messages: _messages });
   };
-  renderCustomActions = props => <CustomActions {...props} />;
 
-  renderText = messageProps => (
-    <MessageText
-      {...messageProps}
-      styles={{
-        left: {},
-        right: {
-          color: 'red',
-        },
-      }}
-    />
-  );
+  renderBackground = () =>
+    // if (this.props.firstMessage) return null;
 
-  renderTime = messageProps => <Time {...messageProps} />;
-
-  renderBackground = () => {
-    if (this.props.firstMessage) return null;
-
-    return (
+    (
       <View style={StyleSheet.absoluteFill}>
-        <EmptyChat uid={this.props.targetUID} />{' '}
+        <EmptyChat uid={this.props.targetUID} />
       </View>
-    );
-  };
+    )
+  ;
 
-  // renderActions={this.renderCustomActions}
+  // renderActions={CustomActions}
 
   userStartedTyping = () =>
     dispatch.isTyping.setAsync({ isTyping: true, groupId: this.props.groupId });
@@ -238,7 +176,7 @@ class Chat extends React.Component {
       return (
         <View style={styles.footerContainer}>
           <Text style={styles.footerText}>
-            {`${this.props.targetName} ${Meta.is_typing}`}
+            {`${this.props.otherUser.name} ${Meta.is_typing}`}
           </Text>
         </View>
       );
@@ -267,6 +205,7 @@ class Chat extends React.Component {
         backgroundColor: backgroundColor || wrapperStyle.left.backgroundColor,
       },
     };
+    // {...props} wrapperStyle={_wrapperStyle}
     return <Bubble {...props} wrapperStyle={_wrapperStyle} />;
   };
 
@@ -278,29 +217,29 @@ class Chat extends React.Component {
   renderAccessory = () => (
     <AccessoryBar
       channel={this.props.channel}
-      text={this.props.userInput}
+      text={this.state.userInput}
       gifActive={this.props.gifOpened}
       onSend={this.onSendMessage}
       onGif={this.onGif}
     />
   );
 
-  onGif = () => {
-    // this.setState({ gifActive: active });
+  onGif = (active) => {
+    this.setState({ gifActive: active });
     // dispatch.chats.updatedGifOpened({ channel: this.props.channel, isOpened: active });
-    // Keyboard.dismiss();
+    Keyboard.dismiss();
   };
 
   renderChatFooter = () => {
     if (
-      this.props.gifOpened &&
-      this.props.userInput &&
-      this.props.userInput.length > 0
+      this.state.gifActive &&
+      this.state.userInput &&
+      this.state.userInput.length > 0
     ) {
       return (
         <GifScroller
           style={{ width: '100%', height: 100, backgroundColor: 'white' }}
-          inputText={this.props.userInput}
+          inputText={this.state.userInput}
           handleGifSelect={this.handleGifSelect}
         />
       );
@@ -309,10 +248,12 @@ class Chat extends React.Component {
   };
 
   handleGifSelect = (url) => {
-    this.onSendMessage([{ image: { uri: url, name: this.props.userInput } }]);
-    firebase
-      .analytics()
-      .logEvent('sent_gif', { channel: this.props.channel, url });
+    this.onSendMessage([{ image: { uri: url, name: this.state.userInput } }]);
+    if (firebase.analytics) {
+      // firebase
+      //   .analytics()
+      //   .logEvent('sent_gif', { channel: this.props.channel, url });
+    }
   };
 
   onInputTextChanged = (text) => {
@@ -320,14 +261,15 @@ class Chat extends React.Component {
     if (gifOpen && !text) {
       gifOpen = false;
     }
-    dispatch.chats.updatedInputText({
-      channel: this.props.channel,
-      input: text,
-    });
-    dispatch.chats.updatedGifOpened({
-      channel: this.props.channel,
-      isOpened: gifOpen,
-    });
+    // dispatch.chats.updatedInputText({
+    //   channel: this.props.channel,
+    //   input: text,
+    // });
+    this.setState({ userInput: text });
+    // dispatch.chats.updatedGifOpened({
+    //   channel: this.props.channel,
+    //   isOpened: gifOpen,
+    // });
     this.isUserEditing = text !== '';
   };
 
@@ -372,19 +314,25 @@ class Chat extends React.Component {
   render() {
     return (
       <View style={[styles.container]}>
-        {this.renderBackground()}
+        {false && this.renderBackground()}
         <GiftedChat
           ref={(c) => {
             this._GiftedMessenger = c;
           }}
           messages={this.props.messages}
           onSend={this.onSendMessage}
-          loadEarlier={this.props.channelHasMore}
-          onLoadEarlier={this.onLoadEarlier}
-          renderMessageText={this.renderText}
-          renderTime={this.renderTime}
-          isLoadingEarlier={this.props.isLoadingEarlier}
+
           keyboardShouldPersistTaps="handled"
+          onPressAvatar={this.onPressAvatar}
+          renderAccessory={this.renderAccessory}
+          renderChatFooter={this.renderChatFooter}
+          parseText
+          isAnimated
+          onInputTextChanged={this.onInputTextChanged}
+          renderFooter={this.renderFooter}
+          renderTime={props => <Time {...props} />}
+          renderMessageText={props => <MessageText {...props} />}
+          renderBubble={this.renderBubble}
           listViewProps={{
             style: { flex: 1, backgroundColor: 'transparent' },
             contentContainerStyle: {
@@ -395,23 +343,24 @@ class Chat extends React.Component {
             keyboardShouldPersistTaps: 'handled',
           }}
           user={this.user}
-          onPressAvatar={this.onPressAvatar}
-          renderAccessory={this.renderAccessory}
-          renderChatFooter={this.renderChatFooter}
-          renderLoading={Loading}
-          parseText
-          isAnimated
-          onLongPress={this.onLongPress}
-          renderAvatarOnTop={false}
-          renderBubble={this.renderBubble}
-          renderFooter={this.renderFooter}
-          onInputTextChanged={this.onInputTextChanged}
-          renderCustomView={this.renderCustomView}
+
         />
       </View>
     );
   }
 }
+
+// onLongPress={this.onLongPress}
+// renderAvatarOnTop={false}
+// renderCustomView={this.renderCustomView}
+// loadEarlier={this.props.channelHasMore}
+// onLoadEarlier={this.onLoadEarlier}
+// isLoadingEarlier={this.props.isLoadingEarlier}
+//
+
+// renderLoading={Loading}
+//
+
 
 const wrapperStyle = {
   right: {
@@ -426,12 +375,13 @@ const wrapperStyle = {
 
 const mergeProps = (state, dispatchProps, ownProps) => {
   const { params = {} } = ownProps.navigation.state;
-  const { groupId } = params;
+  const { uid } = params;
 
+  const groupId = Fire.shared.getGroupId(uid);
   const {
     chats,
     users,
-    firstMessages,
+    // firstMessages,
     channelHasMore,
     isLoadingEarlier,
     isTyping,
@@ -440,24 +390,24 @@ const mergeProps = (state, dispatchProps, ownProps) => {
 
   let chatProps = {};
   if (groupId) {
-    const otherUsers = Fire.shared.getOtherUsersFromChatGroup(groupId);
-    const otherUserUid = otherUsers[0];
+    // const otherUsers = Fire.shared.getOtherUsersFromChatGroup(groupId);
+    const otherUserUid = uid; // otherUsers[0];
     const otherUser = users[otherUserUid];
     const messages = chats[groupId] || {};
-    // console.log({ messages });
+    console.log({ messages });
 
     const _channelHasMore = channelHasMore[groupId];
-    const firstMessage = firstMessages[groupId];
+    // const firstMessage = firstMessages[groupId];
     const _isTyping = isTyping[groupId];
     const _isLoadingEarlier = isLoadingEarlier[groupId];
 
     chatProps = {
       groupId,
-      otherUsers,
+      // otherUsers,
       otherUserUid,
       otherUser,
 
-      firstMessage,
+      // firstMessage,
       channelHasMore: _channelHasMore,
       isTyping: _isTyping,
       isLoadingEarlier: _isLoadingEarlier,
@@ -477,14 +427,14 @@ export default connect(
   ({
     isTyping,
     isLoadingEarlier,
-    firstMessages,
+    // firstMessages,
     channelHasMore,
     chats,
     users,
   }) => ({
     isTyping,
     isLoadingEarlier,
-    firstMessages,
+    // firstMessages,
     channelHasMore,
     chats,
     users,

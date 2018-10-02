@@ -13,8 +13,8 @@ import TagCollection from '../components/TagCollection';
 import UserInfo from '../components/UserInfo';
 import Meta from '../constants/Meta';
 import Fire from '../Fire';
-import * as ProfileProvider from '../provider/ProfileProvider';
-import RelationshipProvider, { Relationship } from '../provider/RelationshipProvider';
+import Relationship from '../models/Relationship';
+
 
 const { width } = Dimensions.get('window');
 

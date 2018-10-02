@@ -9,6 +9,7 @@ import PantryStorage from '../universal/PantryStorage';
 import getDeviceInfo from '../utils/getUserInfo';
 
 import NavigationService from '../navigation/NavigationService';
+import Relationship from '../models/Relationship';
 
 // import GameStates from '../Game/GameStates';
 
@@ -27,6 +28,38 @@ import NavigationService from '../navigation/NavigationService';
 //   }
 //   return name;
 // }
+
+
+
+export const location = {
+  state: {},
+  reducers: {
+    update: (state, props) => ({ ...state, ...props }),
+    set: (state, props) => props,
+    clear: () => {},
+  },
+  effects: {
+    getAsync: () => {
+
+      const hasit = await getPermission(Permissions.LOCATION);
+      if (!hasit) {
+        return null;
+      }
+      if (Settings.simulator && Settings.debuggingLocation) {
+        return await syncCoords(
+          preventServerUpdate,
+          { latitude: 30.14728379721442, longitude: -97.77971597219003 },
+          new Date().getTime(),
+        );
+      }
+    
+      const { coords, timestamp } = await Location.getCurrentPositionAsync({});
+
+      const { latitude, longitude } = coords;
+// Add to user profile
+    },
+  },
+};
 
 function reduceFirebaseUser(user) {
   const nextUser = user;
@@ -240,16 +273,155 @@ export const relationships = {
     set: (state, props) => props,
   },
   effects: {
-    updateAsync: async ({ uid, type }) => {
-      console.log({ uid, type });
+    whenWasUserRated:() => {},
+    updateAsync: async ({ uid: otherId, type }) => {
+      const isPerformingInvalidAction = type === Relationship.blocked || type === Relationship.matched;
+
+      if (isPerformingInvalidAction) {
+        throw new Error(`Cannot set relationship to ${type} in the client`);
+      }
+
+      console.log('relationships.updateAsync', { otherId, type });
+      const userId = Fire.shared.uid;
+      const groupId = Fire.shared.getGroupId(userId, otherId);
+
+      // const props = {
+      //   members: [userId, otherId],
+      //   status: {
+      //     [userId]: type,
+      //   },
+      //   timestamp: {
+      //     [userId]: Date.now(),
+      //   },
+      // };
+
+      const doc = await firebase.firestore().collection(Settings.refs.relationships).doc(groupId);
+
+      function createGroupAsync(...ids) {
+        const members = ids.sort((a, b) => +(a.attr > b.attr) || -(a.attr < b.attr));
+        return doc.set({ members });
+      }
+      async function checkGroupExistenceAsync() {
+        const _doc = await doc.get();
+        return _doc.exists;
+      }
+
+      async function ensureGroupExistenceAsync() {
+        const exists = checkGroupExistenceAsync();
+        if (!exists) {
+          await createGroupAsync(userId, otherId);
+        }
+      }
+
+
+      function getNewStatusGivenCurrentStatus({ currentUserStatus, otherUserStatus, inputStatus }) {
+        const isNoChange = currentUserStatus === inputStatus;
+        const isUserBlockedByOther = currentUserStatus === Relationship.blocked;
+        const isUserBlockingOther = currentUserStatus === Relationship.blocking;
+        const isUserMatchedToOther = currentUserStatus === Relationship.matched && otherUserStatus === Relationship.match;
+        const otherUserLikesYou = otherUserStatus === Relationship.like || otherUserStatus === Relationship.match;
+
+        if (!isNoChange && !isUserBlockedByOther) {
+          // Something is gonna happen...
+          let nextTypeForOtherUser = otherUserStatus;
+          let nextTypeForUser = inputStatus;
+
+          // We've already prevented default. This means any action must be unblocking.
+          if (isUserBlockingOther) {
+            nextTypeForOtherUser = Relationship.none;
+          } else {
+            switch (inputStatus) {
+              case Relationship.like:
+                if (!isUserMatchedToOther && otherUserLikesYou) {
+                  nextTypeForOtherUser = Relationship.match;
+                  nextTypeForUser = Relationship.match;
+                }
+                break;
+              case Relationship.none:
+              case Relationship.dislike:
+                if (isUserMatchedToOther) {
+                  nextTypeForOtherUser = Relationship.like;
+                }
+                break;
+              case Relationship.blocking:
+                nextTypeForOtherUser = Relationship.blocked;
+                break;
+              default:
+                break;
+            }
+          }
+
+          return {
+            [otherId]: nextTypeForOtherUser,
+            [userId]: nextTypeForUser,
+          };
+        }
+        return null;
+      }
+
+
+      async function relationshipTransaction(transaction, inputDoc) {
+        if (!inputDoc.exists) {
+          throw new Error('Document does not exist!');
+        }
+
+        const data = inputDoc.data();
+        const currentTimestamps = data.timestamps || {};
+        const currentStatus = data.status || {};
+        const otherUserStatus = currentStatus[otherId] || Relationship.none;
+        const currentUserStatus = currentStatus[userId] || Relationship.none;
+
+        const nextStatus = getNewStatusGivenCurrentStatus({ currentUserStatus, otherUserStatus, inputStatus: type });
+
+        if (nextStatus) {
+          const timestamp = Date.now();
+          const timestamps = {
+            [otherId]: currentTimestamps[otherId] || timestamp,
+            [userId]: timestamp,
+          };
+
+          const updates = { status: nextStatus, timestamps };
+          transaction.update(doc, updates);
+          return updates;
+        }
+        return Promise.reject(new Error('Sorry! Population is too big.'));
+      }
+
+
+      ensureGroupExistenceAsync();
+
+      const db = firebase.firestore();
+      const _status = await db.runTransaction(transaction => transaction.get(doc).then(sfDoc => relationshipTransaction(transaction, sfDoc)));
+
+      console.log(_status);
     },
-    getAsync: async ({ uid }) => {
-      console.log({ uid });
+    getAsync: async ({ uid: otherId }) => {
+      // console.log({ uid });
+      const userId = Fire.shared.uid;
+      const groupId = Fire.shared.getGroupId(userId, otherId);
+
+      const doc = await firebase.firestore().collection(Settings.refs.relationships).doc(groupId);
+
+      const snapshot = await doc.get();
+      if (snapshot.exists) {
+        const data = snapshot.data();
+        if (data) {
+          const { status = {} } = data;
+          const { [userId]: relationship } = status;
+          console.log('do something', { relationship });
+        }
+      }
     },
     getAllOfTypeAsync: async ({ type }) => {
       console.log({ type });
+      const userId = Fire.shared.uid;
+
+      // const doc = await firebase.firestore().collection(Settings.refs.relationships).where('members', 'array-contains', userId).where(`status.${userId}`, '==', type);
+
+      // doc.get();
     },
     isMatched: ({ uid, shouldUpdate = false, callback }) => {
+      // const isMatched = getAsync() === Relationship.match;
       callback(false);
     },
   },
@@ -445,11 +617,17 @@ export const users = {
     clear: () => ({}),
   },
   effects: {
+    getPaged: async ({ size, start }) => {
+      const { data } = await Fire.shared.getUsersPaged({ size, start });
+      for (const user of data) {
+        dispatch.users.update({ uid: user.key, user: { name: user.displayName, image: user.photoURL, ...user } });
+      }
+      console.log('FOUNDUSERS', data);
+    },
     changeRating: () => {},
     update: ({ uid, user }, { users }) => {
       if (!uid || !user) {
-        console.error('dispatch.users.update: You must pass in a valid uid and user');
-        return;
+        throw new Error(`dispatch.users.update: You must pass in a valid uid and user: ${uid} - ${JSON.stringify(user || {})}`);
       }
       const currentUser = users[uid] || {};
       dispatch.users.set({ uid, user: { ...currentUser, ...(user || {}) } });
@@ -458,9 +636,10 @@ export const users = {
     getProfileImage: ({ uid, forceUpdate }) => {
       dispatch.users.getPropertyForUser({ uid, propName: 'photoURL', forceUpdate });
     },
-    getPropertyForUser: async ({ propName, uid, forceUpdate }, { users }) => {
+    getPropertyForUser: async ({ propName, uid, forceUpdate, callback }, { users }) => {
       if (!isValidKey(uid)) {
         console.warn('getPropertyForUser: Invalid Key', { uid });
+        callback();
         return null;
       }
 
@@ -480,10 +659,15 @@ export const users = {
               uid,
               user: { [propName]: userData[propName] },
             });
+
+            callback(userData);
+            return;
           }
+
         } catch ({ message }) {
           throw new Error(`getPropForUser ${message}`);
         }
+        callback(null;)
       }
     },
   },
@@ -585,6 +769,7 @@ export const chats = {
         [groupId]: nextMessages,
       };
     },
+    clear: (state, { uid }) => ({ ...state, [uid]: undefined }),
   },
   effects: {
     subscribeToChannel: () => { console.warn('TODO: subscribeToChannel'); },
@@ -592,6 +777,8 @@ export const chats = {
     loadEarlier: () => { console.warn('TODO: loadEarlier'); },
 
     updatedInputText: () => { console.warn('TODO: updatedInputText'); },
+    getLastMessage: () => { console.warn('TODO: getLastMessage'); },
+    deleteChannel: () => { console.warn('TODO: deleteChannel'); },
 
     updatedGifOpened: () => { console.warn('TODO: updatedGifOpened'); },
     didRecieveMessageKey: () => {

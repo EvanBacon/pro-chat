@@ -1,13 +1,13 @@
+import { dispatch } from '@rematch/core';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import TouchableBounce from 'react-native/Libraries/Components/Touchable/TouchableBounce';
 import { connect } from 'react-redux';
 
-// import { getProfileImage, getPropertyForUser } from '../redux/profiles';
 import LoadingImage from './LoadingImage';
 import Meta from './Meta';
-import { dispatch } from '@rematch/core';
 
+// import { getProfileImage, getPropertyForUser } from '../redux/profiles';
 class SliderCell extends React.PureComponent {
   componentWillMount() {
     this.load(this.props.uid);
@@ -21,18 +21,7 @@ class SliderCell extends React.PureComponent {
 
   load = async (uid) => {
     if (typeof uid === 'string') {
-      if (!this.props.image) {
-        dispatch.users.getProfileImage({ uid });
-      }
-      if (!this.props.firstName) {
-        dispatch.users.getPropertyForUser({ uid, property: 'firstName' });
-      }
-      if (!this.props.about) {
-        dispatch.users.getPropertyForUser({ uid, property: 'about' });
-      }
-      if (!this.props.rating) {
-        dispatch.users.getPropertyForUser({ uid, property: 'rating' });
-      }
+      dispatch.users.getAsync({ uid });
     }
   };
 
@@ -40,20 +29,33 @@ class SliderCell extends React.PureComponent {
     const {
       itemWidth,
       onPressItem,
-      // index,
       uid,
+
       about,
       rating,
+      firstName,
       image,
     } = this.props;
-
-    // const center = index * itemWidth;
 
     const style = {
       width: itemWidth,
       marginTop: 36,
     };
 
+    const styles = {
+      image: {
+        backgroundColor: 'white',
+        width: itemWidth,
+        height: itemWidth,
+        borderRadius: itemWidth / 2,
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: '#F9F9F9',
+        shadowColor: 'rgba(114,45,250, 0.2)',
+        shadowRadius: 10,
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 1,
+      },
+    };
     return (
       <View style={style}>
         <View
@@ -69,26 +71,13 @@ class SliderCell extends React.PureComponent {
           >
             <LoadingImage
               source={image}
-              style={[
-                {
-                  backgroundColor: 'white',
-                  width: itemWidth,
-                  height: itemWidth,
-                  borderRadius: itemWidth / 2,
-                  borderWidth: StyleSheet.hairlineWidth,
-                  borderColor: '#F9F9F9',
-                  shadowColor: 'rgba(114,45,250, 0.2)',
-                  shadowRadius: 10,
-                  shadowOffset: { width: 0, height: 10 },
-                  shadowOpacity: 1,
-                },
-              ]}
+              style={styles.image}
             />
           </TouchableBounce>
         </View>
         <Meta
           color="white"
-          title={this.props.firstName}
+          title={firstName}
           subtitle={about}
           rating={rating}
         />
@@ -97,30 +86,30 @@ class SliderCell extends React.PureComponent {
   }
 }
 
-const mergeProps = (state, actions, { uid, ...localProps }) => {
-  const { users, ...props } = state;
-
+const mergeProps = ({ users, ...state }, actions, { uid, ...localProps }) => {
   const user = users[uid] || {};
-  // const image = images[uid];
 
-  return {
-    ...localProps,
-    ...props,
+  const {
+    about,
+    rating,
+  } = user;
+  const userProps = {
+    about,
+    rating,
     image: user.photoURL,
-    uid,
-    firstName: user.firstName,
-    about: user.about,
-    rating: user.rating,
-
+    firstName: user.first_name,
+  };
+  return {
+    ...state,
+    ...localProps,
     ...actions,
+    ...userProps,
+    uid,
   };
 };
 
 export default connect(
   ({ users }) => ({ users }),
-  {
-    // getPropertyForUser,
-    // getProfileImage
-  },
+  {},
   mergeProps,
 )(SliderCell);

@@ -22,13 +22,13 @@ class MessagesScreen extends React.Component {
   };
 
   render() {
-    const { messages } = this.props;
+    const { chats } = this.props;
     return (
-      <MessagesList data={Object.values(messages)} onPress={this.onPress} />
+      <MessagesList data={Object.values(chats)} onPress={this.onPress} />
     );
   }
 }
 
-export default connect(({ messages }) => ({
-  messages,
+export default connect(({ chats }) => ({
+  chats,
 }))(MessagesScreen);

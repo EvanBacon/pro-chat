@@ -3,6 +3,9 @@ import { ImagePicker } from 'expo';
 import { NavigationActions } from 'react-navigation';
 import { store } from '../App';
 import Meta from '../constants/Meta';
+import getPermission from './getPermission';
+import { Permissions } from 'expo';
+import reduceImageAsync from './shrinkImageAsync';
 
 // More info on all the options is below in the README...just some common use cases shown here
 const _options = {
@@ -87,37 +90,56 @@ const complete = (response, callback) => {
   }
 };
 
-export const fromLibrary = async () =>
-  // const { cancelled, ...image } = await ImagePicker.launchImageLibraryAsync({
-  //     allowsEditing: false,
-  //     aspect: [1, 1],
-  //     quality: 0.85,
-  //     base64: false,
-  //     exif: true,
-  // });
+export const fromLibrary = async () => {
+  const hasit = await getPermission(Permissions.CAMERA_ROLL);
+  if (!hasit) return;
 
-  // if (cancelled) {
-  //     return;
-  // }
-
-  // return image;
-
-  new Promise((res) => {
-    ImagePicker.launchImageLibrary(_options, (response) => {
-      // Same code as in above section!
-      complete(response, res);
-    });
+  const { cancelled, uri } = await ImagePicker.launchImageLibraryAsync({
+    allowsEditing: false,
+    aspect: [1, 1],
+    quality: 0.85,
+    base64: false,
+    exif: true,
   });
-export const fromCamera = async () =>
-  // Launch Camera:
-  new Promise((res) => {
-    store.dispatch(NavigationActions.navigate({
-      routeName: 'Camera',
-      params: { complete: res },
-    }));
 
-    // ImagePicker.launchCamera(options, (response) => {
-    //     // Same code as in above section!
-    //     complete(response, res);
-    // });
+  if (cancelled) {
+    return;
+  }
+
+  const { uri: reducedUri } = await reduceImageAsync(uri);
+
+  return reducedUri;
+};
+export const fromCamera = async () => {
+  const hasit = await getPermission(Permissions.CAMERA);
+  if (!hasit) return;
+
+  const { cancelled, uri } = await ImagePicker.launchCameraAsync({
+    allowsEditing: false,
+    aspect: [1, 1],
+    quality: 0.85,
+    base64: false,
+    exif: true,
   });
+
+
+  if (cancelled) {
+    return;
+  }
+
+  const { uri: reducedUri } = await reduceImageAsync(uri);
+
+  return reducedUri;
+
+  // // Launch Camera:
+  // new Promise((res) => {
+  //   store.dispatch(NavigationActions.navigate({
+  //     routeName: 'Camera',
+  //     params: { complete: res },
+  //   }));
+
+  //   ImagePicker.launchCamera(options, (response) => {
+  //       // Same code as in above section!
+  //       complete(response, res);
+  //   });
+};

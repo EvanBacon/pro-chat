@@ -1,8 +1,8 @@
+import { dispatch } from '@rematch/core';
 import React, { Component } from 'react';
 import { LayoutAnimation, View } from 'react-native';
 
 import Assets from '../Assets';
-import * as GeoFireProvider from '../provider/GeoFireProvider';
 import Meta from '../constants/Meta';
 import EmptyListMessage from './EmptyListMessage';
 import Footer from './Footer';
@@ -11,7 +11,6 @@ import Section from './Section';
 import Slider from './Slider';
 
 const Images = Assets.images;
-
 // const debug = false;
 // import Assets from '../'
 
@@ -106,9 +105,9 @@ export default class BrowseUsers extends Component {
         >
           <EmptyListMessage
             inverted
-            onPress={(_) => {
-              GeoFireProvider.getLocation();
-              // RecommendedProvider.start();
+            onPress={() => {
+              dispatch.location.getAsync();
+
               // {/* this.setState({ swipedAllCards: false });
               // this.updatedIndex(0); */}
             }}
