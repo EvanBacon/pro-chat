@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "bute",
-    "description": "This project is really great.",
+    "description": "A neat messaging app.",
     "slug": "bute",
     "privacy": "public",
     "sdkVersion": "30.0.0",
@@ -13,7 +13,7 @@
     "icon": "./src/assets/icons/expo.png",
     "facebookScheme": "fb214548308980520",
     "facebookAppId": "214548308980520",
-    "facebookDisplayName": "Art Alert",
+    "facebookDisplayName": "Bute",
     "githubUrl": "https://github.com/evanbacon/bute",
     "splash": {
       "image": "./src/assets/icons/splash.png",
@@ -29,11 +29,10 @@
       "color": "#52416A"
     },
     "ios": {
-      "supportsTablet": true,
       "icon": "./src/assets/icons/ios.png",
       "supportsTablet": true,
       "buildNumber": "0",
-      "bundleIdentifier": "com.evanbacon.expo.bute",
+      "bundleIdentifier": "com.bacon.bute",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription":  "Send your location to your friends",
         "NSCameraUsageDescription": "Take pictures to send to your friends",
@@ -42,10 +41,10 @@
       }
     },
     "android": {
-      "playStoreUrl": "https://play.google.com/store/apps/details?id=com.evanbacon.expo.bute",
+      "playStoreUrl": "https://play.google.com/store/apps/details?id=com.bacon.bute",
       "icon": "./src/assets/icons/expo.png",
       "versionCode": 0,
-      "package": "com.evanbacon.expo.bute"
+      "package": "com.bacon.bute"
     },
     "scheme": "expf323ea36d115447fa3827c6dcb512227"
   }

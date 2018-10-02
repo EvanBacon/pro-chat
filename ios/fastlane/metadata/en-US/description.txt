@@ -1,7 +1,7 @@
-In this extremely unique adventure you play as a brave pair of circles who venture endlessly to find their true meaning. 
+Bute is a mobile application which provides the capability to match with those of the same gender or opposing gender if you both share mutual interest in eachother.
 
-Keep your rhythm flowing with a profound soundtrack  that will sooth your ears into submission.
+Butē displays you with people within your area, which can be set automatically. The user is presented those in their area, and will connect and have the ability to message once both have selected each other as users they like.
 
-Intuitive one handed design allows you to do all of your favorite one handed activities while you continue the fun!
+Messaging is a key feature, which offers the functionality to chat, send location, and send photos & videos. Messaging with a user is unlocked once two people are matched.
 
-Made with bunches of love in Expo!
+As a user, you are allowed to place a photo of yourself, description, and placement of liked tags you have via Facebook. This allows others to see your interests.
