@@ -23,7 +23,6 @@ const userData = {
     deviceName: 'Expo iPhone X',
     deviceYearClass: 2017,
     displayName: 'Evan Bacon',
-    email: 'evanbacon@austin.rr.com',
     emailVerified: false,
     expoVersion: '2.5.9.1014765',
     isAnonymous: false,
@@ -44,7 +43,6 @@ const userData = {
     providerData: [
       {
         displayName: 'Evan Bacon',
-        email: 'evanbacon@austin.rr.com',
         phoneNumber: null,
         photoURL: 'https://graph.facebook.com/10209358712923544/picture',
         providerId: 'facebook.com',

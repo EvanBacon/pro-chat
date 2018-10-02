@@ -6,5 +6,5 @@
 ###################### Automatically generated ######################
 # Feel free to remove the following line if you use fastlane (which you should)
 
-app_identifier "com.evanbacon.expo.bute" # The bundle identifier of your app
+app_identifier "com.bacon.bute" # The bundle identifier of your app
 username "evanjbacon@gmail.com" # your Apple ID user
