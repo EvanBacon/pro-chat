@@ -1,41 +1,50 @@
-import firebase from 'firebase';
+import { dispatch } from '@rematch/core';
 import React, { Component } from 'react';
-import { Animated, LayoutAnimation, View } from 'react-native';
+import { Animated, Dimensions, LayoutAnimation, View } from 'react-native';
 import { connect } from 'react-redux';
-import Blocked from '../components/Blocked'
-import Carousel from '../components/Carousel'
-import Gradient from '../components/Gradient'
-import RateSection from '../components/RateSection'
-import RefreshControl from '../components/RefreshControl'
-import TagCollection from '../components/TagCollection'
-import UserInfo from '../components/UserInfo'
-import styles, { BAR_HEIGHT } from '../components/styles';
+
+import Blocked from '../components/Blocked';
+import Carousel from '../components/Carousel';
+import Gradient from '../components/Gradient';
+import RateSection from '../components/RateSection';
+import RefreshControl from '../components/RefreshControl';
+import { BAR_HEIGHT } from '../components/styles';
+import TagCollection from '../components/TagCollection';
+import UserInfo from '../components/UserInfo';
 import Meta from '../constants/Meta';
+import Fire from '../Fire';
 import * as ProfileProvider from '../provider/ProfileProvider';
-import * as RelationshipProvider from '../provider/RelationshipProvider';
-import { getPopularUsers } from '../redux/popular';
-import { changeRating, getProfileImage, getPropertyForUser } from '../redux/profiles';
-import { getRelationshipWithUser, updateRelationshipWithUser } from '../redux/relationship';
-import { Relationship } from '../provider/RelationshipProvider';
+import RelationshipProvider, { Relationship } from '../provider/RelationshipProvider';
+
+const { width } = Dimensions.get('window');
 
 class Profile extends Component {
   state = {
     refreshing: false,
+    rating: null,
   };
   componentWillMount() {
-    this.props.getPopularUsers();
+    dispatch.popular.getAsync();
   }
   componentDidMount() {
     const { uid } = this.props;
     this.updateWithUID(uid);
-    ProfileProvider.observePropertyForUser({ uid, property: 'rating', callback: this.updateRating });
+    // ProfileProvider.observePropertyForUser({
+    //   uid,
+    //   property: 'rating',
+    //   callback: this.updateRating,
+    // });
   }
   componentWillUnmount() {
-    ProfileProvider.unobservePropertyForUser({ uid: this.props.uid, property: 'rating', callback: this.updateRating });
+    // ProfileProvider.unobservePropertyForUser({
+    //   uid: this.props.uid,
+    //   property: 'rating',
+    //   callback: this.updateRating,
+    // });
   }
   updateRating = ({ val }) => this.setState({ rating: val() });
   componentWillReceiveProps(nextProps) {
-    if (nextProps.uid != this.props.uid) {
+    if (nextProps.uid !== this.props.uid) {
       this.updateWithUID(nextProps.uid);
     }
   }
@@ -43,28 +52,28 @@ class Profile extends Component {
   updateWithUID = async (uid, update) => {
     if (!uid) return;
     const {
-      image, first_name, about, likes, rating, relationship,
+      image, firstName, about, likes, rating, relationship,
     } = this.props;
     if (!image || update) {
-      this.props.getProfileImage({ uid });
+      dispatch.users.getProfileImage({ uid });
     }
-    if (!first_name || update) {
-      this.props.getPropertyForUser({ uid, property: 'first_name' });
+    if (!firstName || update) {
+      dispatch.users.getPropertyForUser({ uid, property: 'first_name' });
     }
     if (!about || update) {
-      this.props.getPropertyForUser({ uid, property: 'about' });
+      dispatch.users.getPropertyForUser({ uid, property: 'about' });
     }
     if (!likes || update) {
-      this.props.getPropertyForUser({ uid, property: 'likes' });
+      dispatch.users.getPropertyForUser({ uid, property: 'likes' });
     }
     if (!rating || update) {
-      this.props.getPropertyForUser({ uid, property: 'rating' });
+      dispatch.users.getPropertyForUser({ uid, property: 'rating' });
     }
     if (!relationship || update) {
-      this.props.getRelationshipWithUser(uid);
+      dispatch.relationships.getAsync({ uid });
     }
 
-    const isMatched = await RelationshipProvider.isMatched(uid);
+    const isMatched = await (new Promise(res => dispatch.relationships.isMatched({ uid, callback: res })));
 
     // this.props.navigation.setParams({ isMatched, name, uid });
     LayoutAnimation.easeInEaseOut();
@@ -80,7 +89,15 @@ class Profile extends Component {
 
   renderPopular = () => {
     // const users = Object.keys(this.props.popular);
-    const users = ['fake-a', 'fake-b', 'fake-c', 'fake-d', 'fake-e', 'fake-01', 'fake-02'];
+    const users = [
+      'fake-a',
+      'fake-b',
+      'fake-c',
+      'fake-d',
+      'fake-e',
+      'fake-01',
+      'fake-02',
+    ];
     return (
       <Carousel
         title={Meta.popular_title}
@@ -95,42 +112,56 @@ class Profile extends Component {
     );
   };
 
-  renderTags = (tags, isUser, first_name) => (
-    <TagCollection style={{}} title={Meta.user_interests_title} tags={tags} isUser={isUser} name={first_name} />
+  renderTags = (tags, isUser, firstName) => (
+    <TagCollection
+      style={{}}
+      title={Meta.user_interests_title}
+      tags={tags}
+      isUser={isUser}
+      name={firstName}
+    />
   );
 
   get isBlocked() {
     const { relationship } = this.props;
-    return relationship === Relationship.blocked || relationship === Relationship.blocking;
+    return (
+      relationship === Relationship.blocked ||
+      relationship === Relationship.blocking
+    );
   }
   renderProfileContents = () => {
     const {
       isUser,
       uid,
-      first_name,
+      firstName,
       likes,
       about,
       relationship,
       rating,
       isMatched,
-      changeRating,
       image,
-      updateRelationshipWithUser,
-      getProfileImage,
+      // updateRelationshipWithUser,
+      // getProfileImage,
       navigation,
     } = this.props;
     if (this.isBlocked) {
-      <Blocked uid={uid} relationship={relationship} updateRelationshipWithUser={updateRelationshipWithUser} />;
+      return (
+        <Blocked
+          uid={uid}
+          relationship={relationship}
+          updateRelationshipWithUser={dispatch.users.updateRelationshipWithUser}
+        />
+      );
     }
 
     return (
       <View>
         <UserInfo
           navigation={navigation}
-          onImageUpdated={async _ => getProfileImage({ uid })}
-          onRatingPressed={changeRating}
+          onImageUpdated={async () => dispatch.users.getProfileImage({ uid })}
+          onRatingPressed={dispatch.user.changeRating}
           image={{ uri: image }}
-          title={first_name}
+          title={firstName}
           subtitle={about}
           rating={rating}
           uid={uid}
@@ -139,8 +170,15 @@ class Profile extends Component {
           hasLightbox
         />
 
-        {!isUser && <RateSection uid={uid} updateRelationshipWithUser={updateRelationshipWithUser} />}
-        {this.renderTags(likes, isUser, first_name)}
+        {!isUser && (
+          <RateSection
+            uid={uid}
+            updateRelationshipWithUser={
+              dispatch.users.updateRelationshipWithUser
+            }
+          />
+        )}
+        {this.renderTags(likes, isUser, firstName)}
         {this.renderPopular()}
       </View>
     );
@@ -154,7 +192,12 @@ class Profile extends Component {
           style={{ flex: 1, margin: 0, padding: 0 }}
           contentInset={{ top: BAR_HEIGHT / 2 }}
           contentOffset={{ y: -(BAR_HEIGHT / 2) }}
-          refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this._onRefresh} />}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh}
+            />
+          }
           contentContainerStyle={{
             alignItems: 'center',
             justifyContent: 'center',
@@ -168,24 +211,23 @@ class Profile extends Component {
 }
 
 const mergeProps = (state, actions, localProps) => {
-  const currentUID = ((localProps.navigation.state || {}).params || {}).uid;
-  const userUID = firebase.uid();
+  const { params = {} } = localProps.navigation.state;
+  const currentUID = params.uid;
+
+  const userUID = Fire.shared.uid;
   const uid = currentUID || userUID;
   const isUser = userUID === uid && currentUID == null;
 
-  console.warn(currentUID, userUID, uid, isUser);
+  // console.warn(currentUID, userUID, uid, isUser);
 
-  const {
-    users, images, relationships, ...props
-  } = state;
+  const { users, relationships, ...props } = state;
   const relationship = relationships[uid];
   const user = users[uid] || {};
-  const image = images[uid];
 
   return {
     ...localProps,
     ...props,
-    image,
+    image: user.photoURL,
     uid,
     isUser,
     relationship,
@@ -198,19 +240,12 @@ const mergeProps = (state, actions, localProps) => {
 };
 
 export default connect(
-  ({ profiles: { users, images }, relationship: { uid }, popular: { users: popular } }) => ({
+  ({ users = {}, relationships = {}, popular = {} }) => ({
     users,
     popular,
-    images,
-    relationships: uid,
+    // images,
+    relationships,
   }),
-  {
-    getPopularUsers,
-    getPropertyForUser,
-    getProfileImage,
-    changeRating,
-    getRelationshipWithUser,
-    updateRelationshipWithUser,
-  },
+  {},
   mergeProps,
 )(Profile);

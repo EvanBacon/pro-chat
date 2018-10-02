@@ -10,7 +10,7 @@ import Circle from '../components/Circle';
 import Button from '../components/Button';
 import SnapText from '../components/ImageEditor/Label';
 import Stickers from '../components/ImageEditor/Stickers';
-import { changeCameraProperty } from '../redux/camera';
+// import { changeCameraProperty } from '../redux/camera';
 
 const Images = Assets.images;
 

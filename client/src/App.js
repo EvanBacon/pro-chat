@@ -10,6 +10,7 @@ import Navigation from './navigation';
 import Gate from './rematch/Gate';
 import AssetUtils from './universal/AssetUtils';
 import { AppLoading } from './universal/Expo';
+import { ActionSheetProvider } from './universal/ActionSheet';
 
 console.ignoredYellowBox = Settings.ignoredYellowBox;
 
@@ -26,7 +27,9 @@ export default class App extends React.Component {
   get screen() {
     return (
       <Gate>
-        <Navigation />
+        <ActionSheetProvider>
+          <Navigation />
+        </ActionSheetProvider>
       </Gate>
     );
   }
@@ -47,7 +50,7 @@ export default class App extends React.Component {
   }
 
   componentWillMount() {
-    console.time('Startup');
+    // console.time('Startup');
     this._setupExperienceAsync();
   }
 
@@ -59,7 +62,7 @@ export default class App extends React.Component {
 
   _setupExperienceAsync = async () => {
     await Promise.all([this._preloadAsync()]);
-    console.timeEnd('Startup');
+    // console.timeEnd('Startup');
     this.setState({ loading: false });
   };
 

@@ -1,11 +1,11 @@
 import { connectActionSheet } from '@expo/react-native-action-sheet';
+import { dispatch } from '@rematch/core';
 import React, { Component } from 'react';
 import { Dimensions, View } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 
 import { Relationship } from '../provider/RelationshipProvider';
-// import { getRelationshipWithUser } from '../redux/relationship';
 import reportUser from '../utils/reportUser';
 import shareUser from '../utils/shareUser';
 import AButton from './AButton';
@@ -27,7 +27,7 @@ class Footer extends Component {
 
   updateRelationship = async (uid) => {
     if (uid && typeof uid === 'string') {
-      this.props.getRelationshipWithUser(uid);
+      dispatch.relationships.getAsync({ uid });
     }
   };
 
@@ -64,7 +64,8 @@ class Footer extends Component {
               onPress={() =>
                 reportUser({
                   uid: this.props.uid,
-                  showActionSheetWithOptions: this.props.showActionSheetWithOptions,
+                  showActionSheetWithOptions: this.props
+                    .showActionSheetWithOptions,
                   reportUser: () => {
                     console.warn('rpu', this.props.uid);
                     this.props.navigate('ReportUser', { uid: this.props.uid });
@@ -122,12 +123,13 @@ const mergeProps = (state, actions, localProps) => {
 };
 
 export default connect(
-  state => ({
-    relationships: state.relationship.uid,
+  ({ relationship = {} }) => ({
+    relationships: relationship.uid,
   }),
   {
     // getRelationshipWithUser,
-    navigate: (routeName, params) => dispatch => dispatch(NavigationActions.navigate({ routeName, params })),
+    navigate: (routeName, params) => dispatch =>
+      dispatch(NavigationActions.navigate({ routeName, params })),
   },
   mergeProps,
 )(Footer);

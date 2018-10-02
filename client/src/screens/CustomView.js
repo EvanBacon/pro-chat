@@ -1,9 +1,17 @@
 import { MapView } from 'expo';
 import firebase from 'firebase';
 import React from 'react';
-import { Linking, Platform, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Linking,
+  StyleSheet,
+  Platform,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 import LoadingImage from '../components/LoadingImage';
+import Fire from '../Fire';
 
 export default class CustomView extends React.Component {
   static defaultProps = {
@@ -21,8 +29,8 @@ export default class CustomView extends React.Component {
   }
   async componentWillMount() {
     if (this.props.currentMessage.imageUrl) {
-      const image = await ImageProvider.getDownloadURLforAsset(this.props.currentMessage.imageUrl);
-      this.setState({ image });
+      // const image = await ImageProvider.getDownloadURLforAsset(this.props.currentMessage.imageUrl);
+      // this.setState({ image });
     }
     // LinkPreview.getPreview(this.props.currentMessage.text).then(data => this.setState({ linkData: data })).catch(error => console.warn(error));
   }
@@ -39,7 +47,11 @@ export default class CustomView extends React.Component {
         return (
           <LoadingImage
             source={{ uri: image }}
-            style={[styles.imageView, this.props.imageViewStyle, { borderRadius: this.state.lightboxOpened ? 0 : 13 }]}
+            style={[
+              styles.imageView,
+              this.props.imageViewStyle,
+              { borderRadius: this.state.lightboxOpened ? 0 : 13 },
+            ]}
           />
         );
       }
@@ -65,7 +77,7 @@ export default class CustomView extends React.Component {
     );
   };
   render() {
-    const isUser = this.props.currentMessage.from == firebase.uid();
+    const isUser = this.props.currentMessage.from == Fire.shared.uid;
     if (this.props.currentMessage.location) {
       const { latitude, longitude } = this.props.currentMessage.location;
       const delta = 0.05;
@@ -88,12 +100,12 @@ export default class CustomView extends React.Component {
           style={[this.props.containerStyle]}
           onPress={() => {
             const url = Platform.select({
-              ios: `http://maps.apple.com/?ll=${this.props.currentMessage.location.latitude},${
-                this.props.currentMessage.location.longitude
-              }`,
-              android: `http://maps.google.com/?q=${this.props.currentMessage.location.latitude},${
-                this.props.currentMessage.location.longitude
-              }`,
+              ios: `http://maps.apple.com/?ll=${
+                this.props.currentMessage.location.latitude
+              },${this.props.currentMessage.location.longitude}`,
+              android: `http://maps.google.com/?q=${
+                this.props.currentMessage.location.latitude
+              },${this.props.currentMessage.location.longitude}`,
             });
             Linking.canOpenURL(url)
               .then((supported) => {
@@ -118,7 +130,12 @@ export default class CustomView extends React.Component {
               longitudeDelta: 0.0421,
             }}
           >
-            <MapView.Marker pinColor="#fff" coordinate={this.props.currentMessage.location} title="" description="" />
+            <MapView.Marker
+              pinColor="#fff"
+              coordinate={this.props.currentMessage.location}
+              title=""
+              description=""
+            />
           </MapView>
         </TouchableOpacity>
       );
@@ -127,7 +144,11 @@ export default class CustomView extends React.Component {
     }
     if (this.props.currentMessage.link) {
       const {
-        images, url, description, mediaType, videos,
+        images,
+        url,
+        description,
+        mediaType,
+        videos,
       } = this.props.currentMessage.link;
       // console.warn(JSON.stringify(this.props.currentMessage.link), "");
       if (images.length > 0) {
@@ -158,7 +179,15 @@ export default class CustomView extends React.Component {
                 },
               ]}
             />
-            <Text style={{ color: isUser ? 'white' : 'black', fontSize: 12, padding: 8 }}>{description}</Text>
+            <Text
+              style={{
+                color: isUser ? 'white' : 'black',
+                fontSize: 12,
+                padding: 8,
+              }}
+            >
+              {description}
+            </Text>
           </TouchableOpacity>
         );
       }

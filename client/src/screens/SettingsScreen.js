@@ -498,7 +498,7 @@ const styles = StyleSheet.create({
 });
 
 const mergeProps = (state, actions, localProps) => {
-  const uid = firebase.uid();
+  const uid = Fire.shared.uid
 
   const { users, ...props } = state;
 

@@ -1,13 +1,14 @@
 import { Permissions } from 'expo';
-import geofire from 'geofire';
+// import geofire from 'geofire';
 import { Platform } from 'react-native';
 
 import firebase from 'firebase';
 import Settings from '../constants/Settings';
+import Fire from '../Fire';
 
 let geoFire;
 export const configure = (database) => {
-  geoFire = new geofire(database.ref('locations/'));
+  // geoFire = new geofire(database.ref('locations/'));
 };
 
 export const updateLocation = ({ latitude, longitude }) => {
@@ -17,7 +18,8 @@ export const updateLocation = ({ latitude, longitude }) => {
 export const deallocate = () => {};
 
 const getCurrentPositionAsync = async settings =>
-  new Promise((res, rej) => navigator.geolocation.getCurrentPosition(res, rej, settings));
+  new Promise((res, rej) =>
+    navigator.geolocation.getCurrentPosition(res, rej, settings));
 
 const syncCoords = async (preventServerUpdate = false, coords, timestamp) => {
   const { latitude, longitude } = coords;
@@ -25,13 +27,13 @@ const syncCoords = async (preventServerUpdate = false, coords, timestamp) => {
   const center = [latitude, longitude];
   console.warn('found location', center);
 
-  if (firebase.uid()) {
+  if (Fire.shared.uid) {
     // store.dispatch(updateUserData({ location: center }));
     if (!preventServerUpdate) {
       try {
         await new Promise((res, rej) =>
           geoFire
-            .set(firebase.uid(), center)
+            .set(Fire.shared.uid, center)
             .then(res)
             .catch(rej));
         console.warn('sent location to server');
@@ -52,7 +54,10 @@ export const getLocation = async (preventServerUpdate = false) => {
   const { status } = await Permissions.getAsync(Permissions.LOCATION);
   if (status !== 'granted') {
     // /TODO: Throw An Error
-    console.warn('Location Permissions not allowed, need to change this in settings', status);
+    console.warn(
+      'Location Permissions not allowed, need to change this in settings',
+      status,
+    );
     return null;
   }
 

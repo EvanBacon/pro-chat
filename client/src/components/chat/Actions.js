@@ -1,10 +1,9 @@
+import { ImagePicker, Location, Permissions } from 'expo';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Modal, StyleSheet, TouchableOpacity, View, Text } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { ImagePicker, Permissions, Location } from 'expo';
-import NavBar, { NavButton, NavButtonText, NavTitle } from 'react-native-nav';
-import Fire from '../../Firebase/Fire';
+import Fire from '../../Fire';
 
 export default class CustomActions extends React.Component {
   _images = [];

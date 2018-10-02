@@ -1,5 +1,6 @@
 import { ImagePicker, Permissions } from 'expo';
-import firebase from 'expo-firebase-app';
+// import firebase from 'expo-firebase-app';
+import firebase from 'firebase';
 import React, { Component } from 'react';
 import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
 

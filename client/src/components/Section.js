@@ -3,11 +3,18 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 export default class Section extends React.Component {
-  static defaultProps = {};
-  static PropTypes = {
+  static defaultProps = {
+    title: null,
+    children: null,
+    style: null,
+  };
+  static propTypes = {
     style: View.propTypes.style,
-    title: PropTypes.string.isRequired,
-    children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.element), PropTypes.element]),
+    title: PropTypes.string,
+    children: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.element),
+      PropTypes.element,
+    ]),
   };
   render() {
     const { style, children, title } = this.props;

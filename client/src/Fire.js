@@ -15,9 +15,9 @@ class Fire {
   constructor() {}
 
   init = () => {
-    if (!Settings.isFirebaseEnabled) {
-      return;
-    }
+    // if (!Settings.isFirebaseEnabled) {
+    //   return;
+    // }
 
     firebase.initializeApp(Secret);
     firebase.firestore().settings({ timestampsInSnapshots: true });

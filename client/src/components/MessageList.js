@@ -18,20 +18,20 @@ class MessageList extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.badgeCount !== this.props.badgeCount) {
-      firebase.messaging().setBadgeNumber(nextProps.badgeCount);
+      // firebase.messaging().setBadgeNumber(nextProps.badgeCount);
     }
   }
 
   componentWillMount() {
-    this.props.findMessageChannels();
+    // dispatch.chats.findMessageChannels();
   }
 
   componentDidMount() {
-    firebase.messaging().onMessage(({ notification, type, nid }) => {
-      if (type.split('-').shift() === 'message') {
-        this._onRefresh();
-      }
-    });
+    // firebase.messaging().onMessage(({ notification, type, nid }) => {
+    //   if (type.split('-').shift() === 'message') {
+    //     this._onRefresh();
+    //   }
+    // });
   }
 
   _onRefresh = async () => {
@@ -52,7 +52,7 @@ class MessageList extends React.Component {
       key={item.channel}
       message={item || {}}
       onPress={event => this.onPressRow({ item, index, event })}
-      onLongPress={_ => MessagesProvider.deleteChannel(item.channel)}
+      onLongPress={() => MessagesProvider.deleteChannel(item.channel)}
     />
   );
 
@@ -78,8 +78,8 @@ class MessageList extends React.Component {
   );
 }
 export default connect(
-  ({ match: { matches }, messages: { channels } }) => {
-    const combined = { ...matches, ...channels };
+  ({ matches = {}, chats = {} }) => {
+    const combined = { ...matches, ...chats };
 
     const _channels = Object.keys(combined)
       .map(val => combined[val])
@@ -98,11 +98,11 @@ export default connect(
     };
   },
   {
-    goHome: () => dispatch =>
-      dispatch(NavigationActions.navigate({ routeName: 'Home' })),
-    navigate: (routeName, params) => dispatch =>
-      dispatch(NavigationActions.navigate({ routeName, params })),
-    findMessageChannels,
-    removedMessageChannel,
+    // goHome: () => dispatch =>
+    //   dispatch(NavigationActions.navigate({ routeName: 'Home' })),
+    // navigate: (routeName, params) => dispatch =>
+    //   dispatch(NavigationActions.navigate({ routeName, params })),
+    // findMessageChannels,
+    // removedMessageChannel,
   },
 )(MessageList);

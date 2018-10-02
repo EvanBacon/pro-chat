@@ -1,5 +1,7 @@
-import firebase from 'expo-firebase-app';
-import 'expo-firebase-storage';
+// import firebase from 'expo-firebase-app';
+// import 'expo-firebase-storage';
+
+import firebase from 'firebase';
 
 async function uploadImageAsync(uri, uploadUri, onProgress) {
   const onStateChanged = ({ bytesTransferred, totalBytes, state }) => {
@@ -12,7 +14,7 @@ async function uploadImageAsync(uri, uploadUri, onProgress) {
         break;
       case 'success': // or 'running'
         console.log('ProfileImage: Upload is done');
-        onProgress && onProgress(progress);
+        if (onProgress) onProgress(progress);
         break;
       default:
         console.log('ProfileImage: Unhandled state', state);

@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import TouchableBounce from 'react-native/Libraries/Components/Touchable/TouchableBounce';
 import { connect } from 'react-redux';
+import { Text } from 'react-native';
 
-import { getProfileImage, getPropertyForUser } from '../../redux/profiles';
+import { dispatch } from '@rematch/core';
+// import { getProfileImage, getPropertyForUser } from '../../redux/profiles';
 import Circle from '../Circle';
 import LoadingImage from '../LoadingImage';
 
@@ -12,7 +14,7 @@ class Cell extends Component {
   }
 
   componentWillReceiveProps(next) {
-    if (this.props.uid != next.uid) {
+    if (this.props.uid !== next.uid) {
       this.load(next.uid);
     }
   }
@@ -20,17 +22,17 @@ class Cell extends Component {
   load = async (uid) => {
     if (uid) {
       if (!this.props.image) {
-        this.props.getProfileImage({ uid });
+        dispatch.users.getProfileImage({ uid });
       }
       if (!this.props.first_name) {
-        this.props.getPropertyForUser({ uid, property: 'first_name' });
+        dispatch.users.getPropertyForUser({ uid, property: 'first_name' });
       }
     }
   };
 
   render() {
     const {
-      image, first_name, style, onPress,
+      image, firstName, style, onPress,
     } = this.props;
 
     const size = 64;
@@ -65,30 +67,36 @@ class Cell extends Component {
           />
         </Circle>
 
-        {true && <DinPro.Medium style={{ textAlign: 'center' }}>{first_name}</DinPro.Medium>}
+        {true && (
+          <Text style={{ textAlign: 'center' }}>
+            {firstName}
+          </Text>
+        )}
       </TouchableBounce>
     );
   }
 }
 
 const mergeProps = (state, actions, { uid, ...localProps }) => {
-  const { users, images, ...props } = state;
+  const { users, ...props } = state;
 
   const user = users[uid] || {};
-  const image = images[uid];
+  // const image = images[uid];
 
   return {
     ...localProps,
     ...props,
-    image,
+    image: user.photoURL,
     uid,
-    first_name: user.first_name,
+    firstName: user.firstName,
     ...actions,
   };
 };
 
 export default connect(
-  ({ profiles: { users, images } }) => ({ users, images }),
-  { getPropertyForUser, getProfileImage },
+  ({ users }) => ({ users }),
+  {
+    // getPropertyForUser, getProfileImage
+  },
   mergeProps,
 )(Cell);

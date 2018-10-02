@@ -1,24 +1,32 @@
-
-import firebase from './firebase';
+import firebase from 'firebase';
 
 import faker from 'faker';
+import Fire from '../Fire';
 
 export const uploadProfileImage = async (image, onProgress) => {
   console.warn(image);
-  const uid = firebase.uid();
-  if (!firebase.uid() || !image) {
+
+  const uid = Fire.shared.uid;
+  if (!Fire.shared.uid || !image) {
     return;
   }
   let file;
   if (typeof image === 'string') {
-    file = image.split('\\').pop().split('/').pop()
+    file = image
+      .split('\\')
+      .pop()
+      .split('/')
+      .pop()
       .split('.');
     image = { uri: image };
   } else {
-    file = image.uri.split('\\').pop().split('/').pop()
+    file = image.uri
+      .split('\\')
+      .pop()
+      .split('/')
+      .pop()
       .split('.');
   }
-
 
   // Get the part without dots on the end
   const extension = file.pop();
@@ -32,7 +40,6 @@ export const uploadProfileImage = async (image, onProgress) => {
 
   await saveReferenceToImage(res, url);
 
-
   return url;
 };
 
@@ -42,14 +49,20 @@ export const saveReferenceToImage = async (snapshot, path) => {
 
     const timestamp = new Date().getTime();
 
-    const { downloadUrl, ref: { path: fullPath } } = snapshot;
+    const {
+      downloadUrl,
+      ref: { path: fullPath },
+    } = snapshot;
     if (downloadUrl) {
       console.log('save upload', path, downloadUrl, fullPath);
-      return firebase.database().ref(path).update({
-        url: downloadUrl,
-        path: fullPath,
-        timestamp,
-      });
+      return firebase
+        .database()
+        .ref(path)
+        .update({
+          url: downloadUrl,
+          path: fullPath,
+          timestamp,
+        });
     }
   } else {
     console.error('ERROR: snapshot is undefined, uploadProfileImage', path);
@@ -66,7 +79,8 @@ const getProfileUrl = async (uid, update = false) => {
   const profileRef = firebase.database().ref(route);
 
   try {
-    const snapshot = await (new Promise((res, rej) => profileRef.once('value', res).catch(rej)));
+    const snapshot = await new Promise((res, rej) =>
+      profileRef.once('value', res).catch(rej));
     const value = snapshot.val();
 
     console.log('obtained image data', route, value, snapshot.key);
@@ -87,10 +101,14 @@ export const getDownloadURLforAsset = async (url, onProgress) => {
     const path = url.substring(url.indexOf('.com') + 4, url.length);
     const ref = firebase.storage().ref(path);
 
-    const payload = await (new Promise((resolve, reject) => ref.getDownloadURL().then(resolve).catch(reject))) || {};
+    const payload =
+      (await new Promise((resolve, reject) =>
+        ref
+          .getDownloadURL()
+          .then(resolve)
+          .catch(reject))) || {};
     console.log('IMIIT', payload);
     return payload;
-
 
     // return (await (new Promise((res, rej) => firebase.storage().ref(path).downloadFile(firebase.storage.Native.TEMP_DIRECTORY_PATH)
     //                 .on('state_changed', snapshot => {
@@ -107,7 +125,7 @@ export const getProfileImage = async (uid) => {
     return faker.image.avatar();
   }
   if (!uid) {
-    uid = firebase.uid();
+    uid = Fire.shared.uid;
     console.log('get profile image for user', uid);
   } else {
     console.log('get profile image', uid);
@@ -171,7 +189,6 @@ export const reduceImage = async (uri) => {
   } catch (error) {
     // Oops, something went wrong. Check that the filename is correct and
     // inspect err to get more details.
-
   }
   return uri;
   // return new Promise((res, rej) => {
@@ -200,11 +217,12 @@ export const routeForTestImage = ({ name, ext }) => {
 
 export const routeForProfileImage = ({ uid, name, ext }) => {
   if (uid && name && ext) {
-    return `${Routes.images}/${Routes.users}/${uid}/${Routes.profile}/${name}${ext}`;
+    return `${Routes.images}/${Routes.users}/${uid}/${
+      Routes.profile
+    }/${name}${ext}`;
   }
   return null;
 };
-
 
 const TaskState = {
   resumed: 'upload_resumed',
@@ -212,59 +230,77 @@ const TaskState = {
   paused: 'upload_paused',
 };
 export const uploadAsset = async ({
-  image, path, contentType = 'image/jpeg', contentEncoding = 'base64', onProgress, resumed, paused,
-}) => new Promise((res, rej) => {
-  const {
-    uri,
-    fileSize,
-    origURL,
-    longitude,
-    fileName,
-    height,
-    width,
-    latitude,
-    timestamp,
-    isVertical,
-  } = image;
+  image,
+  path,
+  contentType = 'image/jpeg',
+  contentEncoding = 'base64',
+  onProgress,
+  resumed,
+  paused,
+}) =>
+  new Promise((res, rej) => {
+    const {
+      uri,
+      fileSize,
+      origURL,
+      longitude,
+      fileName,
+      height,
+      width,
+      latitude,
+      timestamp,
+      isVertical,
+    } = image;
 
-  console.log('Upload Asset', path, uri);
+    console.log('Upload Asset', path, uri);
 
-  const unsubscribe = firebase.storage()
-    .ref(path)
-    .putFile(uri)
-    .on('state_changed', (nState) => {
-      const {
-        metadata, bytesTransferred, downloadUrl, ref, task, totalBytes, state,
-      } = nState;
-      console.log('State Change', nState, onProgress);
-      onProgress && onProgress(bytesTransferred / totalBytes);
-      // Current upload state
+    const unsubscribe = firebase
+      .storage()
+      .ref(path)
+      .putFile(uri)
+      .on(
+        'state_changed',
+        (nState) => {
+          const {
+            metadata,
+            bytesTransferred,
+            downloadUrl,
+            ref,
+            task,
+            totalBytes,
+            state,
+          } = nState;
+          console.log('State Change', nState, onProgress);
+          onProgress && onProgress(bytesTransferred / totalBytes);
+          // Current upload state
 
-      switch (state) {
-        case 'running': // or 'running'
-          console.log('Upload is resumed');
-          // resumed && resumed();
-          break;
-        case 'success': // or 'running'
-          // console.log('Upload is progress');
-          // var _progress = (bytesTransferred / totalBytes);
-          // onProgress && onProgress(_progress);
-          break;
-      }
-    }, (err) => {
-      // Error
-      console.log("Error: Couldn't upload image");
-      unsubscribe();
-      rej(err);
-    }, (uploadedFile) => {
-      // Success
-      console.log('Image uploaded!');
-      unsubscribe();
-      res(uploadedFile);
-    });
+          switch (state) {
+            case 'running': // or 'running'
+              console.log('Upload is resumed');
+              // resumed && resumed();
+              break;
+            case 'success': // or 'running'
+              // console.log('Upload is progress');
+              // var _progress = (bytesTransferred / totalBytes);
+              // onProgress && onProgress(_progress);
+              break;
+          }
+        },
+        (err) => {
+          // Error
+          console.log("Error: Couldn't upload image");
+          unsubscribe();
+          rej(err);
+        },
+        (uploadedFile) => {
+          // Success
+          console.log('Image uploaded!');
+          unsubscribe();
+          res(uploadedFile);
+        },
+      );
 
-
-  /*
+    /*
          fileSize: 182091,
   origURL: 'assets-library://asset/asset.JPG?id=51255493-AF0E-44EA-B3FD-FDCF0E36C1A1&ext=JPG',
   longitude: -73.972345,
@@ -276,4 +312,4 @@ export const uploadAsset = async ({
   isVertical: true,
   uri: 'file:///var/mobile/Containers/Data/Application/26F082A0-3278-4304-BBC7-44022020A14D/Documents/images/47B513A3-8C52-4FC1-B04D-8B04F93E903E.jpg'
         */
-});
+  });

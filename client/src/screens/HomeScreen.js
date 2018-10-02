@@ -38,7 +38,7 @@ class HomeScreen extends React.Component {
   }
 
   componentDidMount() {
-    firebase.messaging().requestPermissions();
+    // firebase.messaging().requestPermissions();
     this.checkBanned((this.props.user || {}).isBlocked);
     this.checkUnderage((this.props.user || {}).birthday);
   }
@@ -136,8 +136,8 @@ class HomeScreen extends React.Component {
   }
 }
 export default connect(({
-  auth: { user },
-  geo: { nearbyUsers: users },
+  user,
+  users, // geo: { nearbyUsers: users },
   onBoarding: { firstLike, firstDislike, wantMoreInfo },
 }) => ({
   user,

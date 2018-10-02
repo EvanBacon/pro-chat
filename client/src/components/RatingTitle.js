@@ -7,6 +7,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Meta from '../constants/Meta';
 import Settings from '../constants/Settings';
 import styles from './styles';
+import Fire from '../Fire';
 
 export default class RatingTitle extends React.Component {
   static propTypes = {
@@ -30,7 +31,7 @@ export default class RatingTitle extends React.Component {
       : Meta.tap_to_get_rating
     ).toUpperCase();
 
-    const isUser = firebase.uid() === uid && uid != null;
+    const isUser = Fire.shared.uid === uid && uid != null;
     if (!isUser && !title) {
       return null;
     }

@@ -19,14 +19,12 @@ export const store = init({
   plugins: [persistPlugin],
 });
 class Gate extends React.Component {
-  static propTypes = {
-    children: View.propTypes.children.isRequired,
-  };
-
   render() {
     return (
       <Provider store={store}>
-        <PersistGate persistor={getPersistor()}>{this.props.children}</PersistGate>
+        <PersistGate persistor={getPersistor()}>
+          {this.props.children}
+        </PersistGate>
       </Provider>
     );
   }

@@ -12,7 +12,7 @@ const { width } = Dimensions.get('window');
 const Edit = connectActionSheet(() => (
   <Button.Edit
     testID="test-profile-edit-button"
-    onPress={(_) => {
+    onPress={() => {
       selectImage(this.props.showActionSheetWithOptions, this.props.onImage);
     }}
     style={this.props.style}
@@ -23,16 +23,11 @@ export default class UserInfo extends Component {
   state = {};
   componentDidMount() {}
 
-  // renderImage = image =>
-  // if (this.props.hasLightbox) {
-  //     return (
-
-  //         <View style={{flex: 1}}>
-  //             {image}
-  //             </View>
-  //         </Lightbox>
-  //     )
-  // }
+  renderImage = (image) => {
+    if (this.props.hasLightbox) {
+      return <View style={{ flex: 1 }}>{image}</View>;
+    }
+  };
   // image;
   render() {
     return (

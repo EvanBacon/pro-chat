@@ -1,7 +1,8 @@
 import firebase from 'firebase';
+import Fire from '../Fire';
 
-import bootyWord from './booty_word_list';
-
+// import bootyWord from '../booty_word_list';
+const bootyWord = () => 'lit';
 export const Gender = {
   male: 'male',
   female: 'female',
@@ -10,13 +11,15 @@ export const Gender = {
 
 export const getProfileForUser = async ({ uid }) => {
   const ref = firebase.database().ref(`users/${uid}`);
-  const snapshot = await new Promise((resolve, reject) => ref.once('value', resolve).catch(reject));
+  const snapshot = await new Promise((resolve, reject) =>
+    ref.once('value', resolve).catch(reject));
   return snapshot.val();
 };
 
 export const getPropertyForUser = async ({ uid, property }) => {
   const ref = firebase.database().ref(`users/${uid}/${property}`);
-  const snapshot = await new Promise((resolve, reject) => ref.once('value', resolve).catch(reject));
+  const snapshot = await new Promise((resolve, reject) =>
+    ref.once('value', resolve).catch(reject));
   return snapshot.val();
 };
 
@@ -30,7 +33,7 @@ export const unobservePropertyForUser = ({ uid, property, callback }) => {
 };
 
 export const updateUserProfile = async (updates) => {
-  const uid = firebase.uid();
+  const uid = Fire.shared.uid;
   if (!uid) return;
   const ref = firebase.database().ref(`users/${uid}`);
   return await ref.update(updates);
@@ -38,7 +41,7 @@ export const updateUserProfile = async (updates) => {
 
 // listen for changes to firebase and dispatch actions to update app state
 export function subscribeToProfile({ callback }) {
-  const uid = firebase.uid();
+  const uid = fireFire.shared.uid;
   if (!uid) return;
   const ref = firebase.database().ref(`users/${uid}`);
   ref.on('value', snapshot => callback(snapshot.val()));
@@ -49,7 +52,7 @@ export function changeRating() {
 
 // remove listeners
 export function unsubscribeToProfile() {
-  const uid = firebase.uid();
+  const uid = Fire.shared.uid;
   if (!uid) return;
   const ref = firebase.database().ref(`users/${uid}`);
   ref.off();

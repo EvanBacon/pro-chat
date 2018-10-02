@@ -8,14 +8,18 @@ import Meta from '../constants/Meta';
 
 export default class TagCollection extends Component {
   static propTypes = {
-    title: PropTypes.string.isRequired,
+    title: PropTypes.string,
     style: View.propTypes.style,
-    tags: PropTypes.array.isRequired,
-    isUser: PropTypes.bool.isRequired,
-    name: PropTypes.string.isRequired,
+    tags: PropTypes.array,
+    isUser: PropTypes.bool,
+    name: PropTypes.string,
   };
   static defaultProps = {
+    title: null,
     style: {},
+    tags: null,
+    name: null,
+    isUser: false,
   };
 
   _renderContents = (tags, isUser, name) => {

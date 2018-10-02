@@ -3,9 +3,10 @@ import { StyleSheet, View } from 'react-native';
 import TouchableBounce from 'react-native/Libraries/Components/Touchable/TouchableBounce';
 import { connect } from 'react-redux';
 
-import { getProfileImage, getPropertyForUser } from '../redux/profiles';
+// import { getProfileImage, getPropertyForUser } from '../redux/profiles';
 import LoadingImage from './LoadingImage';
 import Meta from './Meta';
+import { dispatch } from '@rematch/core';
 
 class SliderCell extends React.PureComponent {
   componentWillMount() {
@@ -21,16 +22,16 @@ class SliderCell extends React.PureComponent {
   load = async (uid) => {
     if (typeof uid === 'string') {
       if (!this.props.image) {
-        this.props.getProfileImage({ uid });
+        dispatch.users.getProfileImage({ uid });
       }
       if (!this.props.firstName) {
-        this.props.getPropertyForUser({ uid, property: 'first_name' });
+        dispatch.users.getPropertyForUser({ uid, property: 'firstName' });
       }
       if (!this.props.about) {
-        this.props.getPropertyForUser({ uid, property: 'about' });
+        dispatch.users.getPropertyForUser({ uid, property: 'about' });
       }
       if (!this.props.rating) {
-        this.props.getPropertyForUser({ uid, property: 'rating' });
+        dispatch.users.getPropertyForUser({ uid, property: 'rating' });
       }
     }
   };
@@ -97,17 +98,17 @@ class SliderCell extends React.PureComponent {
 }
 
 const mergeProps = (state, actions, { uid, ...localProps }) => {
-  const { users, images, ...props } = state;
+  const { users, ...props } = state;
 
   const user = users[uid] || {};
-  const image = images[uid];
+  // const image = images[uid];
 
   return {
     ...localProps,
     ...props,
-    image,
+    image: user.photoURL,
     uid,
-    firstName: user.first_name,
+    firstName: user.firstName,
     about: user.about,
     rating: user.rating,
 
@@ -116,7 +117,10 @@ const mergeProps = (state, actions, { uid, ...localProps }) => {
 };
 
 export default connect(
-  ({ profiles: { users, images } }) => ({ users, images }),
-  { getPropertyForUser, getProfileImage },
+  ({ users }) => ({ users }),
+  {
+    // getPropertyForUser,
+    // getProfileImage
+  },
   mergeProps,
 )(SliderCell);

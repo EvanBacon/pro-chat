@@ -1,11 +1,11 @@
 import firebase from 'firebase';
 
 import { store } from '../App';
-import { foundNearbyUser, removeNearbyUser } from './redux/geo';
+import Fire from '../Fire';
+// import { foundNearbyUser, removeNearbyUser } from './redux/geo';
 
 const key = 'recommended';
-const _ref = () => firebase.database().ref(`${key}/${firebase.uid()}`);
-
+const _ref = () => firebase.database().ref(`${key}/${Fire.shared.uid}`);
 let started = false;
 export const start = () => {
   if (started) return;

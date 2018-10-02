@@ -61,12 +61,6 @@ class MatchesList extends React.PureComponent {
     />
   );
 }
-export default connect(
-  ({ match }) => ({
-    matches: (match || {}).matches,
-  }),
-  {
-    navigate: (routeName, params) => dispatch =>
-      dispatch(NavigationActions.navigate({ routeName, params })),
-  },
-)(MatchesList);
+export default connect(({ matches = {} }) => ({
+  matches,
+}))(MatchesList);

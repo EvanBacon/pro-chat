@@ -1,12 +1,12 @@
 import React from 'react';
-import { createTopTabNavigator } from 'react-navigation';
+import { createMaterialTopTabNavigator } from 'react-navigation';
 import { Text } from 'react-native';
 import MatchesList from '../components/MatchesList';
 import MessageList from '../components/MessageList';
 import Colors from '../constants/Colors';
 import Meta from '../constants/Meta';
 
-const Tab = createTopTabNavigator(
+const Tab = createMaterialTopTabNavigator(
   {
     Messages: MessageList,
     Matches: MatchesList,

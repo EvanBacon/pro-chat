@@ -3,6 +3,7 @@ import firebase from 'firebase';
 import { Platform } from 'react-native';
 
 import formatDate from '../utils/formatDate';
+import Fire from '../Fire';
 
 export const Relationship = {
   like: 'like',
@@ -46,12 +47,12 @@ export function updateRelationship(uid, type) {
       break;
   }
 
-  if (!firebase.uid()) {
+  if (!Fire.shared.uid) {
     console.warn('User is not yet initialized, cannot set: ', type);
     return;
   }
 
-  const _uid = firebase.uid();
+  const _uid = Fire.shared.uid;
 
   console.warn('Update Relationship', _uid, uid, type);
   if (_uid && uid && type && _uid !== uid) {
@@ -59,14 +60,18 @@ export function updateRelationship(uid, type) {
     if (type === Relationship.none) {
       return profileRef.remove();
     }
-    return profileRef.update({ relationship: type, timestamp: Date.now(), read: null });
+    return profileRef.update({
+      relationship: type,
+      timestamp: Date.now(),
+      read: null,
+    });
   }
   console.warn(`Cannot Add ${uid} to your ${type}`);
   return null;
 }
 
 export const isMatched = async (uid) => {
-  if (!uid || uid === firebase.uid()) {
+  if (!uid || uid === Fire.shared.uid) {
     return null;
   }
   const relationship = await getRelationshipWithUser({ uid });
@@ -74,18 +79,24 @@ export const isMatched = async (uid) => {
 };
 
 export const getRelationshipWithUser = async ({ uid }) => {
-  const _uid = firebase.uid();
+  const _uid = Fire.shared.uid;
   if (uid === _uid) {
     return null;
   }
-  const ref = firebase.database().ref(`relationships/${_uid}/${uid}/relationship`);
-  const snapshot = await new Promise((resolve, reject) => ref.once('value', resolve).catch(reject));
+  const ref = firebase
+    .database()
+    .ref(`relationships/${_uid}/${uid}/relationship`);
+  const snapshot = await new Promise((resolve, reject) =>
+    ref.once('value', resolve).catch(reject));
   return snapshot.val();
 };
 
 export const whenWasUserRated = async ({ uid }) => {
-  const ref = firebase.database().ref(`relationships/${firebase.uid()}/${uid}/timestamp`);
-  const snapshot = await new Promise((resolve, reject) => ref.once('value', resolve).catch(reject));
+  const ref = firebase
+    .database()
+    .ref(`relationships/${Fire.shared.uid}/${uid}/timestamp`);
+  const snapshot = await new Promise((resolve, reject) =>
+    ref.once('value', resolve).catch(reject));
   const v = snapshot.val();
   if (v) {
     return formatDate(v);
@@ -97,7 +108,7 @@ export const getRelationships = async ({ type }) => {
     console.error(type, 'is not a valid relationship');
     return;
   }
-  const ref = firebase.database().ref(`relationships/${firebase.uid()}`);
+  const ref = firebase.database().ref(`relationships/${Fire.shared.uid}`);
   const snapshot = await new Promise((resolve, reject) =>
     ref
       .orderByChild('relationship')

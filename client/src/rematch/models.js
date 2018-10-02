@@ -8,6 +8,8 @@ import { Constants, Facebook } from '../universal/Expo';
 import PantryStorage from '../universal/PantryStorage';
 import getDeviceInfo from '../utils/getUserInfo';
 
+import NavigationService from '../navigation/NavigationService';
+
 // import GameStates from '../Game/GameStates';
 
 // function mergeInternal(state, { uid, user }) {
@@ -85,6 +87,18 @@ function reduceFirebaseUser(user) {
 }
 
 
+export const popular = {
+  state: {},
+  reducers: {
+    update: (state, props) => ({ ...state, ...props }),
+    set: (state, props) => props,
+    clear: () => {},
+  },
+  effects: {
+    getAsync: () => {},
+  },
+};
+
 export const onBoarding = {
   state: {},
   reducers: {
@@ -118,14 +132,18 @@ export const user = {
         Alert.alert(message);
       }
     },
+    changeRating: () => {},
     observeAuth: () => {
       firebase.auth().onAuthStateChanged((auth) => {
         if (!auth) {
           // TODO: Evan: Y tho...
           dispatch.user.clear();
           dispatch.user.signInAnonymously();
+          NavigationService.navigate('Auth');
         } else {
           dispatch.user.getAsync();
+          NavigationService.navigate('App');
+
           // dispatch.leaders.getAsync({ uid: user.uid });
         }
       });
@@ -159,14 +177,14 @@ export const user = {
       if (Object.keys(updates).length > 0) {
         dispatch.user.update(updates);
       }
-      dispatch.dailyStreak.compareDaily();
-      dispatch.players.update({
+      // dispatch.dailyStreak.compareDaily();
+      dispatch.users.update({
         uid: combinedUserData.uid,
         user: combinedUserData,
       });
 
       if (Settings.isCacheProfileUpdateActive) {
-        const shouldUpdateKey = '@PillarValley/shouldUpdateProfile';
+        const shouldUpdateKey = '@Bute/shouldUpdateProfile';
         const something = await PantryStorage.getItemWithExpiration(shouldUpdateKey);
         if (!something) {
           const some = await PantryStorage.setItemWithExpiration(
@@ -185,7 +203,7 @@ export const user = {
     mergeDataWithFirebase: async (props) => {
       const doc = await firebase
         .firestore()
-        .collection('players')
+        .collection('users')
         .doc(Fire.shared.uid);
       doc.set(props, { merge: true });
     },
@@ -200,7 +218,7 @@ export const user = {
       console.log('syncLocalToFirebase', otherUserProps);
       const doc = await firebase
         .firestore()
-        .collection('players')
+        .collection('users')
         .doc(Fire.shared.uid);
       doc.set(otherUserProps, { merge: true });
     },
@@ -212,10 +230,28 @@ export const user = {
       }
       doc.set(props, { merge: true });
     },
+  },
+};
 
-    updateRelationshipWithUser: async ({ uid, type }) => {
+
+export const relationships = {
+  state: {},
+  reducers: {
+    set: (state, props) => props,
+  },
+  effects: {
+    updateAsync: async ({ uid, type }) => {
       console.log({ uid, type });
-    }
+    },
+    getAsync: async ({ uid }) => {
+      console.log({ uid });
+    },
+    getAllOfTypeAsync: async ({ type }) => {
+      console.log({ type });
+    },
+    isMatched: ({ uid, shouldUpdate = false, callback }) => {
+      callback(false);
+    },
   },
 };
 
@@ -233,7 +269,7 @@ function deleteUserAsync(uid) {
       .doc(uid)
       .delete(),
     db
-      .collection('players')
+      .collection('users')
       .doc(uid)
       .delete(),
   ]);
@@ -409,6 +445,7 @@ export const users = {
     clear: () => ({}),
   },
   effects: {
+    changeRating: () => {},
     update: ({ uid, user }, { users }) => {
       if (!uid || !user) {
         console.error('dispatch.users.update: You must pass in a valid uid and user');
@@ -505,7 +542,7 @@ export const isTyping = {
         dispatch.isTyping.update({ [groupId]: isTyping });
       });
 
-      const userRoute = `${Settings.refs.channels}/${groupId}/is_typing/${firebase.uid()}`;
+      const userRoute = `${Settings.refs.channels}/${groupId}/is_typing/${Fire.shared.uid}`;
       // Monitor connection state on browser tab
       firebase
         .database()

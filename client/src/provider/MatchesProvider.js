@@ -1,7 +1,8 @@
 import firebase from 'firebase';
-import { acknowledgeNewMatch, foundNewMatch, foundMatch, removedMatch } from './redux/match';
+// import { acknowledgeNewMatch, foundNewMatch, foundMatch, removedMatch } from './redux/match';
 
 import { store } from './App';
+import Fire from '../Fire';
 
 const key = 'relationships';
 
@@ -13,11 +14,12 @@ const _receivedMatch = (snapshot) => {
   const { read } = match;
 
   const user = { uid, ...match };
+
   if (read == null) {
     const timestamp = new Date().getTime();
     firebase
       .database()
-      .ref(`${key}/${firebase.uid()}/${uid}`)
+      .ref(`${key}/${Fire.shared.uid}/${uid}`)
       .update({ read: timestamp });
     store.dispatch(foundNewMatch({ user }));
   } else {
@@ -34,7 +36,7 @@ const _removedMatch = (snapshot) => {
 };
 
 export const subscribeToMatches = () => {
-  const profileRef = firebase.database().ref(`${key}/${firebase.uid()}`);
+  const profileRef = firebase.database().ref(`${key}/${Fire.shared.uid}`);
   profileRef
     .orderByChild('relationship')
     .equalTo('match')
@@ -46,7 +48,7 @@ export const subscribeToMatches = () => {
 };
 
 export const unsubscribeToMatches = () => {
-  const profileRef = firebase.database().ref(`${key}/${firebase.uid()}`);
+  const profileRef = firebase.database().ref(`${key}/${Fire.shared.uid}`);
   profileRef
     .orderByChild('relationship')
     .equalTo('match')
