@@ -157,29 +157,40 @@ export default class Slider extends React.Component {
           disableBottomSwipe
           disableTopSwipe
           overlayLabels={{
+            none: {
+              title: '',
+              swipeColor: '#9262C2',
+              backgroundOpacity: '0.75',
+              fontColor: '#FFF',
+              style: { wrapper: {} },
+            },
             bottom: {
               title: 'BLEAH',
               swipeColor: '#9262C2',
               backgroundOpacity: '0.75',
               fontColor: '#FFF',
+              style: { wrapper: {} },
             },
             left: {
               title: 'NAH',
               swipeColor: '#FF6C6C',
               backgroundOpacity: '0.75',
               fontColor: '#FFF',
+              style: { wrapper: {} },
             },
             right: {
               title: 'LIT',
               swipeColor: '#4CCC93',
               backgroundOpacity: '0.75',
               fontColor: '#FFF',
+              style: { wrapper: {} },
             },
             top: {
               title: 'SUPER LIKE',
               swipeColor: '#4EB8B7',
               backgroundOpacity: '0.75',
               fontColor: '#FFF',
+              style: { wrapper: {} },
             },
           }}
           animateOverlayLabelsOpacity

@@ -67,6 +67,10 @@ class MatchesList extends React.PureComponent {
     />
   );
 }
-export default connect(({ users: matches }) => ({
+const MatchesScreen = connect(({ users: matches }) => ({
   matches,
 }))(MatchesList);
+
+MatchesScreen.navigation = { title: 'Matches' };
+
+export default MatchesScreen;

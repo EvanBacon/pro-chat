@@ -1,21 +1,24 @@
 import React from 'react';
 import { Image } from 'react-native';
-
+import { Constants } from 'expo';
 import Assets from '../Assets';
+import { AppLoading } from '../universal/Expo';
 
-export default class LoadingIndicator extends React.PureComponent {
+export default class Loading extends React.PureComponent {
   render() {
-    return (
-      <Image
-        style={{
-          resizeMode: 'cover',
-          flex: 1,
-          width: '100%',
-          height: '100%',
-        }}
-        source={Assets.images.splash}
-      />
-    );
+    return <AppLoading />;
+    // return (
+    //   <Image
+    //     style={{
+    //       resizeMode: 'cover',
+    //       flex: 1,
+    //       width: '100%',
+    //       height: '100%',
+    //       backgroundColor: Constants.manifest.tintColor,
+    //     }}
+    //     source={Assets.images.splash}
+    //   />
+    // );
   }
 }
 

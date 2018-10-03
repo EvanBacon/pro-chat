@@ -68,7 +68,6 @@ export default class AvatarImage extends React.PureComponent {
       color: 'rgba(150, 150, 150, 1)',
       unfilledColor: 'rgba(200, 200, 200, 0.2)',
       thickness: 1,
-      progress: this.props.progress,
     };
 
     if (typeof this.props.avatar === 'function') {

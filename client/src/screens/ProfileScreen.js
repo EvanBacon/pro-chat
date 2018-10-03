@@ -19,6 +19,9 @@ import Relationship from '../models/Relationship';
 const { width } = Dimensions.get('window');
 
 class Profile extends Component {
+  static navigationOptions = () => ({
+    title: 'Profile',
+  });
   state = {
     refreshing: false,
     rating: null,
@@ -52,12 +55,12 @@ class Profile extends Component {
   updateWithUID = async (uid, update) => {
     if (!uid) return;
     const {
-      image, firstName, about, likes, rating, relationship,
+      image, name, about, likes, rating, relationship,
     } = this.props;
     if (!image || update) {
       dispatch.users.getProfileImage({ uid });
     }
-    if (!firstName || update) {
+    if (!name || update) {
       dispatch.users.getPropertyForUser({ uid, property: 'first_name' });
     }
     if (!about || update) {
@@ -112,13 +115,13 @@ class Profile extends Component {
     );
   };
 
-  renderTags = (tags, isUser, firstName) => (
+  renderTags = (tags, isUser, name) => (
     <TagCollection
       style={{}}
       title={Meta.user_interests_title}
       tags={tags}
       isUser={isUser}
-      name={firstName}
+      name={name}
     />
   );
 
@@ -133,7 +136,7 @@ class Profile extends Component {
     const {
       isUser,
       uid,
-      firstName,
+      name,
       likes,
       about,
       relationship,
@@ -144,12 +147,15 @@ class Profile extends Component {
       // getProfileImage,
       navigation,
     } = this.props;
+
+    console.log("legoboi", { isUser, uid, name, likes, about, relationship, rating, isMatched, image })
+    if (!uid) return null;
+
     if (this.isBlocked) {
       return (
         <Blocked
           uid={uid}
           relationship={relationship}
-          updateRelationshipWithUser={dispatch.users.updateRelationshipWithUser}
         />
       );
     }
@@ -160,8 +166,8 @@ class Profile extends Component {
           navigation={navigation}
           onImageUpdated={async () => dispatch.users.getProfileImage({ uid })}
           onRatingPressed={dispatch.user.changeRating}
-          image={{ uri: image }}
-          title={firstName}
+          image={image}
+          title={name}
           subtitle={about}
           rating={rating}
           uid={uid}
@@ -173,12 +179,9 @@ class Profile extends Component {
         {!isUser && (
           <RateSection
             uid={uid}
-            updateRelationshipWithUser={
-              dispatch.users.updateRelationshipWithUser
-            }
           />
         )}
-        {this.renderTags(likes, isUser, firstName)}
+        {this.renderTags(likes, isUser, name)}
         {this.renderPopular()}
       </View>
     );
@@ -210,32 +213,36 @@ class Profile extends Component {
   }
 }
 
-const mergeProps = (state, actions, localProps) => {
+
+
+const mergeProps = ({ users, relationships, ...state }, actions, { uid, ...localProps }) => {
   const { params = {} } = localProps.navigation.state;
-  const currentUID = params.uid;
 
-  const userUID = Fire.shared.uid;
-  const uid = currentUID || userUID;
-  const isUser = userUID === uid && currentUID == null;
+  const mainUserId = Fire.shared.uid;
+  const userId = params.uid || uid || Fire.shared.uid;
 
-  // console.warn(currentUID, userUID, uid, isUser);
+  const isUser = mainUserId === userId;
 
-  const { users, relationships, ...props } = state;
-  const relationship = relationships[uid];
-  const user = users[uid] || {};
-
-  return {
-    ...localProps,
-    ...props,
-    image: user.photoURL,
-    uid,
+  const relationship = relationships[userId];
+  const user = users[userId] || {};
+  // console.warn(user, uid);
+  const { about, rating } = user;
+  const userProps = {
+    ...user,
     isUser,
-    relationship,
-    first_name: user.first_name,
-    about: user.about,
-    rating: user.rating,
-    likes: (user.likes || {}).data,
+    uid: userId,
+    about: about || 'I am not interesting, but I do like to pretend.',
+    rating: rating || 'moth',
+    //TODO: Standard - decide on one format
+    image: user.photoURL || user.image,
+    name: user.first_name || user.name || user.displayName || user.deviceName,
+  };
+  return {
+    ...state,
+    ...localProps,
     ...actions,
+    ...userProps,
+    relationship,
   };
 };
 
@@ -243,7 +250,6 @@ export default connect(
   ({ users = {}, relationships = {}, popular = {} }) => ({
     users,
     popular,
-    // images,
     relationships,
   }),
   {},

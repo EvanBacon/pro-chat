@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "bute",
+    "name": "Bütē",
     "description": "A neat messaging app.",
     "slug": "bute",
     "privacy": "public",
@@ -25,7 +25,7 @@
     },
     "assetBundlePatterns": ["src/assets/**/*"],
     "notification": {
-      "icon": "./assets/icons/notification-icon.png",
+      "icon": "./src/assets/icons/ios.png",
       "color": "#52416A"
     },
     "ios": {
@@ -34,7 +34,7 @@
       "buildNumber": "0",
       "bundleIdentifier": "com.bacon.bute",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription":  "Send your location to your friends",
+        "NSLocationWhenInUseUsageDescription": "Send your location to your friends",
         "NSCameraUsageDescription": "Take pictures to send to your friends",
         "NSPhotoLibraryUsageDescription": "Send your photos to people you chat with",
         "NSContactsUsageDescription": "Find your friends who also use this app"

@@ -4,12 +4,6 @@ export default {
     'DINPro-Medium.ttf': require('./assets/fonts/DINPro-Medium.ttf'),
     'DINPro-Regular.ttf': require('./assets/fonts/DINPro-Regular.ttf'),
   },
-  icons: {
-    'icon.png': require('./assets/icons/icon.png'),
-    'loading-icon.png': require('./assets/icons/loading-icon.png'),
-    'notification-icon.png': require('./assets/icons/notification-icon.png'),
-    'splash.png': require('./assets/icons/splash.png'),
-  },
   images: {
     arrow_left: require('./assets/images/arrow_left.png'),
     arrow_right: require('./assets/images/arrow_right.png'),
@@ -29,7 +23,7 @@ export default {
     profile_inactive: require('./assets/images/profile_inactive.png'),
     profile_active: require('./assets/images/profile_active.png'),
     settings: require('./assets/images/settings.png'),
-    splash: require('./assets/images/splash.png'),
+    splash: require('./assets/icons/splash.png'),
     splash_icon: require('./assets/images/splash_icon.png'),
     empty: {
       location: require('./assets/images/empty/location.png'),

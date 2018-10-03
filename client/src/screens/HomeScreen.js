@@ -37,7 +37,7 @@ import isUnderAge from '../utils/isUnderAge';
 //           ]
 class HomeScreen extends React.Component {
   static navigationOptions = () => ({
-    title: 'Bute',
+    title: 'Explore',
     headerRight: (
       <HeaderButtons
         IconComponent={Ionicons}
@@ -86,19 +86,19 @@ class HomeScreen extends React.Component {
     if (nBirthday !== oBirthday) {
       this.checkUnderage(nBirthday);
       if (!isUnderAge(nBirthday) && isUnderAge(oBirthday)) {
-        this.props.navigation.goBack();
+        NavigationService.goBack();
       }
     }
   }
   checkBanned = (isBlocked) => {
     if (isBlocked) {
-      this.props.navigation.navigate('AccountUnderReview');
+      NavigationService.navigate('AccountUnderReview');
     }
   };
 
   checkUnderage = (birthday) => {
     if (isUnderAge(birthday)) {
-      this.props.navigation.navigate('UnderAge', { birthday });
+      NavigationService.navigate('UnderAge', { birthday });
     }
   };
 
@@ -122,7 +122,7 @@ class HomeScreen extends React.Component {
                 Meta.info_like_subtitle,
                 Meta.info_like_action,
               );
-              if (firebase.analytics) { firebase.analytics().logEvent('first_like', { uid }); }
+              // if (firebase.analytics) { firebase.analytics().logEvent('first_like', { uid }); }
             }
             dispatch.user.updateRelationshipWithUser({
               uid,
@@ -137,7 +137,7 @@ class HomeScreen extends React.Component {
                 Meta.info_dislike_subtitle,
                 Meta.info_dislike_action,
               );
-              if (firebase.analytics) { firebase.analytics().logEvent('first_dislike', { uid }); }
+              // if (firebase.analytics) { firebase.analytics().logEvent('first_dislike', { uid }); }
             }
             dispatch.user.updateRelationshipWithUser({
               uid,
@@ -152,16 +152,15 @@ class HomeScreen extends React.Component {
                 Meta.meta_info_learn_more_subtitle,
                 Meta.meta_info_learn_more_action,
               );
-              if (firebase.analytics) {
-firebase
-                  .analytics()
-                  .logEvent('user_was_informed_about_tapping_profile_card', {
-                    uid,
-                  });
-}
+//               if (firebase.analytics) {
+// firebase
+//                   .analytics()
+//                   .logEvent('user_was_informed_about_tapping_profile_card', {
+//                     uid,
+//                   });
+// }
             }
           }}
-          navigation={this.props.navigation}
           users={this.props.users}
         />
       </Gradient>

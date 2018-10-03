@@ -6,6 +6,7 @@ import selectImage from '../utils/SelectImage';
 import Button from './Button';
 import Meta from './Meta';
 import ProfileImage from './ProfileImage';
+import NavigationService from '../navigation/NavigationService';
 
 const { width } = Dimensions.get('window');
 
@@ -30,6 +31,7 @@ export default class UserInfo extends Component {
   };
   // image;
   render() {
+    const width = Dimensions.get('window').width * 0.65;
     return (
       <View
         style={[
@@ -43,13 +45,16 @@ export default class UserInfo extends Component {
         ]}
       >
         {this.renderImage(<ProfileImage
+          name={this.props.title}
+          image={this.props.image}
+          size={width}
           lightbox={this.props.hasLightbox}
           onImageUpdated={this.props.onImageUpdated}
           source={this.props.image}
           isUser={this.props.isUser}
           isEditing={this.state.isEditing}
           onEditingChanged={(isEditing) => {
-              this.props.navigation.navigate('EditProfile', {});
+              NavigationService.navigate('EditProfile', {});
               // this.setState({ isEditing: !this.state.isEditing });
             }}
         />)}

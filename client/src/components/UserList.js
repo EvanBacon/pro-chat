@@ -23,13 +23,18 @@ export default class UserList extends React.Component {
         ItemSeparatorComponent={Divider}
         ListEmptyComponent={ListEmptyComponent}
         refreshControl={
-          <RefreshControl tintColor="#B996FC" titleColor="#B996FC" refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl
+            tintColor="#B996FC"
+            titleColor="#B996FC"
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
         }
         style={StyleSheet.flatten([style, { flex: 1 }])}
         contentInset={{ top }}
         contentOffset={{ y: -top }}
         data={debugTestEmpty ? [] : data}
-        keyExtractor={(item, index) => index}
+        keyExtractor={(item, index) => `${index}`}
         renderItem={renderItem}
         {...props}
       />

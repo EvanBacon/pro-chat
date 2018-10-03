@@ -1,20 +1,20 @@
+import { dispatch } from '@rematch/core';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
 
 import Meta from '../constants/Meta';
 import Images from '../Images';
-import EmptyListMessage from './EmptyListMessage';
 import Relationship from '../models/Relationship';
+import EmptyListMessage from './EmptyListMessage';
 
 export default class Blocked extends Component {
   static propTypes = {
     relationship: PropTypes.string.isRequired,
     uid: PropTypes.string.isRequired,
-    updateRelationshipWithUser: PropTypes.func.isRequired,
   };
   render() {
-    const { relationship, uid, updateRelationshipWithUser } = this.props;
+    const { relationship, uid } = this.props;
     const outward = relationship === Relationship.blocking;
 
     const title = outward ? Meta.blocking : Meta.Blocked;
@@ -23,9 +23,12 @@ export default class Blocked extends Component {
       <EmptyListMessage
         style={styles.container}
         inverted
-        onPress={(_) => {
+        onPress={() => {
           if (outward) {
-            updateRelationshipWithUser(uid, Relationship.none);
+            dispatch.users.updateRelationshipWithUser({
+              uid,
+              type: Relationship.none,
+            });
           }
         }}
         noButton={!outward}

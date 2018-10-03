@@ -34,7 +34,9 @@ const licenses = Object.keys(Data).map((key) => {
   const [name, version] = key.split('@');
 
   const reg = /((https?:\/\/)?(www\.)?github\.com\/)?(@|#!\/)?([A-Za-z0-9_]{1,15})(\/([-a-z]{1,20}))?/i;
-  let username = extractNameFromGithubUrl(license.repository) || extractNameFromGithubUrl(license.licenseUrl);
+  let username =
+    extractNameFromGithubUrl(license.repository) ||
+    extractNameFromGithubUrl(license.licenseUrl);
 
   let userUrl;
   let image;
@@ -69,7 +71,7 @@ export default class Licenses extends Component {
     return (
       <FlatList
         style={styles.list}
-        keyExtractor={({ key }) => key}
+        keyExtractor={({ key }) => `${key}`}
         data={licenses}
         contentContainerStyle={{ paddingBottom: Settings.bottomInset }}
         renderItem={this.renderItem}

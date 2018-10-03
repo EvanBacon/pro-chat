@@ -43,7 +43,7 @@ const Tab = createMaterialTopTabNavigator(
     swipeEnabled: true,
     // Put tab bar on bottom of screen on both platforms
     // tabBarComponent: TabBarBottom,
-    tabBarPosition: 'bottom',
+    tabBarPosition: 'top',
     // Disable animation so that iOS/Android have same behaviors
     animationEnabled: true,
     // Don't show the labels
@@ -52,5 +52,7 @@ const Tab = createMaterialTopTabNavigator(
     },
   },
 );
+
+Tab.navigationOptions = { title: 'Chat' };
 
 export default Tab;

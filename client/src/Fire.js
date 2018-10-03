@@ -123,9 +123,7 @@ class Fire {
   };
 
 
-  getGroupId = (...uids) => this.getChatGroupId(uids)
-
-  getChatGroupId = (uids) => {
+  getGroupId = (...uids) => {
     const shouldCache = typeof uids === 'string';
     if (shouldCache && this._groupIdCache[uids]) return this._groupIdCache[uids];
 

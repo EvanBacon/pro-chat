@@ -4,6 +4,8 @@ import { Platform } from 'react-native';
 
 import sizeInfo from '../utils/whatAmI';
 
+const realName = 'Bütē Alert';
+
 const debug = __DEV__;
 
 const fields = [
@@ -39,6 +41,7 @@ const Settings = {
     apiKey: 'dc6zaTOxFJmzC',
     endPoint: 'https://api.giphy.com/v1/gifs/search?q=',
   },
+  noName: 'Sasuke Uchiha',
   isIos: Platform.OS === 'ios',
   osVersion: sizeInfo.osVersion,
   loginBehavior: sizeInfo.loginBehavior,
@@ -87,7 +90,6 @@ const Settings = {
   /*
       So many of these...
   */
-
 
   name: 'Būte',
   user: 'Art', //

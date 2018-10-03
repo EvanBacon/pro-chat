@@ -4,6 +4,7 @@ import { View } from 'react-native';
 import Circle from './Circle';
 import LoadingImage from './LoadingImage';
 import NotificationDot from './NotificationDot';
+import AvatarImage from './Image/AvatarImage';
 
 export default class UserImage extends Component {
   static defaultProps = {
@@ -12,10 +13,15 @@ export default class UserImage extends Component {
 
   render() {
     const {
-      style, source, size, containerStyle, isNew,
+      style, image, name, size, containerStyle, isNew,
     } = this.props;
     return (
-      <View style={[{ width: size, aspectRatio: 1, marginRight: 8 }, containerStyle]}>
+      <View
+        style={[
+          { width: size, aspectRatio: 1, marginRight: 8 },
+          containerStyle,
+        ]}
+      >
         <Circle
           style={[
             {
@@ -33,10 +39,8 @@ export default class UserImage extends Component {
             style,
           ]}
         >
-          <LoadingImage
-            size={size}
-            source={source}
-            style={{
+          <AvatarImage
+            avatarStyle={{
               flex: 1,
               maxWidth: size,
               minWidth: size,
@@ -44,6 +48,8 @@ export default class UserImage extends Component {
               maxHeight: size,
               borderRadius: size / 2,
             }}
+            name={name}
+            avatar={image}
           />
         </Circle>
         {isNew && <NotificationDot />}

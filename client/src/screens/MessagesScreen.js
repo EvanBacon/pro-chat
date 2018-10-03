@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import { MessagesList } from '../components/pagedList/MessagesList';
 import Fire from '../Fire';
+import NavigationService from '../navigation/NavigationService';
 
 class MessagesScreen extends React.Component {
   static navigationOptions = {
@@ -14,7 +15,7 @@ class MessagesScreen extends React.Component {
   }
 
   onPress = ({ item: { groupId, name, uid } }) => {
-    this.props.navigation.navigate('Chat', {
+    NavigationService.navigate('Chat', {
       groupId,
       title: name,
       uid, // : Fire.shared.getOtherUsersFromChatGroup(groupId)[0],
@@ -23,9 +24,7 @@ class MessagesScreen extends React.Component {
 
   render() {
     const { chats } = this.props;
-    return (
-      <MessagesList data={Object.values(chats)} onPress={this.onPress} />
-    );
+    return <MessagesList data={Object.values(chats)} onPress={this.onPress} />;
   }
 }
 

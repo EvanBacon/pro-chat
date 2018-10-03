@@ -15,6 +15,8 @@ import Time from '../components/Time';
 import Meta from '../constants/Meta';
 import Fire from '../Fire';
 import CustomView from './CustomView';
+import NavigationService from '../navigation/NavigationService';
+import Settings from '../constants/Settings';
 
 class Chat extends React.Component {
   static navigationOptions = ({ navigation }) => ({
@@ -40,6 +42,14 @@ class Chat extends React.Component {
 
   get uid() {
     return Fire.shared.uid;
+  }
+
+  componentWillReceiveProps({ title }) {
+    if (this.props.title !== title) {
+      this.props.navigation.setParams({ title });
+    }
+    
+
   }
 
   async componentDidMount() {
@@ -212,7 +222,7 @@ class Chat extends React.Component {
   onLoadEarlier = () => dispatch.chats.loadEarlier(this.props.channel);
 
   onPressAvatar = user =>
-    this.props.navigation.navigate('OtherProfile', { uid: user._id });
+  NavigationService.navigate('Profile', { uid: user._id });
 
   renderAccessory = () => (
     <AccessoryBar
@@ -406,6 +416,7 @@ const mergeProps = (state, dispatchProps, ownProps) => {
       // otherUsers,
       otherUserUid,
       otherUser,
+      title: otherUser.name || otherUser.firstName || otherUser.displayName || otherUser.deviceName || Settings.noName,
 
       // firstMessage,
       channelHasMore: _channelHasMore,

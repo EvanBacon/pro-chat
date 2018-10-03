@@ -11,6 +11,7 @@ import Gate from './rematch/Gate';
 import AssetUtils from './universal/AssetUtils';
 import { AppLoading } from './universal/Expo';
 import { ActionSheetProvider } from './universal/ActionSheet';
+import Loading from './components/Loading';
 
 console.ignoredYellowBox = Settings.ignoredYellowBox;
 
@@ -18,9 +19,6 @@ export default class App extends React.Component {
   state = { loading: true };
 
   get loadingScreen() {
-    if (Settings.debug) {
-      return <View />;
-    }
     return <AppLoading />;
   }
 
@@ -49,28 +47,24 @@ export default class App extends React.Component {
     return AssetUtils.arrayFromObject(Assets.images);
   }
 
-  componentWillMount() {
-    // console.time('Startup');
-    this._setupExperienceAsync();
-  }
-
   componentDidMount() {
     StatusBar.setBarStyle('light-content', true);
+    this._setupExperienceAsync();
     Fire.shared.init();
   }
 
   componentWillUnmount() {}
 
   _setupExperienceAsync = async () => {
-    await Promise.all([this._preloadAsync()]);
+    await Promise.all(this._preloadAsync());
     // console.timeEnd('Startup');
     this.setState({ loading: false });
   };
 
-  async _preloadAsync() {
-    await AssetUtils.cacheAssetsAsync({
+  _preloadAsync() {
+    return AssetUtils.cacheAssetsAsync({
       fonts: this.fonts,
-      files: this.files,
+      // files: this.files,
     });
   }
 

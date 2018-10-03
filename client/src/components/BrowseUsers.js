@@ -9,6 +9,7 @@ import Footer from './Footer';
 import Gradient from './Gradient';
 import Section from './Section';
 import Slider from './Slider';
+import NavigationService from '../navigation/NavigationService';
 
 const Images = Assets.images;
 // const debug = false;
@@ -82,16 +83,22 @@ export default class BrowseUsers extends Component {
 
     // return _users;
 
-    return this.props.users;
+    return ['k6rCUoV1ckMnej3zx31Pr9GJT143']; // this.props.users;
   }
 
   render() {
     const { users } = this;
     const { selectedData } = this.state;
 
-    const keys = ['fake-03', 'fake-033', 'fake-0333', 'fake-033333', 'fake-0333432'];
+    // const keys = [
+    //   'fake-03',
+    //   'fake-033',
+    //   'fake-0333',
+    //   'fake-033333',
+    //   'fake-0333432',
+    // ];
 
-    // const keys = Object.keys(users || {});
+    const keys = users; // Object.keys(users || {});
 
     if (!users || !keys.length) {
       return (
@@ -146,7 +153,7 @@ export default class BrowseUsers extends Component {
             }
           }}
           onPressItem={(uid) => {
-            this.props.navigation.navigate('OtherProfile', { uid });
+            NavigationService.navigate('Profile', { uid });
           }}
           onLike={this.props.onLike}
           onDislike={this.props.onDislike}

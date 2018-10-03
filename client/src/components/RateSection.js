@@ -1,3 +1,4 @@
+import { dispatch } from '@rematch/core';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
@@ -8,24 +9,34 @@ import Section from './Section';
 
 export default class RateSection extends Component {
   static propTypes = {
-    title: PropTypes.string.isRequired,
+    title: PropTypes.string,
     style: View.propTypes.style,
-    updateRelationshipWithUser: PropTypes.func.isRequired,
     uid: PropTypes.string.isRequired,
   };
+
+  static defaultProps = {
+    title: undefined,
+  };
+
   render() {
-    const {
-      title, style, uid, updateRelationshipWithUser,
-    } = this.props;
+    const { title, style, uid } = this.props;
     return (
       <Section title={title} style={[style, styles.container]}>
         <Footer
           uid={uid}
           selectedData={uid}
           footerVisible
-          onLike={() => updateRelationshipWithUser(uid, Relationship.like)}
+          onLike={() =>
+            dispatch.users.updateRelationshipWithUser({
+              uid,
+              type: Relationship.like,
+            })
+          }
           onDislike={() =>
-            updateRelationshipWithUser(uid, Relationship.dislike)
+            dispatch.users.updateRelationshipWithUser({
+              uid,
+              type: Relationship.dislike,
+            })
           }
         />
       </Section>

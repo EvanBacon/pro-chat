@@ -3,15 +3,17 @@ import React from 'react';
 import { StyleSheet, Text, TouchableHighlight, View } from 'react-native';
 
 import UserImage from './UserImage';
+import Settings from '../constants/Settings';
 
 export default class MatchesRow extends React.Component {
   static defaultProps = {
     underlayColor: '#ddd',
-    name: 'Nameless Bute',
+    name: Settings.noName,
+    // image: require('../assets/icons/expo.png'),
   };
 
   static propTypes = {
-    image: PropTypes.string.isRequired,
+    image: PropTypes.string,
     name: PropTypes.string.isRequired,
     onPress: PropTypes.func.isRequired,
     underlayColor: PropTypes.string,
@@ -24,22 +26,17 @@ export default class MatchesRow extends React.Component {
     return (
       <TouchableHighlight underlayColor={underlayColor} onPress={onPress}>
         <View style={styles.container}>
-          {image && (
-            <UserImage
-              containerStyle={{
-                marginRight: 0,
-              }}
-              source={{
-                uri: image,
-              }}
-              size={64}
-            />
-          )}
-          {name && (
-            <Text style={styles.title} numberOfLines={1}>
-              {name}
-            </Text>
-          )}
+          <UserImage
+            containerStyle={{
+              marginRight: 0,
+            }}
+            name={name}
+            image={image}
+            size={64}
+          />
+          <Text style={styles.title} numberOfLines={1}>
+            {name}
+          </Text>
         </View>
       </TouchableHighlight>
     );

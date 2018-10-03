@@ -3,7 +3,7 @@ import { Dimensions, StyleSheet } from 'react-native';
 const { height, width } = Dimensions.get('window');
 export const ITEM_SIZE = width * 0.68;
 export const EMPTY_ITEM_SIZE = width - ITEM_SIZE;
-export const BAR_HEIGHT = height * 0.149925037; // (Constants.statusBarHeight || 20) * 5;
+export const BAR_HEIGHT = height * 0.13; // 0.149925037; // (Constants.statusBarHeight || 20) * 5;
 
 export default StyleSheet.create({
   container: {

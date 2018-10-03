@@ -10,6 +10,7 @@ import getDeviceInfo from '../utils/getUserInfo';
 
 import NavigationService from '../navigation/NavigationService';
 import Relationship from '../models/Relationship';
+import getPermission from '../utils/getPermission';
 
 // import GameStates from '../Game/GameStates';
 
@@ -29,8 +30,6 @@ import Relationship from '../models/Relationship';
 //   return name;
 // }
 
-
-
 export const location = {
   state: {},
   reducers: {
@@ -39,18 +38,17 @@ export const location = {
     clear: () => {},
   },
   effects: {
-    getAsync: () => {
-
+    getAsync: async () => {
       const hasit = await getPermission(Permissions.LOCATION);
       if (!hasit) {
         return null;
       }
       if (Settings.simulator && Settings.debuggingLocation) {
-        return await syncCoords(
-          preventServerUpdate,
-          { latitude: 30.14728379721442, longitude: -97.77971597219003 },
-          new Date().getTime(),
-        );
+        // return syncCoords(
+        //   false,
+        //   { latitude: 30.14728379721442, longitude: -97.77971597219003 },
+        //   new Date().getTime(),
+        // );
       }
     
       const { coords, timestamp } = await Location.getCurrentPositionAsync({});
@@ -75,7 +73,7 @@ function reduceFirebaseUser(user) {
       }
     }
     if (Object.keys(possibleUpdates).length > 0) {
-      const user = firebase.auth().currentUser;
+      // const user = firebase.auth().currentUser;
       console.log({ possibleUpdates });
       firebase.auth().currentUser.updateProfile(possibleUpdates);
     }
@@ -139,6 +137,11 @@ export const onBoarding = {
     set: (state, props) => props,
     clear: () => {},
   },
+  effects: {
+    setItem: async (...props) => {
+      console.warn("TODO: onBoarding.setItem", props)
+    }
+  }
 };
 
 export const user = {
@@ -181,6 +184,9 @@ export const user = {
         }
       });
     },
+    updateRelationshipWithUser: ({ uid, type }) => {
+console.warn("TODO: user.updateRelationshipWithUser")
+    },
     getAsync: async (props, { user: localUserData }) => {
       const nextLocalUserData = localUserData || {};
       let combinedUserData = {};
@@ -201,7 +207,7 @@ export const user = {
       const updates = {};
       for (const key of Object.keys(combinedUserData)) {
         if (
-          combinedUserData[key] != undefined &&
+          combinedUserData[key] !== undefined &&
           combinedUserData[key] !== nextLocalUserData[key]
         ) {
           updates[key] = combinedUserData[key];
@@ -273,8 +279,11 @@ export const relationships = {
     set: (state, props) => props,
   },
   effects: {
-    whenWasUserRated:() => {},
+    whenWasUserRated: () => {},
     updateAsync: async ({ uid: otherId, type }) => {
+      const userId = Fire.shared.uid;
+      if (otherId === userId) return;
+
       const isPerformingInvalidAction = type === Relationship.blocked || type === Relationship.matched;
 
       if (isPerformingInvalidAction) {
@@ -282,7 +291,6 @@ export const relationships = {
       }
 
       console.log('relationships.updateAsync', { otherId, type });
-      const userId = Fire.shared.uid;
       const groupId = Fire.shared.getGroupId(userId, otherId);
 
       // const props = {
@@ -396,8 +404,9 @@ export const relationships = {
       console.log(_status);
     },
     getAsync: async ({ uid: otherId }) => {
-      // console.log({ uid });
       const userId = Fire.shared.uid;
+      if (otherId === userId) return;
+      // console.log({ uid });
       const groupId = Fire.shared.getGroupId(userId, otherId);
 
       const doc = await firebase.firestore().collection(Settings.refs.relationships).doc(groupId);
@@ -414,13 +423,15 @@ export const relationships = {
     },
     getAllOfTypeAsync: async ({ type }) => {
       console.log({ type });
-      const userId = Fire.shared.uid;
+      // const userId = Fire.shared.uid;
 
       // const doc = await firebase.firestore().collection(Settings.refs.relationships).where('members', 'array-contains', userId).where(`status.${userId}`, '==', type);
 
       // doc.get();
     },
-    isMatched: ({ uid, shouldUpdate = false, callback }) => {
+    isMatched: ({ uid: otherId, shouldUpdate = false, callback }) => {
+      const userId = Fire.shared.uid;
+      if (otherId === userId) return;
       // const isMatched = getAsync() === Relationship.match;
       callback(false);
     },
@@ -617,6 +628,9 @@ export const users = {
     clear: () => ({}),
   },
   effects: {
+    getAsync: async () => {
+      dispatch.users.getPaged({size: 2})
+    },
     getPaged: async ({ size, start }) => {
       const { data } = await Fire.shared.getUsersPaged({ size, start });
       for (const user of data) {
@@ -636,7 +650,8 @@ export const users = {
     getProfileImage: ({ uid, forceUpdate }) => {
       dispatch.users.getPropertyForUser({ uid, propName: 'photoURL', forceUpdate });
     },
-    getPropertyForUser: async ({ propName, uid, forceUpdate, callback }, { users }) => {
+    getPropertyForUser: async ({ propName, uid, forceUpdate, callback: _cb }, { users }) => {
+      let callback = _cb || function() {}
       if (!isValidKey(uid)) {
         console.warn('getPropertyForUser: Invalid Key', { uid });
         callback();
@@ -661,13 +676,13 @@ export const users = {
             });
 
             callback(userData);
-            return;
+            return null;
           }
-
         } catch ({ message }) {
           throw new Error(`getPropForUser ${message}`);
         }
-        callback(null;)
+        callback(null);
+        return null;
       }
     },
   },
@@ -814,7 +829,7 @@ export const chats = {
       });
     },
     startChatting: async ({ uids, callback }, { chats }) => {
-      const groupId = Fire.shared.getChatGroupId(uids);
+      const groupId = Fire.shared.getGroupId(uids);
       console.log('start chatting');
 
       if (!chats[groupId]) {

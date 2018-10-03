@@ -14,7 +14,11 @@ export default class MessageRow extends React.Component {
     } = this.props;
 
     return (
-      <TouchableHighlight underlayColor="#ddd" onPress={onPress} onLongPress={onLongPress}>
+      <TouchableHighlight
+        underlayColor="#ddd"
+        onPress={onPress}
+        onLongPress={onLongPress}
+      >
         <View
           style={{
             flex: 1,
@@ -26,7 +30,12 @@ export default class MessageRow extends React.Component {
           }}
         >
           <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
-            <UserImage source={image} style={{ marginRight: 14 }} isNew={seen === false} />
+            <UserImage
+              name={name}
+              image={image}
+              style={{ marginRight: 14 }}
+              isNew={seen === false}
+            />
             <Message title={name} subtitle={text} />
           </View>
           <Timestamp>{timestamp}</Timestamp>
@@ -36,7 +45,9 @@ export default class MessageRow extends React.Component {
   }
 }
 
-export const Timestamp = ({ children }) => <Text style={{ textAlign: 'right' }}>{children}</Text>;
+export const Timestamp = ({ children }) => (
+  <Text style={{ textAlign: 'right' }}>{children}</Text>
+);
 
 export const Message = ({ title, subtitle }) => (
   <View>

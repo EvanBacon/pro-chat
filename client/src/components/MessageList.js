@@ -1,4 +1,4 @@
-import { dispatch } from '@rematch/core/typings/rematch';
+import { dispatch } from '@rematch/core';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -7,6 +7,7 @@ import Images from '../Images';
 import EmptyListMessage from './EmptyListMessage';
 import MessageRow from './MessageRow';
 import UserList from './UserList';
+import Settings from '../constants/Settings';
 
 // import { findMessageChannels, removedMessageChannel } from '../redux/messages';
 class MessageList extends React.Component {
@@ -75,7 +76,7 @@ class MessageList extends React.Component {
     />
   );
 }
-export default connect(
+const MessageScreen = connect(
   ({ matches = {}, chats = {} }) => {
     const combined = { ...matches, ...chats };
 
@@ -91,7 +92,15 @@ export default connect(
     }
 
     return {
-      channels: _channels,
+      channels: _channels.map(item => ({
+        ...item,
+        name:
+          item.name ||
+          item.firstName ||
+          item.displayName ||
+          item.deviceName ||
+          Settings.noName,
+      })),
       badgeCount,
     };
   },
@@ -104,3 +113,7 @@ export default connect(
     // removedMessageChannel,
   },
 )(MessageList);
+
+MessageScreen.navigation = { title: 'Messages' };
+
+export default MessageScreen;

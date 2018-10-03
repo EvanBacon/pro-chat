@@ -18,7 +18,7 @@ export default class ProfileImage extends React.Component {
   };
 
   componentDidMount() {
-    if (!this.state.image) this._getProfileImageAsync();
+    // if (!this.state.image) this._getProfileImageAsync();
   }
 
   _getProfileImageAsync = async () => {
@@ -99,15 +99,31 @@ export default class ProfileImage extends React.Component {
   };
 
   render() {
+    const { size } = this.props;
+
+    let containerStyle = styles.container;
+    if (size) {
+      containerStyle = {
+        ...containerStyle,
+        minWidth: size,
+        maxWidth: size,
+        minHeight: size,
+        maxHeight: size,
+        borderRadius: size / 2,
+        backgroundColor: 'blue',
+        overflow: 'hidden',
+      };
+    }
+
     return (
-      <View style={styles.container}>
-        <TouchableOpacity onPress={this.onPress}>
+      <View style={[containerStyle, this.props.style]}>
+        <TouchableOpacity style={containerStyle} onPress={this.onPress}>
           <AvatarImage
             progress={this.state.progress}
             textStyle={styles.text}
             avatarStyle={styles.avatar}
             name={this.props.name}
-            avatar={this.state.image}
+            avatar={this.props.image}
           />
         </TouchableOpacity>
       </View>
@@ -118,12 +134,14 @@ export default class ProfileImage extends React.Component {
 const styles = StyleSheet.create({
   container: {
     height: Settings.avatarSize,
-    minWidth: Settings.avatarSize,
+    width: Settings.avatarSize,
+    aspectRatio: 1,
   },
   text: { fontWeight: 'bold', fontSize: 48 },
   avatar: {
     width: '100%',
     height: '100%',
+    aspectRatio: 1,
     borderRadius: Settings.avatarSize / 2,
   },
 });

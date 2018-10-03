@@ -1,28 +1,33 @@
 import React from 'react';
-import { ActivityIndicator, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 
+import { AppLoading } from '../universal/Expo';
+
+// import Loading from '../components/Loading';
 export default class Screen extends React.Component {
   static navigationOptions = { title: 'Loading' };
 
   render() {
-    return (
-      <View style={styles.container}>
-        <StatusBar barStyle="default" />
-        <ActivityIndicator />
-        <Text style={styles.text}>Loading</Text>
-      </View>
-    );
+    return <AppLoading />;
+    // return (
+    //   <View style={styles.container}>
+    //     <StatusBar barStyle="default" />
+    //     <ActivityIndicator />
+    //     <Text style={styles.text}>Loading</Text>
+    //   </View>
+    // );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#331a71',
     alignItems: 'center',
     justifyContent: 'center',
   },
   text: {
     textAlign: 'center',
+    color: 'white',
   },
 });

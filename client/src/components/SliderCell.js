@@ -25,6 +25,8 @@ class SliderCell extends React.PureComponent {
     }
   };
 
+  onPress = () => this.props.onPressItem(this.props.uid);
+
   render() {
     const {
       itemWidth,
@@ -45,6 +47,7 @@ class SliderCell extends React.PureComponent {
     const styles = {
       image: {
         backgroundColor: 'white',
+        overflow: 'hidden',
         width: itemWidth,
         height: itemWidth,
         borderRadius: itemWidth / 2,
@@ -66,13 +69,10 @@ class SliderCell extends React.PureComponent {
         >
           <TouchableBounce
             activeOpacity={0.7}
-            style={{ flex: 1 }}
-            onPress={() => onPressItem(uid)}
+            style={{ flex: 1, overflow: 'hidden' }}
+            onPress={this.onPress}
           >
-            <LoadingImage
-              source={image}
-              style={styles.image}
-            />
+            <LoadingImage source={image} style={styles.image} />
           </TouchableBounce>
         </View>
         <Meta
@@ -88,23 +88,20 @@ class SliderCell extends React.PureComponent {
 
 const mergeProps = ({ users, ...state }, actions, { uid, ...localProps }) => {
   const user = users[uid] || {};
-
-  const {
-    about,
-    rating,
-  } = user;
+  // console.warn(user, uid);
+  const { about, rating } = user;
   const userProps = {
-    about,
-    rating,
+    uid,
+    about: about || 'I am not interesting, but I do like to pretend.',
+    rating: 'moth',
     image: user.photoURL,
-    firstName: user.first_name,
+    firstName: user.first_name || user.name || user.displayName,
   };
   return {
     ...state,
     ...localProps,
     ...actions,
     ...userProps,
-    uid,
   };
 };
 
