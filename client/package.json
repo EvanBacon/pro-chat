@@ -6,6 +6,7 @@
   "private": true,
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
+    "watchbuild": "watchbuild -a com.bacon.bute -u evanjbacon@gmail.com",
     "metadata": "fastlane deliver --skip_binary_upload",
     "start": "./node_modules/.bin/webpack-dev-server -d --config ./webpack.config.js  --inline --hot --colors --content-base public/",
     "build": "NODE_ENV=production ./node_modules/.bin/webpack -p --config ./webpack.config.js",

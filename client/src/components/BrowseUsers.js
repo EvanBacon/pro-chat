@@ -10,6 +10,7 @@ import Gradient from './Gradient';
 import Section from './Section';
 import Slider from './Slider';
 import NavigationService from '../navigation/NavigationService';
+import Settings from '../constants/Settings';
 
 const Images = Assets.images;
 // const debug = false;
@@ -101,6 +102,10 @@ export default class BrowseUsers extends Component {
     const keys = users; // Object.keys(users || {});
 
     if (!users || !keys.length) {
+      if (Settings.hideBooty) {
+        return null;
+      }
+
       return (
         <Gradient
           style={{

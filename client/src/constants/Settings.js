@@ -41,6 +41,7 @@ const Settings = {
     apiKey: 'dc6zaTOxFJmzC',
     endPoint: 'https://api.giphy.com/v1/gifs/search?q=',
   },
+  hideBooty: true,
   noName: 'Sasuke Uchiha',
   isIos: Platform.OS === 'ios',
   osVersion: sizeInfo.osVersion,

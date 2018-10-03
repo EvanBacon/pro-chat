@@ -3,7 +3,7 @@
     "name": "Bütē",
     "description": "A neat messaging app.",
     "slug": "bute",
-    "privacy": "public",
+    "privacy": "unlisted",
     "sdkVersion": "30.0.0",
     "platforms": ["ios", "android"],
     "version": "0.0.0",
@@ -31,7 +31,7 @@
     "ios": {
       "icon": "./src/assets/icons/ios.png",
       "supportsTablet": true,
-      "buildNumber": "0",
+      "buildNumber": "1",
       "bundleIdentifier": "com.bacon.bute",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Send your location to your friends",

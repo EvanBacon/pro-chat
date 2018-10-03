@@ -53,11 +53,6 @@ class Fire {
     firebase.firestore().settings({ timestampsInSnapshots: true });
     dispatch.user.observeAuth();
 
-    // DEBUG
-    if (!Settings.debug) {
-      dispatch.leaders.clear();
-    }
-
     // dispatch.users.clear();
     // dispatch.user.clear();
   };

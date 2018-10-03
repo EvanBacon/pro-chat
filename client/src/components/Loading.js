@@ -14,7 +14,7 @@ export default class Loading extends React.PureComponent {
     //       flex: 1,
     //       width: '100%',
     //       height: '100%',
-    //       backgroundColor: Constants.manifest.tintColor,
+    //       backgroundColor: '#52416A',
     //     }}
     //     source={Assets.images.splash}
     //   />

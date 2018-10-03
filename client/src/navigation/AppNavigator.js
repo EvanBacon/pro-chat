@@ -19,6 +19,7 @@ import HomeScreen from '../screens/HomeScreen';
 import MessagesScreen from '../screens/MessagesScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SignInScreen from '../screens/SignInScreen';
+import Settings from '../constants/Settings';
 
 // import CameraScreen from '../screens/CameraScreen';
 // import DevTeamScreen from '../screens/DevTeamScreen';
@@ -39,6 +40,7 @@ const MainTab = createBottomTabNavigator(
     swipeEnabled: true,
     animationEnabled: true,
     tabBarOptions: {
+      // tabBarButtonComponent: () => <Text>
       activeTintColor: '#e91e63',
       activeBackgroundColor: tintColor,
       inactiveBackgroundColor: tintColor,
@@ -59,7 +61,7 @@ const MainTab = createBottomTabNavigator(
 );
 
 MainTab.navigationOptions = {
-  title: 'Būte',
+  title: Settings.hideBooty ? 'Beauty' : 'Būte',
   // headerRight: (
   //   <View style={{ marginRight: 16 }}>
   //     <Button.Chat selected />
@@ -90,6 +92,7 @@ const AppStack = createStackNavigator(
     },
     navigationOptions: {
       headerTransparent: true,
+      tintColor: 'white',
       headerBackground: <Header />,
       headerTitleStyle: {
         fontFamily: 'DINPro-Regular',
