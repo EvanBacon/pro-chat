@@ -21,13 +21,14 @@ import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import SignInScreen from '../screens/SignInScreen';
 import NavigationService from './NavigationService';
-
+import ChooseInterestScreen from '../components/ChooseInterest';
 // import ExploreScreen from '../screens/ExploreScreen';
 // import CameraScreen from '../screens/CameraScreen';
-// import DevTeamScreen from '../screens/DevTeamScreen';
+import DevTeamScreen from '../screens/DevTeamScreen';
 // import ReportScreen from '../screens/ReportScreen';
-// import UnderAgeScreen from '../screens/UnderAgeScreen';
+import UnderAgeScreen from '../screens/UnderAgeScreen';
 import WebsiteScreen from '../screens/WebsiteScreen';
+import LicensesScreen from '../components/Licenses';
 
 // const { tintColor } = Constants.manifest;
 const tintColor = '#52416A';
@@ -95,13 +96,14 @@ const AppStack = createStackNavigator(
     Communications: CommunicationsScreen,
     Messages: MessagesScreen,
     Profile: ProfileScreen,
-
+    Licenses: LicensesScreen,
+    ChooseInterest: ChooseInterestScreen,
     // Camera: CameraScreen,
-    // DevTeam: DevTeamScreen,
+    DevTeam: DevTeamScreen,
     // Explore: ExploreScreen,
     // Report: ReportScreen,
     Settings: SettingsScreen,
-    // UnderAge: UnderAgeScreen,
+    UnderAge: UnderAgeScreen,
     Website: WebsiteScreen,
   },
   {

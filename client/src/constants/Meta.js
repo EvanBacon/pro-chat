@@ -129,7 +129,7 @@ export const strings = {
     eula: 'EULA',
     privacy_policy: 'Privacy Policy',
     terms_of_service: 'Terms of Service',
-    licenses: 'Licenses',
+    licenses: 'Libraries',
     contact: 'Contact',
     interested_in: 'Interested In',
     help_support: 'Help & Support',

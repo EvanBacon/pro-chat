@@ -180,10 +180,10 @@ export default class BrowseUsers extends Component {
             footerVisible={footerVisible}
             onLike={this._like}
             onDislike={this._dislike}
-            onShuffle={(_) => {
+            onShuffle={() => {
               // / Share
             }}
-            onRevert={(_) => {
+            onRevert={() => {
               // More
             }}
           />

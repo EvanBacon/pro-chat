@@ -79,7 +79,7 @@ const Settings = {
   isCacheProfileUpdateActive: !debug || false,
   shouldDelayFirebaseProfileSyncInMinutes: 60,
   canEditPhoto: false,
-  mainInitialRouteName: 'MainTab', // 'Chat'
+  mainInitialRouteName: 'MainTab', // 'Settings', // 'UnderAge', // 'MainTab', // 'Chat'
   testOnboarding: false,
   needsProfileImage: true,
   location: {

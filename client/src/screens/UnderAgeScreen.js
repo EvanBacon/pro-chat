@@ -8,6 +8,8 @@ import Meta from '../constants/Meta';
 import Images from '../Images';
 
 class UnderAgeReview extends React.Component {
+  static navigationOptions = { title: 'Not Old Enough!' };
+
   render() {
     return (
       <Gradient style={{ justifyContent: 'flex-end' }}>

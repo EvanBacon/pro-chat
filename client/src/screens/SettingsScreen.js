@@ -1,6 +1,5 @@
 import { dispatch } from '@rematch/core';
 import Expo, { Haptic } from 'expo';
-import firebase from '../universal/firebase';
 import React from 'react';
 import {
   Animated,
@@ -20,9 +19,9 @@ import { connect } from 'react-redux';
 import Gradient from '../components/Gradient';
 import Colors from '../constants/Colors';
 import Meta from '../constants/Meta';
-import Fire from '../Fire';
 import Images from '../Images';
 import NavigationService from '../navigation/NavigationService';
+import firebase from '../universal/firebase';
 import emailSupport, { Subjects } from '../utils/sendEmailToSupport';
 import transformInterestTitle from '../utils/transformInterestTitle';
 
@@ -76,6 +75,29 @@ class Carousel extends React.Component {
     itemWidth: 130,
   };
 
+  constructor(props) {
+    super(props);
+
+    this._currentPage = -1;
+
+    const isHapticEnabled = Platform.OS === 'ios';
+    if (isHapticEnabled) {
+      this.scroll.addListener( ({ value }) => {
+
+        const perc = (value / this.state.itemWidth) - 0.5;
+        let page = Math.floor(perc);
+
+        if (page !== this._currentPage) {
+          this._currentPage = page;
+          Haptic.selection();
+        }
+      });
+     }
+  }
+
+  componentWillUnmount() {
+    this.scroll.removeAllListeners();
+  }
   _onLayout = ({ nativeEvent: { layout } }) => this.setState({ ...layout });
 
   renderItem = ({ item, index }) => {
@@ -199,9 +221,9 @@ class Carousel extends React.Component {
     this.props.onSelectIndex(page, this.props.data[page]);
     // this._setCurrentPage(page);
 
-    if (Platform.os === 'ios') {
-      Haptic.selection();
-    }
+    // if (Platform.OS === 'ios') {
+    //   Haptic.selection();
+    // }
   };
   _calculateCurrentPage = (offset) => {
     const { itemWidth } = this.state;
@@ -339,6 +361,8 @@ const urls = {
 };
 
 class SettingsScreen extends React.Component {
+
+  static navigationOptions = { title: "Settings" }
   ranges = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
 
   setCarousel = false;
@@ -389,7 +413,7 @@ class SettingsScreen extends React.Component {
       update: () => Expo.Util.reload(),
       privacypolicy: () => this.openWeb(urls.privacy, Meta.privacy_policy),
       tos: () => this.openWeb(urls.terms, Meta.terms_of_service),
-      licenses: () => this.openWeb(urls.licenses, Meta.licenses),
+      licenses: () => NavigationService.navigate('Licenses'),
       help: () => this.openWeb(urls.contact, Meta.contact),
       contact: () => emailSupport({ subject: Subjects.general }),
     };
@@ -438,6 +462,10 @@ class SettingsScreen extends React.Component {
           <SwitchCell
             title={Meta.notifications}
             onValueChange={(notificationsEnabled) => {
+
+              if (Platform.OS === "ios") {
+                Haptic.selection();
+              }
               if (notificationsEnabled) {
                 firebase.messaging().requestPermissions();
               }
@@ -494,7 +522,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     // backgroundColor: '#fff',
-    paddingTop: 128,
+    paddingTop: 64,
   },
 });
 

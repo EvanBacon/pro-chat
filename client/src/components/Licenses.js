@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { FlatList, StyleSheet } from 'react-native';
 
 import Settings from '../constants/Settings';
-import Data from '../licenses';
+import Data from '../../licenses';
 import LicensesListItem from './LicensesListItem';
 
 function extractNameFromGithubUrl(url) {
@@ -73,7 +73,10 @@ export default class Licenses extends Component {
         style={styles.list}
         keyExtractor={({ key }) => `${key}`}
         data={licenses}
-        contentContainerStyle={{ paddingBottom: Settings.bottomInset }}
+        contentContainerStyle={{
+          paddingBottom: Settings.bottomInset,
+          paddingTop: 30,
+        }}
         renderItem={this.renderItem}
       />
     );
