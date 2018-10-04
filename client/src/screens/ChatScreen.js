@@ -64,7 +64,7 @@ class Chat extends React.Component {
   async componentDidMount() {
     const { otherUserUid, groupId } = this.props;
     // dispatch.chats.clear({ uid: groupId });
-    await Fire.shared.getUserAsync({ uid: otherUserUid });
+    // await Fire.shared.getUserAsync({ uid: otherUserUid });
     dispatch.chats.startChatting({
       uids: otherUserUid,
       callback: (unsubscribe) => {

@@ -133,7 +133,7 @@ class Fire {
   _groupIdCache = {};
   _getChatGroupId = (input) => {
     const uids = ensureChatGroupIDs(input);
-    const keys = uids.sort((a, b) => +(a.attr > b.attr) || -(a.attr < b.attr));
+    const keys = uids.sort((a, b) => a > b); //+(a.attr > b.attr) || -(a.attr < b.attr));
     const groupId = keys.join('_');
     return groupId;
   };
@@ -267,7 +267,7 @@ class Fire {
   getMessageList = async () => {
     // / lol debug....
 
-    console.log('debugging getMessageList()');
+    // console.log('debugging getMessageList()');
     // const _debugPreviewMessages = {
     //   '0UUOFoP8xMTQ0lD5g8ax5CnIo2o2_k6rCUoV1ckMnej3zx31Pr9GJT143': {
     //     name: 'Evan Bacon',
@@ -351,15 +351,12 @@ class Fire {
       const sender = group[0];
       const user = await (new Promise(res => dispatch.users.ensureUserIsLoadedAsync({ uid: sender, callback: res }) ));
 
-      console.log('previewMessage:try', {
-        user, //message, groupId, members,
-      });
       const previewMessage = parseMessage(user, message, groupId, group);
 
       previewMessages[groupId] = previewMessage;
     }
 
-    console.log('heeyyooo',previewMessages)// JSON.stringify(previewMessages));
+    // console.log('heeyyooo',previewMessages)// JSON.stringify(previewMessages));
     dispatch.messages.update(previewMessages);
     return previewMessages;
   };

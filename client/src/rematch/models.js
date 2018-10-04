@@ -308,7 +308,7 @@ export const relationships = {
       const doc = await firebase.firestore().collection(Settings.refs.relationships).doc(groupId);
 
       function createGroupAsync(...ids) {
-        const members = ids.sort((a, b) => +(a.attr > b.attr) || -(a.attr < b.attr));
+        const members = ids.sort((a, b) => a > b);
         console.log("Relationship.updateAsync: createGroupAsync", {members})
 
         return doc.set({ members });
@@ -760,8 +760,6 @@ export const users = {
         callback();
         return null;
       }
-
-      console.log('getPropertyForUser', uid, users[uid]);
       if (
         forceUpdate === true ||
         !users[uid] ||
@@ -924,6 +922,7 @@ export const chats = {
         throw new Error("Invalid User data found, can't parse message");
       }
 
+      console.log("Add Message", message.key);
       dispatch.chats.addMessages({
         groupId,
         messages: {
