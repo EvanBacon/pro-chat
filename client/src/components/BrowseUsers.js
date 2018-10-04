@@ -158,7 +158,7 @@ export default class BrowseUsers extends Component {
             }
           }}
           onPressItem={(uid) => {
-            NavigationService.navigate('Profile', { uid });
+            NavigationService.navigateToUserSpecificScreen('Profile', { uid });
           }}
           onLike={this.props.onLike}
           onDislike={this.props.onDislike}
