@@ -9,6 +9,8 @@ import MessageRow from './MessageRow';
 import UserList from './UserList';
 import Settings from '../constants/Settings';
 
+import NavigationService from '../navigation/NavigationService';
+import Fire from '../Fire';
 // import { findMessageChannels, removedMessageChannel } from '../redux/messages';
 class MessageList extends React.Component {
   state = {
@@ -43,8 +45,14 @@ class MessageList extends React.Component {
     this.setState({ refreshing: false });
   };
 
-  onPressRow = async ({ item: { uid } }) =>
-    this.props.navigate('Chat', { uid });
+  onPressRow = async ({ item: { channel } }) => {
+    const uid = Fire.shared.getOtherUsersFromChatGroup(channel)[0];
+    console.log('CHAT', uid, channel);
+
+    if (Fire.shared.canMessage({ uid })) {
+      NavigationService.navigate('Chat', { uid });
+    }
+  };
 
   renderItem = ({ item, index }) => (
     <MessageRow
@@ -81,28 +89,35 @@ const MessageScreen = connect(
     const combined = { ...matches, ...chats };
 
     // All messages ever [ { [key]: { ... } } ]
-    const _channels = Object.keys(combined)
-      .map(val => combined[val])
-      .sort((a, b) => b.date - a.date);
+    const _channels = Object.keys(combined).map(val => ({
+      messages: combined[val],
+      id: val,
+    }));
+    // .sort((a, b) => b.date - a.date);
 
     const firstMessages = [];
 
     for (const channel of _channels) {
-      const messages = Object.values(channel);
+      const messages = Object.values(channel.messages);
       if (messages.length && messages[0]) {
-        firstMessages.push(messages[0]);
+        firstMessages.push({
+          channel: channel.id,
+          ...messages[0],
+        });
       } else {
         // TODO: Empty...
-        firstMessages.push({});
+        firstMessages.push({
+          channel: channel.id,
+        });
       }
     }
 
-    let badgeCount = 0;
-    for (const channel of _channels) {
-      if (channel.seen === false) {
-        badgeCount += 1;
-      }
-    }
+    const badgeCount = 0;
+    // for (const channel of _channels) {
+    //   if (channel.seen === false) {
+    //     badgeCount += 1;
+    //   }
+    // }
 
     console.log('MessageList: Props: Users: ONEEEPUNCH', {
       channels: firstMessages,

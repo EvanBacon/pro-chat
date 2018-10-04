@@ -105,6 +105,7 @@ const AppStack = createStackNavigator(
     navigationOptions: {
       headerTransparent: true,
       tintColor: 'white',
+      headerTintColor: 'white',
       headerBackground: <Header />,
       headerTitleStyle: {
         fontFamily: 'DINPro-Regular',

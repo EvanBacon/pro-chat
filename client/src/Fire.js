@@ -153,7 +153,10 @@ class Fire {
     const doc = await this.getChatGroupDoc(key).get();
     return doc.exists;
   };
-
+  
+  canMessage = ({ uid }) => {
+    return (isValidKey(uid) && uid !== this.uid);
+  }
   getChatGroupCollection = () => this.db.collection('chat_groups');
 
   getChatGroupDoc = groupId => this.getChatGroupCollection().doc(groupId);
