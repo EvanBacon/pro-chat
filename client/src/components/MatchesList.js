@@ -47,7 +47,11 @@ class MatchesList extends React.PureComponent {
   onPressRow = async ({ uid }) => {
     console.log('GO TO:', { uid });
     if (Fire.shared.canMessage({ uid })) {
-      NavigationService.navigate('Profile', { uid });
+      // NavigationService.navigateToUserSpecificScreen('Profile', uid);
+      NavigationService.navigateToUserSpecificScreen(
+        'Chat',
+        'fHgE92IvgLbUmbG2nU7DOyLsk5e2',
+      );
     }
   };
   renderItem = ({ item }) => {

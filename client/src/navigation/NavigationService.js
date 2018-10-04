@@ -1,6 +1,7 @@
 // NavigationService.js
 
 import { NavigationActions } from 'react-navigation';
+import { dispatch } from '@rematch/core';
 
 let _navigator;
 
@@ -15,6 +16,11 @@ function navigate(routeName, params) {
   }));
 }
 
+function navigateToUserSpecificScreen(routeName, uid, params = {}) {
+  dispatch.users.ensureUserIsLoadedAsync({ uid });
+  navigate(routeName, { ...params, uid });
+}
+
 function goBack(routeName) {
   _navigator.dispatch(NavigationActions.back(routeName));
 }
@@ -25,4 +31,5 @@ export default {
   navigate,
   goBack,
   setTopLevelNavigator,
+  navigateToUserSpecificScreen,
 };

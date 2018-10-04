@@ -15,10 +15,9 @@ class MessagesScreen extends React.Component {
   }
 
   onPress = ({ item: { groupId, name, uid } }) => {
-    NavigationService.navigate('Chat', {
+    NavigationService.navigateToUserSpecificScreen('Chat', uid, {
       groupId,
       title: name,
-      uid, // : Fire.shared.getOtherUsersFromChatGroup(groupId)[0],
     });
   };
 

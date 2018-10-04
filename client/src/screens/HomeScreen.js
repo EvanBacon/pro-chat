@@ -15,7 +15,6 @@ import Relationship from '../models/Relationship';
 import NavigationService from '../navigation/NavigationService';
 import isUnderAge from '../utils/isUnderAge';
 
-
 // [
 //             "0a944021-1ba5-c51a-0e98-fc2dd3834eeb",
 //             "102737ac-5af8-ac22-5e5c-cfef54ebefeb",
@@ -46,11 +45,10 @@ class HomeScreen extends React.Component {
         color="blue"
       >
         <HeaderButtons.Item
-            title="add"
-            iconName="md-add"
-            onPress={async () => {
-            }}
-          />
+          title="add"
+          iconName="md-add"
+          onPress={async () => {}}
+        />
       </HeaderButtons>
     ),
   });
@@ -64,9 +62,15 @@ class HomeScreen extends React.Component {
   componentDidMount() {
     if (Settings.debugGoToChat) {
       if (Fire.shared.uid === 'fHgE92IvgLbUmbG2nU7DOyLsk5e2') {
-        NavigationService.navigate('Chat', { uid: 'pfrNeWLaXxMUnB2LBsG84OeSi732' });
+        NavigationService.navigateToUserSpecificScreen(
+          'Chat',
+          'pfrNeWLaXxMUnB2LBsG84OeSi732',
+        );
       } else {
-        NavigationService.navigate('Chat', { uid: 'fHgE92IvgLbUmbG2nU7DOyLsk5e2' });
+        NavigationService.navigateToUserSpecificScreen(
+          'Chat',
+          'fHgE92IvgLbUmbG2nU7DOyLsk5e2',
+        );
       }
     }
 
@@ -124,7 +128,7 @@ class HomeScreen extends React.Component {
               );
               // if (firebase.analytics) { firebase.analytics().logEvent('first_like', { uid }); }
             }
-            dispatch.user.updateRelationshipWithUser({
+            dispatch.relationships.updateAsync({
               uid,
               type: Relationship.like,
             });
@@ -139,7 +143,7 @@ class HomeScreen extends React.Component {
               );
               // if (firebase.analytics) { firebase.analytics().logEvent('first_dislike', { uid }); }
             }
-            dispatch.user.updateRelationshipWithUser({
+            dispatch.relationships.updateAsync({
               uid,
               type: Relationship.dislike,
             });
@@ -152,13 +156,13 @@ class HomeScreen extends React.Component {
                 Meta.meta_info_learn_more_subtitle,
                 Meta.meta_info_learn_more_action,
               );
-//               if (firebase.analytics) {
-// firebase
-//                   .analytics()
-//                   .logEvent('user_was_informed_about_tapping_profile_card', {
-//                     uid,
-//                   });
-// }
+              //               if (firebase.analytics) {
+              // firebase
+              //                   .analytics()
+              //                   .logEvent('user_was_informed_about_tapping_profile_card', {
+              //                     uid,
+              //                   });
+              // }
             }
           }}
           users={this.props.users}
@@ -167,14 +171,29 @@ class HomeScreen extends React.Component {
     );
   }
 }
+
 export default connect(({
   user,
   users, // geo: { nearbyUsers: users },
   onBoarding: { firstLike, firstDislike, wantMoreInfo },
-}) => ({
-  user,
-  users,
-  firstLike,
-  firstDislike,
-  wantMoreInfo,
-}))(HomeScreen);
+}) => {
+  const { [Fire.shared.uid]: currentUser, ...otherUsers } = users;
+
+  console.log('otherUsers', { otherUsers });
+  return {
+    user,
+    firstLike,
+    firstDislike,
+    wantMoreInfo,
+    users: Object.values(otherUsers).filter(({ uid }) =>
+      Fire.shared.canMessage({ uid })),
+  };
+
+  // return {
+  //   user,
+  //   users,
+  //   firstLike,
+  //   firstDislike,
+  //   wantMoreInfo,
+  // }
+})(HomeScreen);

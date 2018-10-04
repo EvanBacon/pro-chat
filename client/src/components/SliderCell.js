@@ -21,7 +21,7 @@ class SliderCell extends React.PureComponent {
 
   load = async (uid) => {
     if (typeof uid === 'string') {
-      dispatch.users.getAsync({ uid });
+      dispatch.users.ensureUserIsLoadedAsync({ uid });
     }
   };
 

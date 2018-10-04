@@ -26,9 +26,7 @@ class Profile extends Component {
     refreshing: false,
     rating: null,
   };
-  componentWillMount() {
-    dispatch.popular.getAsync();
-  }
+
   componentDidMount() {
     const { uid } = this.props;
     this.updateWithUID(uid);
@@ -227,7 +225,11 @@ const mergeProps = (
 
   const isUser = mainUserId === userId;
 
-  const relationship = relationships[userId];
+  let relationship = Relationship.none;
+  if (!isUser) {
+    relationship = relationships[Fire.shared.getGroupId(userId)];
+  }
+  
   const user = users[userId] || {};
   // console.warn(user, uid);
   const { about, rating } = user;

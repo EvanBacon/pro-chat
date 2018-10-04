@@ -27,13 +27,13 @@ export default class RateSection extends Component {
           selectedData={uid}
           footerVisible
           onLike={() =>
-            dispatch.users.updateRelationshipWithUser({
+            dispatch.relationships.updateAsync({
               uid,
               type: Relationship.like,
             })
           }
           onDislike={() =>
-            dispatch.users.updateRelationshipWithUser({
+            dispatch.relationships.updateAsync({
               uid,
               type: Relationship.dislike,
             })

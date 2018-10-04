@@ -84,7 +84,7 @@ export default class BrowseUsers extends Component {
 
     // return _users;
 
-    return ['k6rCUoV1ckMnej3zx31Pr9GJT143']; // this.props.users;
+    return this.props.users.map(({ uid }) => uid);
   }
 
   render() {

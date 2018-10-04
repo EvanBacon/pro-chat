@@ -37,7 +37,7 @@ class MessageList extends React.Component {
 
   _onRefresh = async () => {
     this.setState({ refreshing: true });
-    const messages = this.props.channels.map(({ uid, channel }) =>
+    const messages = this.props.channels.map(({ uid, groupId: channel }) =>
       dispatch.chats.getLastMessage({ uid, channel }));
 
     await Promise.all(messages);
@@ -45,12 +45,12 @@ class MessageList extends React.Component {
     this.setState({ refreshing: false });
   };
 
-  onPressRow = async ({ item: { channel } }) => {
+  onPressRow = async ({ item: { groupId: channel } }) => {
     const uid = Fire.shared.getOtherUsersFromChatGroup(channel)[0];
     console.log('CHAT', uid, channel);
 
     if (Fire.shared.canMessage({ uid })) {
-      NavigationService.navigate('Chat', { uid });
+      NavigationService.navigateToUserSpecificScreen('Chat', uid);
     }
   };
 
@@ -85,32 +85,32 @@ class MessageList extends React.Component {
   );
 }
 const MessageScreen = connect(
-  ({ matches = {}, chats = {} }) => {
-    const combined = { ...matches, ...chats };
+  ({ messages = {} }) => {
+    // const combined = messages; // { ...matches, ...chats };
 
     // All messages ever [ { [key]: { ... } } ]
-    const _channels = Object.keys(combined).map(val => ({
-      messages: combined[val],
-      id: val,
-    }));
-    // .sort((a, b) => b.date - a.date);
+    // const _channels = Object.keys(combined).map(val => ({
+    //   messages: combined[val],
+    //   id: val,
+    // }));
+    // // .sort((a, b) => b.date - a.date);
 
-    const firstMessages = [];
+    // const firstMessages = [];
 
-    for (const channel of _channels) {
-      const messages = Object.values(channel.messages);
-      if (messages.length && messages[0]) {
-        firstMessages.push({
-          channel: channel.id,
-          ...messages[0],
-        });
-      } else {
-        // TODO: Empty...
-        firstMessages.push({
-          channel: channel.id,
-        });
-      }
-    }
+    // for (const channel of _channels) {
+    //   const messages = Object.values(channel.messages);
+    //   if (messages.length && messages[0]) {
+    //     firstMessages.push({
+    //       channel: channel.id,
+    //       ...messages[0],
+    //     });
+    //   } else {
+    //     // TODO: Empty...
+    //     firstMessages.push({
+    //       channel: channel.id,
+    //     });
+    //   }
+    // }
 
     const badgeCount = 0;
     // for (const channel of _channels) {
@@ -119,11 +119,20 @@ const MessageScreen = connect(
     //   }
     // }
 
+    // let messages = [];
+
+    // for (let message of channels) {
+    //   messages.push()
+    // }
+
+    // const messages = Object.values(messages);
+
     console.log('MessageList: Props: Users: ONEEEPUNCH', {
-      channels: firstMessages,
+      messages,
     });
+
     return {
-      channels: firstMessages,
+      channels: Object.values(messages),
       badgeCount,
     };
   },

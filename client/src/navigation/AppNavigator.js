@@ -38,6 +38,7 @@ const MainTab = createBottomTabNavigator(
     Communications: CommunicationsScreen,
   },
   {
+    initialRouteName: 'Main',
     swipeEnabled: true,
     animationEnabled: true,
     cardStyle: {},

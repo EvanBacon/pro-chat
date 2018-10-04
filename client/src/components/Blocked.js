@@ -25,7 +25,7 @@ export default class Blocked extends Component {
         inverted
         onPress={() => {
           if (outward) {
-            dispatch.users.updateRelationshipWithUser({
+            dispatch.relationships.updateAsync({
               uid,
               type: Relationship.none,
             });

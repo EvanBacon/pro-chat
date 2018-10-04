@@ -178,14 +178,13 @@ export const user = {
           NavigationService.navigate('Auth');
         } else {
           dispatch.user.getAsync();
+          dispatch.popular.getAsync();
+          Fire.shared.getMessageList();
           NavigationService.navigate('App');
 
           // dispatch.leaders.getAsync({ uid: user.uid });
         }
       });
-    },
-    updateRelationshipWithUser: ({ uid, type }) => {
-      console.warn("TODO: user.updateRelationshipWithUser")
     },
     getAsync: async (props, { user: localUserData }) => {
       const nextLocalUserData = localUserData || {};
@@ -282,7 +281,10 @@ export const relationships = {
     whenWasUserRated: () => {},
     updateAsync: async ({ uid: otherId, type }) => {
       const userId = Fire.shared.uid;
-      if (otherId === userId) return;
+      if (!Fire.shared.canMessage({ uid: otherId })) {
+        console.warn("Cannot Rate urself")
+        return;
+      }
 
       const isPerformingInvalidAction = type === Relationship.blocked || type === Relationship.matched;
 
@@ -290,8 +292,8 @@ export const relationships = {
         throw new Error(`Cannot set relationship to ${type} in the client`);
       }
 
-      console.log('relationships.updateAsync', { otherId, type });
       const groupId = Fire.shared.getGroupId(userId, otherId);
+      console.log('relationships.updateAsync', { otherId, type, groupId });
 
       // const props = {
       //   members: [userId, otherId],
@@ -307,15 +309,20 @@ export const relationships = {
 
       function createGroupAsync(...ids) {
         const members = ids.sort((a, b) => +(a.attr > b.attr) || -(a.attr < b.attr));
+        console.log("Relationship.updateAsync: createGroupAsync", {members})
+
         return doc.set({ members });
       }
       async function checkGroupExistenceAsync() {
+        console.log("Relationship.updateAsync: checkGroupExistenceAsync")
         const _doc = await doc.get();
         return _doc.exists;
       }
 
       async function ensureGroupExistenceAsync() {
-        const exists = checkGroupExistenceAsync();
+        const exists = await checkGroupExistenceAsync();
+        console.log("Relationship.updateAsync: ensureGroupExistenceAsync", {exists})
+
         if (!exists) {
           await createGroupAsync(userId, otherId);
         }
@@ -328,6 +335,12 @@ export const relationships = {
         const isUserBlockingOther = currentUserStatus === Relationship.blocking;
         const isUserMatchedToOther = currentUserStatus === Relationship.matched && otherUserStatus === Relationship.match;
         const otherUserLikesYou = otherUserStatus === Relationship.like || otherUserStatus === Relationship.match;
+
+        console.log("Relationship.updateAsync: getNewStatusGivenCurrentStatus", {isNoChange,
+          isUserBlockedByOther,
+          isUserBlockingOther,
+          isUserMatchedToOther,
+          otherUserLikesYou,})
 
         if (!isNoChange && !isUserBlockedByOther) {
           // Something is gonna happen...
@@ -396,12 +409,12 @@ export const relationships = {
       }
 
 
-      ensureGroupExistenceAsync();
+      await ensureGroupExistenceAsync();
 
       const db = firebase.firestore();
       const _status = await db.runTransaction(transaction => transaction.get(doc).then(sfDoc => relationshipTransaction(transaction, sfDoc)));
 
-      console.log(_status);
+      console.log({_status});
     },
     getAsync: async ({ uid: otherId }) => {
       const userId = Fire.shared.uid;
@@ -608,14 +621,64 @@ export const messages = {
   },
 };
 
+
+function filterUser(user) {
+  function isV(s) {
+    if (s && s !== "") return s;
+    return null;
+  }
+ // Remove these....
+ const { stsTokenManager, providerData, ..._userProps } = user;
+
+ // Merge These...
+ const { first_name, name: _name, displayName, deviceName, photoURL, image: _image, uid: _uid, key: _key, ...__userProps } = _userProps;
+
+ const name = (isV(first_name) || isV(_name) || isV(displayName) || isV(deviceName) || Settings.noName);
+ const image = isV(photoURL) || isV(_image);
+ const uid = isV(_uid) || isV(_key);
+
+ const nextUser = {
+   ...__userProps,
+   uid,
+   name,
+   image,
+ };
+
+ return nextUser;
+}
+
+import moment from 'moment';
+
+const lessThanHoursAgo = (date, hours = 1) => {
+  return moment(date).isAfter(moment().subtract(hours, 'hours'));
+}
+
+
+function isValidUser(user, fields = [ "name", "image", "uid" ]) {
+  if (user == null || typeof user === "undefined") {
+    return false;
+  }
+
+  // If user data couldn't be loaded for some reason, then pause to prevent loop. Check again sometime later.
+  if (user.ensured && lessThanHoursAgo(user.ensured, 3)) {
+    return true;
+  }
+  for (const field of fields) {
+    if (!user[field] || typeof user[field] !== "string" || user[field] === '') {
+      return false;
+    }
+  } 
+  return true;
+}
+
 export const users = {
   state: {},
   reducers: {
     update: (state, { uid, user }) => {
-      const { [uid]: currentUser, ...otherUsers } = state;
+      const { [uid]: currentUser = {}, ...otherUsers } = state;
       return {
         ...otherUsers,
-        [uid]: { ...(currentUser || {}), ...user },
+        [uid]: { ...currentUser, ...user },
       };
     },
     set: (state, { uid, user }) => {
@@ -628,30 +691,63 @@ export const users = {
     clear: () => ({}),
   },
   effects: {
-    getAsync: async () => {
+    debugLoadSomeUsersAsync: () => {
       dispatch.users.getPaged({size: 2})
+    },
+    getAsync: async ({ uid }) => {
+      // dispatch.users.getPaged({size: 2})
+    },
+    ensureUserIsLoadedAsync: async ({ uid, callback }, { users }) => {
+      let cb = callback || function() {}
+      console.log("ensureUserIsLoadedAsync:A", !Fire.shared.canMessage({ uid }));
+      if (!Fire.shared.canMessage({ uid })) {
+        // The current user should always be loaded and up to date.
+        cb(null);
+        return
+      }
+
+      const storedUser = users[uid];
+
+      console.log("ensureUserIsLoadedAsync:B", !!storedUser, !isValidUser(storedUser));
+      if (!isValidUser(storedUser)) {
+        try {
+          const snapshot = await Fire.shared._getUserInfoAsync({ uid });
+
+          const userData = snapshot.data();
+          if (userData) {
+            console.log("userData", userData)
+            const nextUser = {
+              ...filterUser(userData),
+              ensured: Date.now(),
+            };
+            dispatch.users.update({
+              uid,
+              user: nextUser,
+            });
+            cb(nextUser);
+            return;
+          }
+        } catch ({ message }) {
+          throw new Error(`getPropForUser ${message}`);
+        }
+      } 
+      cb(storedUser);
     },
     getPaged: async ({ size, start }) => {
       const { data } = await Fire.shared.getUsersPaged({ size, start });
       for (const user of data) {
-        const { stsTokenManager, providerData, ..._userProps } = user;
-        dispatch.users.update({ 
-          uid: user.key, user: { 
-            ..._userProps,
-            name: user.first_name || user.name || user.displayName || user.deviceName || Settings.noName,
-            image: user.photoURL || user.image,
-          } 
-        });
+        dispatch.users.update({ uid, user: filterUser(user) });
       }
-      // console.log('FOUNDUSERS', data);
     },
-    changeRating: () => {},
+    changeRating: () => {
+      console.warn("TODO: changeRating");
+    },
     update: ({ uid, user }, { users }) => {
       if (!uid || !user) {
         throw new Error(`dispatch.users.update: You must pass in a valid uid and user: ${uid} - ${JSON.stringify(user || {})}`);
       }
       const currentUser = users[uid] || {};
-      dispatch.users.set({ uid, user: { ...currentUser, ...(user || {}) } });
+      dispatch.users.set({ uid, user: { ...currentUser, ...user } });
     },
     clearUser: ({ uid }) => dispatch.users.set({ uid, user: null }),
     getProfileImage: ({ uid, forceUpdate }) => {

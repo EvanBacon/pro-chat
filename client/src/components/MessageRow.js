@@ -9,14 +9,14 @@ export default class MessageRow extends React.Component {
   render() {
     const {
       message: {
-        user, seen, text, timestamp,
+        name, image, isSeen, isSent, message, timeAgo,
       },
       onPress,
       onLongPress,
     } = this.props;
 
     console.log({ tickle: this.props.message });
-    const { name, avatar: image } = user || {};
+    // const { name, avatar: image } = user || {};
     return (
       <TouchableHighlight
         underlayColor="#ddd"
@@ -38,11 +38,11 @@ export default class MessageRow extends React.Component {
               name={name}
               image={image}
               style={{ marginRight: 14 }}
-              isNew={seen === false}
+              isNew={isSeen === false}
             />
-            <Message title={name} subtitle={text} />
+            <Message title={name} subtitle={message} />
           </View>
-          <Timestamp>{timestamp}</Timestamp>
+          <Timestamp>{timeAgo}</Timestamp>
         </View>
       </TouchableHighlight>
     );
@@ -50,7 +50,7 @@ export default class MessageRow extends React.Component {
 }
 
 export const Timestamp = ({ children }) => (
-  <Text style={{ textAlign: 'right' }}>{formatDate(children)}</Text>
+  <Text style={{ textAlign: 'right' }}>{children}</Text>
 );
 
 export const Message = ({ title, subtitle }) => (

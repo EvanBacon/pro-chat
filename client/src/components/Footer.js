@@ -6,10 +6,10 @@ import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 
 import Relationship from '../models/Relationship';
+import NavigationService from '../navigation/NavigationService';
 import reportUser from '../utils/reportUser';
 import shareUser from '../utils/shareUser';
 import AButton from './AButton';
-
 
 const { width } = Dimensions.get('window');
 
@@ -69,7 +69,10 @@ class Footer extends Component {
                     .showActionSheetWithOptions,
                   reportUser: () => {
                     console.warn('rpu', this.props.uid);
-                    this.props.navigate('ReportUser', { uid: this.props.uid });
+                    NavigationService.navigateToUserSpecificScreen(
+                      'ReportUser',
+                      this.props.uid,
+                    );
                   },
                 })
               }

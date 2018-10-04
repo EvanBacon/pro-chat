@@ -230,8 +230,8 @@ class Chat extends React.Component {
 
   onLoadEarlier = () => dispatch.chats.loadEarlier(this.props.channel);
 
-  onPressAvatar = user =>
-  NavigationService.navigate('Profile', { uid: user._id });
+  onPressAvatar = ({ _id: uid }) =>
+  NavigationService.navigateToUserSpecificScreen('Profile', uid);
 
   renderAccessory = () => (
     <AccessoryBar
@@ -411,7 +411,7 @@ const mergeProps = (state, dispatchProps, ownProps) => {
   if (groupId) {
     // const otherUsers = Fire.shared.getOtherUsersFromChatGroup(groupId);
     const otherUserUid = uid; // otherUsers[0];
-    const otherUser = users[otherUserUid];
+    const otherUser = users[otherUserUid] || {};
     const messages = chats[groupId] || {};
     console.log({ messages });
 
@@ -425,7 +425,7 @@ const mergeProps = (state, dispatchProps, ownProps) => {
       // otherUsers,
       otherUserUid,
       otherUser,
-      title: otherUser.name || otherUser.firstName || otherUser.displayName || otherUser.deviceName || Settings.noName,
+      title: otherUser.name,
 
       // firstMessage,
       channelHasMore: _channelHasMore,

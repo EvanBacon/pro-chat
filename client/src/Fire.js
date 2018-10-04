@@ -4,6 +4,7 @@ import { Constants } from './universal/Expo';
 
 import Settings from './constants/Settings';
 import Secret from '../Secret';
+import moment from 'moment';
 
 
 import uuid from 'uuid';
@@ -267,27 +268,27 @@ class Fire {
     // / lol debug....
 
     console.log('debugging getMessageList()');
-    const _debugPreviewMessages = {
-      '0UUOFoP8xMTQ0lD5g8ax5CnIo2o2_k6rCUoV1ckMnej3zx31Pr9GJT143': {
-        name: 'Evan Bacon',
-        groupId: '0UUOFoP8xMTQ0lD5g8ax5CnIo2o2_k6rCUoV1ckMnej3zx31Pr9GJT143',
-        photoURL: 'https://graph.facebook.com/10209358712923544/picture',
-        uid: 'k6rCUoV1ckMnej3zx31Pr9GJT143',
-        isGroupChat: false,
-        message: 'Sent an image',
-        isSeen: false,
-        isSent: false,
-        timeAgo: '15 hours ago',
-      },
-    };
-    dispatch.messages.update(_debugPreviewMessages);
-    return _debugPreviewMessages;
+    // const _debugPreviewMessages = {
+    //   '0UUOFoP8xMTQ0lD5g8ax5CnIo2o2_k6rCUoV1ckMnej3zx31Pr9GJT143': {
+    //     name: 'Evan Bacon',
+    //     groupId: '0UUOFoP8xMTQ0lD5g8ax5CnIo2o2_k6rCUoV1ckMnej3zx31Pr9GJT143',
+    //     photoURL: 'https://graph.facebook.com/10209358712923544/picture',
+    //     uid: 'k6rCUoV1ckMnej3zx31Pr9GJT143',
+    //     isGroupChat: false,
+    //     message: 'Sent an image',
+    //     isSeen: false,
+    //     isSent: false,
+    //     timeAgo: '15 hours ago',
+    //   },
+    // };
+    // dispatch.messages.update(_debugPreviewMessages);
+    // return _debugPreviewMessages;
 
     const chatGroups = await this.getChatGroups({});
 
     const parseMessage = (
       {
-        uid, displayName, deviceName, photoURL,
+        uid, name, image,
       },
       message,
       groupId,
@@ -299,7 +300,7 @@ class Fire {
       let timeAgo;
       let isSeen;
       if (message) {
-        timeAgo = timeago().format(message.timestamp);
+        timeAgo = moment(message.timestamp).fromNow(true);
         isSeen = message.seen != null;
         if (message.text) {
           preview = message.text;
@@ -315,9 +316,9 @@ class Fire {
       }
 
       return {
-        name: displayName || deviceName,
+        name,
         groupId,
-        photoURL,
+        image,
         uid,
         isGroupChat,
         message: preview,
@@ -348,17 +349,17 @@ class Fire {
       const group = memberUids;
       // TODO: Evan: Handle groups yolo
       const sender = group[0];
-      const user = await this.getUserAsync({ uid: sender });
+      const user = await (new Promise(res => dispatch.users.ensureUserIsLoadedAsync({ uid: sender, callback: res }) ));
 
       console.log('previewMessage:try', {
-        user, message, groupId, members,
+        user, //message, groupId, members,
       });
       const previewMessage = parseMessage(user, message, groupId, group);
 
       previewMessages[groupId] = previewMessage;
     }
 
-    console.log('heeyyooo', JSON.stringify(previewMessages));
+    console.log('heeyyooo',previewMessages)// JSON.stringify(previewMessages));
     dispatch.messages.update(previewMessages);
     return previewMessages;
   };
@@ -408,6 +409,7 @@ class Fire {
         console.error(error);
       }
     }
+
     return users[uid];
   };
 
