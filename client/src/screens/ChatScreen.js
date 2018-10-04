@@ -44,7 +44,16 @@ class Chat extends React.Component {
     return Fire.shared.uid;
   }
 
+  constructor(props) {
+    super(props);
+
+    const { title } = props; 
+    if (title && title !== '') {
+      props.navigation.setParams({ title });
+    }
+  }
   componentWillReceiveProps({ title }) {
+    console.log({title});
     if (this.props.title !== title) {
       this.props.navigation.setParams({ title });
     }

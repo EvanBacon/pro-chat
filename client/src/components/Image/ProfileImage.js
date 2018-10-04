@@ -110,7 +110,6 @@ export default class ProfileImage extends React.Component {
         minHeight: size,
         maxHeight: size,
         borderRadius: size / 2,
-        backgroundColor: 'blue',
         overflow: 'hidden',
       };
     }

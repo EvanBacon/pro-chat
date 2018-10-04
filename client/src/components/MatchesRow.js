@@ -19,12 +19,15 @@ export default class MatchesRow extends React.Component {
     underlayColor: PropTypes.string,
   };
 
+  onPress = () => {
+    const { onPress, uid } = this.props;
+    onPress({ uid });
+  };
+
   render() {
-    const {
-      image, name, onPress, underlayColor,
-    } = this.props;
+    const { image, name, underlayColor } = this.props;
     return (
-      <TouchableHighlight underlayColor={underlayColor} onPress={onPress}>
+      <TouchableHighlight underlayColor={underlayColor} onPress={this.onPress}>
         <View style={styles.container}>
           <UserImage
             containerStyle={{

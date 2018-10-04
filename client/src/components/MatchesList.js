@@ -10,6 +10,7 @@ import UserList from './UserList';
 import Assets from '../Assets';
 import { dispatch } from '@rematch/core';
 import NavigationService from '../navigation/NavigationService';
+import Fire from '../Fire';
 
 const Images = Assets.images;
 const EmptyMatchesScreen = ({ goHome }) => (
@@ -39,37 +40,50 @@ class MatchesList extends React.PureComponent {
   }
 
   _onRefresh = () => {
-    this.setState({ refreshing: true });
-    this.setState({ refreshing: false });
+    this.setState({ refreshing: true }, () =>
+      this.setState({ refreshing: false }));
   };
 
-  onPressRow = async ({ uid }) => NavigationService.navigate('Chat', { uid });
-
-  renderItem = ({ item: key, index }) => {
-    const { image, name, uid } = this.props.matches[key];
+  onPressRow = async ({ uid }) => {
+    console.log('GO TO:', { uid });
+    if (Fire.shared.canMessage({ uid })) {
+      NavigationService.navigate('Profile', { uid });
+    }
+  };
+  renderItem = ({ item }) => {
+    const { name, image, uid } = item;
     return (
       <MatchesRow
-        image={image}
         name={name}
-        onPress={event => this.onPressRow({ uid, index, event })}
+        image={image}
+        uid={uid}
+        onPress={this.onPressRow}
       />
     );
   };
 
-  render = () => (
-    <UserList
-      style={this.props.style}
-      ListEmptyComponent={EmptyMatchesScreen}
-      refreshing={this.state.refreshing}
-      onRefresh={this._onRefresh}
-      data={Object.keys(this.props.matches)}
-      renderItem={this.renderItem}
-    />
-  );
+  render() {
+    const { style, data } = this.props;
+    return (
+      <UserList
+        style={style}
+        data={data}
+        renderItem={this.renderItem}
+        refreshing={this.state.refreshing}
+        onRefresh={this._onRefresh}
+        ListEmptyComponent={EmptyMatchesScreen}
+      />
+    );
+  }
 }
-const MatchesScreen = connect(({ users: matches }) => ({
-  matches,
-}))(MatchesList);
+const MatchesScreen = connect(({ users }) => {
+  const { [Fire.shared.uid]: currentUser, ...otherUsers } = users;
+
+  return {
+    data: Object.values(otherUsers).filter(({ uid }) =>
+      Fire.shared.canMessage({ uid })),
+  };
+})(MatchesList);
 
 MatchesScreen.navigation = { title: 'Matches' };
 

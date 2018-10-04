@@ -14,7 +14,7 @@ import UserInfo from '../components/UserInfo';
 import Meta from '../constants/Meta';
 import Fire from '../Fire';
 import Relationship from '../models/Relationship';
-
+import Settings from '../constants/Settings';
 
 const { width } = Dimensions.get('window');
 
@@ -76,7 +76,8 @@ class Profile extends Component {
       dispatch.relationships.getAsync({ uid });
     }
 
-    const isMatched = await (new Promise(res => dispatch.relationships.isMatched({ uid, callback: res })));
+    const isMatched = await new Promise(res =>
+      dispatch.relationships.isMatched({ uid, callback: res }));
 
     // this.props.navigation.setParams({ isMatched, name, uid });
     LayoutAnimation.easeInEaseOut();
@@ -148,16 +149,21 @@ class Profile extends Component {
       navigation,
     } = this.props;
 
-    console.log("legoboi", { isUser, uid, name, likes, about, relationship, rating, isMatched, image })
+    console.log('legoboi', {
+      isUser,
+      uid,
+      name,
+      likes,
+      about,
+      relationship,
+      rating,
+      isMatched,
+      image,
+    });
     if (!uid) return null;
 
     if (this.isBlocked) {
-      return (
-        <Blocked
-          uid={uid}
-          relationship={relationship}
-        />
-      );
+      return <Blocked uid={uid} relationship={relationship} />;
     }
 
     return (
@@ -176,11 +182,7 @@ class Profile extends Component {
           hasLightbox
         />
 
-        {!isUser && (
-          <RateSection
-            uid={uid}
-          />
-        )}
+        {!isUser && <RateSection uid={uid} />}
         {this.renderTags(likes, isUser, name)}
         {this.renderPopular()}
       </View>
@@ -213,9 +215,11 @@ class Profile extends Component {
   }
 }
 
-
-
-const mergeProps = ({ users, relationships, ...state }, actions, { uid, ...localProps }) => {
+const mergeProps = (
+  { users, relationships, ...state },
+  actions,
+  { uid, ...localProps },
+) => {
   const { params = {} } = localProps.navigation.state;
 
   const mainUserId = Fire.shared.uid;
@@ -233,9 +237,11 @@ const mergeProps = ({ users, relationships, ...state }, actions, { uid, ...local
     uid: userId,
     about: about || 'I am not interesting, but I do like to pretend.',
     rating: rating || 'moth',
-    //TODO: Standard - decide on one format
+    // TODO: Standard - decide on one format
     image: user.photoURL || user.image,
     name: user.first_name || user.name || user.displayName || user.deviceName,
+
+    likes: Settings.fakeLikes,
   };
   return {
     ...state,
@@ -249,7 +255,7 @@ const mergeProps = ({ users, relationships, ...state }, actions, { uid, ...local
 export default connect(
   ({ users = {}, relationships = {}, popular = {} }) => ({
     users,
-    popular,
+    popular: users,
     relationships,
   }),
   {},

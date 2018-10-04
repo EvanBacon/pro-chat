@@ -5,7 +5,7 @@ import { Platform } from 'react-native';
 
 import sizeInfo from '../utils/whatAmI';
 
-const isInAppleReview = true;
+const isInAppleReview = false;
 
 const realName = 'Bütē Alert';
 
@@ -75,6 +75,9 @@ const Settings = {
   /*
       So many of these...
   */
+  isChatEnabled: true,
+  isMatchesEnabled: true,
+
   isInAppleReview,
   name: isInAppleReview ? 'Beauty' : 'Bütē',
   user: isInAppleReview ? 'Art' : 'Bütē',
@@ -87,6 +90,36 @@ const Settings = {
     debug: '8fd94ebef2e642a29137cc7d09412907',
     production: '',
   },
+  fakeLikes: [
+    {
+      name: 'Young Thug',
+      created_time: Date.now(),
+    },
+    {
+      name: 'XXXTENTACION',
+      created_time: Date.now(),
+    },
+    {
+      name: 'Lil Tay',
+      created_time: Date.now(),
+    },
+    {
+      name: 'Batman',
+      created_time: Date.now(),
+    },
+    {
+      name: 'Legos',
+      created_time: Date.now(),
+    },
+    {
+      name: 'Thiccness',
+      created_time: Date.now(),
+    },
+    {
+      name: 'Dexter',
+      created_time: Date.now(),
+    },
+  ],
 };
 
 export default Settings;
