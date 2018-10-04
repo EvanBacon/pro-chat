@@ -6,7 +6,7 @@ import { AsyncStorage } from 'react-native';
  * @returns {Promise.<*>}
  */
 
-export async function setItemWithExpiration(key, value, minutes) {
+async function setItemWithExpiration(key, value, minutes) {
   // set expire at
   const _value = { value, expireAt: getExpireDate(minutes) };
   // stringify object
@@ -15,13 +15,17 @@ export async function setItemWithExpiration(key, value, minutes) {
   return AsyncStorage.setItem(key, objectToStore);
 }
 
-export async function getItemWithExpiration(urlAsKey) {
+async function getItemWithExpiration(urlAsKey) {
   let data;
   await AsyncStorage.getItem(urlAsKey, async (err, value) => {
     data = JSON.parse(value);
 
     // there is data in cache && cache is expired
-    if (data !== null && data.expireAt && new Date(data.expireAt) < new Date()) {
+    if (
+      data !== null &&
+      data.expireAt &&
+      new Date(data.expireAt) < new Date()
+    ) {
       // clear cache
       AsyncStorage.removeItem(urlAsKey);
 
@@ -37,7 +41,7 @@ export async function getItemWithExpiration(urlAsKey) {
   return null;
 }
 
-export function getExpireDate(expireInMinutes) {
+function getExpireDate(expireInMinutes) {
   const now = new Date();
   const expireTime = new Date(now);
   expireTime.setMinutes(now.getMinutes() + expireInMinutes);

@@ -271,7 +271,6 @@ export const user = {
   },
 };
 
-
 export const notifications = {
   state: {
     status: null
