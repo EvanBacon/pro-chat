@@ -30,7 +30,7 @@ class Chat extends React.Component {
     // prefs: {},
     // keyboard: 0,
     gifActive: false,
-    userInput: 'Sailor Moon',
+    userInput: '',
   };
 
   get user() {

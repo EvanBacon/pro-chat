@@ -30,6 +30,7 @@ import Settings from '../constants/Settings';
 
 // const { tintColor } = Constants.manifest;
 const tintColor = '#52416A';
+
 const MainTab = createBottomTabNavigator(
   {
     MainProfile: ProfileScreen,
@@ -39,22 +40,26 @@ const MainTab = createBottomTabNavigator(
   {
     swipeEnabled: true,
     animationEnabled: true,
+    cardStyle: {},
     tabBarOptions: {
       // tabBarButtonComponent: () => <Text>
       activeTintColor: '#e91e63',
       activeBackgroundColor: tintColor,
       inactiveBackgroundColor: tintColor,
       inactiveTintColor: tintColor,
-      showIcon: true,
+      showIcon: false,
       labelStyle: {
-        fontSize: 12,
+        fontSize: 16,
+        fontFamily: 'DIN-Pro-Medium',
         color: 'white',
       },
       tabStyle: {
         backgroundColor: tintColor,
+        padding: 0,
       },
       style: {
-        // backgroundColor: tintColor,
+        padding: 0,
+        backgroundColor: tintColor,
       },
     },
   },
@@ -69,9 +74,15 @@ MainTab.navigationOptions = {
   // ),
 };
 
+let _MainTab;
+if (Settings.isInAppleReview) {
+  _MainTab = CommunicationsScreen;
+} else {
+  _MainTab = MainTab;
+}
 const AppStack = createStackNavigator(
   {
-    Main: MainTab,
+    MainTab: _MainTab,
     AccountUnderReview: AccountUnderReviewScreen,
     Chat: ChatScreen,
     Communications: CommunicationsScreen,
@@ -87,6 +98,7 @@ const AppStack = createStackNavigator(
     // Website: WebsiteScreen,
   },
   {
+    initialRouteName: Settings.mainInitialRouteName,
     cardStyle: {
       marginTop: BAR_HEIGHT - 30,
     },

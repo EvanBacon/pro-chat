@@ -1,8 +1,11 @@
 // @flow
+
 import { Constants } from 'expo';
 import { Platform } from 'react-native';
 
 import sizeInfo from '../utils/whatAmI';
+
+const isInAppleReview = true;
 
 const realName = 'Bütē Alert';
 
@@ -36,11 +39,6 @@ const Settings = {
       // 'user_friends'
     ],
   },
-  giphy: {
-    giphyKey: '&api_key=dc6zaTOxFJmzC',
-    apiKey: 'dc6zaTOxFJmzC',
-    endPoint: 'https://api.giphy.com/v1/gifs/search?q=',
-  },
   hideBooty: true,
   noName: 'Sasuke Uchiha',
   isIos: Platform.OS === 'ios',
@@ -53,27 +51,13 @@ const Settings = {
   bottomInset: sizeInfo.bottomInset,
   topInset: sizeInfo.topInset,
   isSimulator: !Constants.isDevice,
-  // isFirebaseEnabled: !debug || false,
-  isAutoStartEnabled: false, //! debug && true,
-  isScreenshotEnabled: !debug || false,
-  isMotionMenuEnabled: !debug || true,
-  isComposerEnabled: false, //! debug || false,
   debug,
-  ballDistance: 60,
-  rotationSpeed: 4,
-  epsilon: 15,
-  angleRange: [25, 155],
-  visibleTargets: 5,
   ignoredYellowBox: ['Class ABI', 'Module ABI', "Audio doesn't exist"],
   slug: debug ? 'crossy-road' : 'users',
-  isEveryScoreBest: debug && false,
   isCacheProfileUpdateActive: !debug || false,
   shouldDelayFirebaseProfileSyncInMinutes: 60,
-
   canEditPhoto: false,
-  leaderPageSize: 25,
-  mainInitialRouteName: 'Game', // 'Unlockables', // ,
-
+  mainInitialRouteName: 'MainTab', // 'Chat'
   testOnboarding: false,
   needsProfileImage: true,
   location: {
@@ -91,10 +75,10 @@ const Settings = {
   /*
       So many of these...
   */
-
-  name: 'Būte',
-  user: 'Art', //
-  userPlural: 'Artists', //
+  isInAppleReview,
+  name: isInAppleReview ? 'Beauty' : 'Bütē',
+  user: isInAppleReview ? 'Art' : 'Bütē',
+  userPlural: isInAppleReview ? 'Artists' : 'Bütēs',
   debugging:
     global.isDebuggingInChrome ||
     __DEV__ ||

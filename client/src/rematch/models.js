@@ -185,7 +185,7 @@ export const user = {
       });
     },
     updateRelationshipWithUser: ({ uid, type }) => {
-console.warn("TODO: user.updateRelationshipWithUser")
+      console.warn("TODO: user.updateRelationshipWithUser")
     },
     getAsync: async (props, { user: localUserData }) => {
       const nextLocalUserData = localUserData || {};
@@ -634,9 +634,16 @@ export const users = {
     getPaged: async ({ size, start }) => {
       const { data } = await Fire.shared.getUsersPaged({ size, start });
       for (const user of data) {
-        dispatch.users.update({ uid: user.key, user: { name: user.displayName, image: user.photoURL, ...user } });
+        const { stsTokenManager, providerData, ..._userProps } = user;
+        dispatch.users.update({ 
+          uid: user.key, user: { 
+            ..._userProps,
+            name: user.first_name || user.name || user.displayName || user.deviceName || Settings.noName,
+            image: user.photoURL || user.image,
+          } 
+        });
       }
-      console.log('FOUNDUSERS', data);
+      // console.log('FOUNDUSERS', data);
     },
     changeRating: () => {},
     update: ({ uid, user }, { users }) => {

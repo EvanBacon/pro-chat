@@ -3,16 +3,20 @@ import { Text, TouchableHighlight, View } from 'react-native';
 
 import UserImage from './UserImage';
 
+import formatDate from '../utils/formatDate';
+
 export default class MessageRow extends React.Component {
   render() {
     const {
       message: {
-        name, image, seen, text, timestamp,
+        user, seen, text, timestamp,
       },
       onPress,
       onLongPress,
     } = this.props;
 
+    console.log({ tickle: this.props.message });
+    const { name, avatar: image } = user || {};
     return (
       <TouchableHighlight
         underlayColor="#ddd"
@@ -46,7 +50,7 @@ export default class MessageRow extends React.Component {
 }
 
 export const Timestamp = ({ children }) => (
-  <Text style={{ textAlign: 'right' }}>{children}</Text>
+  <Text style={{ textAlign: 'right' }}>{formatDate(children)}</Text>
 );
 
 export const Message = ({ title, subtitle }) => (

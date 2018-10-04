@@ -48,7 +48,7 @@ class MessageList extends React.Component {
 
   renderItem = ({ item, index }) => (
     <MessageRow
-      key={item.channel}
+      key={item.uid}
       message={item || {}}
       onPress={event => this.onPressRow({ item, index, event })}
       onLongPress={() => dispatch.chats.deleteChannel(item.channel)}
@@ -80,9 +80,22 @@ const MessageScreen = connect(
   ({ matches = {}, chats = {} }) => {
     const combined = { ...matches, ...chats };
 
+    // All messages ever [ { [key]: { ... } } ]
     const _channels = Object.keys(combined)
       .map(val => combined[val])
       .sort((a, b) => b.date - a.date);
+
+    const firstMessages = [];
+
+    for (const channel of _channels) {
+      const messages = Object.values(channel);
+      if (messages.length && messages[0]) {
+        firstMessages.push(messages[0]);
+      } else {
+        // TODO: Empty...
+        firstMessages.push({});
+      }
+    }
 
     let badgeCount = 0;
     for (const channel of _channels) {
@@ -91,16 +104,11 @@ const MessageScreen = connect(
       }
     }
 
+    console.log('MessageList: Props: Users: ONEEEPUNCH', {
+      channels: firstMessages,
+    });
     return {
-      channels: _channels.map(item => ({
-        ...item,
-        name:
-          item.name ||
-          item.firstName ||
-          item.displayName ||
-          item.deviceName ||
-          Settings.noName,
-      })),
+      channels: firstMessages,
       badgeCount,
     };
   },
