@@ -43,6 +43,8 @@ class MessageList extends React.Component {
     await Promise.all(messages);
 
     this.setState({ refreshing: false });
+
+    dispatch.notifications.registerAsync();
   };
 
   onPressRow = async ({ item: { groupId: channel } }) => {

@@ -5,6 +5,8 @@ import { MessagesList } from '../components/pagedList/MessagesList';
 import Fire from '../Fire';
 import NavigationService from '../navigation/NavigationService';
 
+import { dispatch } from '@rematch/core';
+
 class MessagesScreen extends React.Component {
   static navigationOptions = {
     title: 'Messages',
@@ -12,6 +14,7 @@ class MessagesScreen extends React.Component {
 
   componentDidMount() {
     Fire.shared.getMessageList();
+    dispatch.notifications.registerAsync();
   }
 
   onPress = ({ item: { groupId, name, uid } }) => {

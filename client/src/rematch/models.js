@@ -4,7 +4,7 @@ import { Alert } from 'react-native';
 
 import Settings from '../constants/Settings';
 import Fire from '../Fire';
-import { Constants, Facebook } from '../universal/Expo';
+import { Constants,Permissions, Notifications, Facebook } from '../universal/Expo';
 import PantryStorage from '../universal/PantryStorage';
 import getDeviceInfo from '../utils/getUserInfo';
 
@@ -267,6 +267,47 @@ export const user = {
         return;
       }
       doc.set(props, { merge: true });
+    },
+  },
+};
+
+
+export const notifications = {
+  state: {
+    status: null
+  },
+  reducers: {
+    setStatus: (state, status) => ({ ...state, status })
+  },
+  effects: {
+
+    registerAsync: async () => {
+      console.log("registerAsync")
+      const { status: existingStatus } = await Permissions.askAsync(
+        Permissions.NOTIFICATIONS,
+      );
+      let finalStatus = existingStatus;
+      console.log("registerAsync:B", existingStatus)
+      // only ask if permissions have not already been determined, because
+      // iOS won't necessarily prompt the user a second time.
+      if (existingStatus !== 'granted') {
+        // Android remote notification permissions are granted during the app
+        // install, so this will only ask on iOS
+        const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+        finalStatus = status;
+      }
+    
+      // Stop here if the user did not grant permissions
+      if (finalStatus !== 'granted') {
+        console.log("registerAsync:C--fuck", existingStatus)
+
+        return;
+      }
+    
+      // Get the token that uniquely identifies this device
+      let token = await Notifications.getExpoPushTokenAsync();
+      console.log({token});
+      dispatch.notifications.setStatus(finalStatus);
     },
   },
 };
