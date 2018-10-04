@@ -8,7 +8,7 @@ import { PersistGate } from 'redux-persist/es/integration/react';
 import * as models from './models';
 
 const persistPlugin = createRematchPersist({
-  whiteList: ['score', 'user'],
+  whiteList: ['user', 'onBoarding'],
   //   throttle: 5000,
   version: 2,
   storage: AsyncStorage,

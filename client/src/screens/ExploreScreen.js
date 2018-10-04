@@ -20,7 +20,7 @@
 //         return;
 //       }
 //       try {
-//         const groupId = Fire.shared.getGroupId(item.uid);
+//         const groupId = IdManager.getGroupId(item.uid);
 
 //         NavigationService.navigate('Chat', {
 //           groupId,

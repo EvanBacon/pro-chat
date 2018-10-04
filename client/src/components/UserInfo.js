@@ -1,24 +1,22 @@
-import { connectActionSheet } from '@expo/react-native-action-sheet';
+// import { connectActionSheet } from '@expo/react-native-action-sheet';
 import React, { Component } from 'react';
 import { Dimensions, View } from 'react-native';
 
-import selectImage from '../utils/SelectImage';
-import Button from './Button';
-import Meta from './Meta';
-import ProfileImage from './ProfileImage';
 import NavigationService from '../navigation/NavigationService';
+// import selectImage from '../utils/SelectImage';
+// import Button from './Button';
+import ProfileImage from './Image/ProfileImage';
+import Meta from './Meta';
 
-const { width } = Dimensions.get('window');
-
-const Edit = connectActionSheet(() => (
-  <Button.Edit
-    testID="test-profile-edit-button"
-    onPress={() => {
-      selectImage(this.props.showActionSheetWithOptions, this.props.onImage);
-    }}
-    style={this.props.style}
-  />
-));
+// const Edit = connectActionSheet(() => (
+//   <Button.Edit
+//     testID="test-profile-edit-button"
+//     onPress={() => {
+//       selectImage(this.props.showActionSheetWithOptions, this.props.onImage);
+//     }}
+//     style={this.props.style}
+//   />
+// ));
 
 export default class UserInfo extends Component {
   state = {};

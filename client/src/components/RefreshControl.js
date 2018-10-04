@@ -4,10 +4,20 @@ import { RefreshControl } from 'react-native';
 import Meta from '../constants/Meta';
 
 class ButeRefreshControl extends React.Component {
+  static defaultProps = {
+    color: 'white',
+  };
   render() {
-    const { props } = this;
+    const { color, ...props } = this.props;
 
-    return <RefreshControl title={Meta.updating} tintColor="white" titleColor="white" {...props} />;
+    return (
+      <RefreshControl
+        title={Meta.updating}
+        tintColor={color}
+        titleColor={color}
+        {...props}
+      />
+    );
   }
 }
 

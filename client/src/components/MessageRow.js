@@ -3,8 +3,6 @@ import { Text, TouchableHighlight, View } from 'react-native';
 
 import UserImage from './UserImage';
 
-import formatDate from '../utils/formatDate';
-
 export default class MessageRow extends React.Component {
   render() {
     const {

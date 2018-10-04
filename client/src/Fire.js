@@ -1,46 +1,18 @@
 // @flow
 import { dispatch } from '@rematch/core';
+import moment from 'moment';
+import uuid from 'uuid';
+
+import Secret from '../Secret';
+import Settings from './constants/Settings';
+import IdManager from './IdManager';
+import { store } from './rematch/Gate';
 import { Constants } from './universal/Expo';
 
-import Settings from './constants/Settings';
-import Secret from '../Secret';
-import moment from 'moment';
-
-
-import uuid from 'uuid';
-import { store } from './rematch/Gate';
 
 const firebase = require('firebase');
 // Required for side-effects
 require('firebase/firestore');
-
-const collectionName = Settings.slug;
-
-function isValidKey(key) {
-  return key && typeof key === 'string' && key !== '';
-}
-function ensureUidGroup(input) {
-  if (input != null) {
-    if (Array.isArray(input)) {
-      return input;
-    } else if (typeof input === 'string') {
-      return input.split('_');
-    }
-  }
-  throw new Error('ensureUidGroup: requires valid input');
-}
-
-function ensureChatGroupIDs(input) {
-  if (input == null || !Array.isArray(input)) {
-    throw new Error('ensureChatGroupIDs: Invalid uids', { input });
-  }
-  const uids = [...new Set(input)];
-  if (uids.length < 2) {
-    throw new Error('ensureChatGroupIDs: Not enough uids', { uids });
-  }
-  return uids;
-}
-
 
 class Fire {
   constructor() {}
@@ -50,7 +22,7 @@ class Fire {
     //   return;
     // }
 
-    firebase.initializeApp(Secret);
+    firebase.initializeApp(Secret.firebase);
     firebase.firestore().settings({ timestampsInSnapshots: true });
     dispatch.user.observeAuth();
 
@@ -58,35 +30,12 @@ class Fire {
     // dispatch.user.clear();
   };
 
-  /*
-    negative values are also accepted... Use this for spending and for updating after a game.
-  */
-  addCurrency = amount =>
-    new Promise((res, rej) => {
-      this.db
-        .runTransaction(transaction =>
-          transaction.get(this.doc).then((userDoc) => {
-            if (!userDoc.exists) {
-              throw new Error('Document does not exist!');
-            }
-
-            const data = userDoc.data();
-            const currency = data.currency || 0;
-            const newCurrency = currency + amount;
-            transaction.update(this.doc, { currency: newCurrency });
-            this.user.currency = newCurrency;
-            return newCurrency;
-          }))
-        .then(res)
-        .catch(rej);
-    });
-
   upgradeAccount = async () => {
-    dispatch.facebook.upgradeAccount();
+    dispatch.auth.upgrade();
   };
 
   submitComplaint = (targetUid, complaint) => {
-    this.db.collection('complaints').add({
+    this.db.collection(Settings.refs.complaints).add({
       slug: Constants.manifest.slug,
       uid: this.uid,
       targetUid,
@@ -97,50 +46,13 @@ class Fire {
 
   _getUserInfoAsync = ({ uid }) =>
     this.db
-      .collection('users')
+      .collection(Settings.refs.users)
       .doc(uid)
       .get();
 
-
-  getOtherUsersFromChatGroup = (groupId) => {
-    if (!isValidKey(groupId)) {
-      console.warn('getOtherUsersFromChatGroup: Invalid group id', { groupId });
-      return [];
-    }
-    // / Remove self from group...
-    const uids = groupId.split('_');
-    if (uids.length < 2) return uids[1];
-
-    const idx = uids.indexOf(this.uid);
-    if (idx > -1) {
-      uids.splice(idx, 1);
-    }
-    return uids;
-  };
-
-
-  getGroupId = (...uids) => {
-    const shouldCache = typeof uids === 'string';
-    if (shouldCache && this._groupIdCache[uids]) return this._groupIdCache[uids];
-
-    const groupId = this._getChatGroupId([...ensureUidGroup(uids), this.uid]);
-
-    if (shouldCache) this._groupIdCache[uids] = groupId;
-
-    return groupId;
-  };
-
-  _groupIdCache = {};
-  _getChatGroupId = (input) => {
-    const uids = ensureChatGroupIDs(input);
-    const keys = uids.sort((a, b) => a > b); //+(a.attr > b.attr) || -(a.attr < b.attr));
-    const groupId = keys.join('_');
-    return groupId;
-  };
-
   ensureChatGroupExists = async (uids) => {
-    const keys = [...ensureUidGroup(uids), this.uid];
-    const key = this._getChatGroupId(keys);
+    const keys = [...IdManager.ensureUidGroup(uids), this.uid];
+    const key = IdManager.getGroupId(keys);
     const chatGroupExists = await this._checkChatGroupExistence(key);
     console.log({ key, chatGroupExists });
     if (chatGroupExists) {
@@ -155,26 +67,23 @@ class Fire {
     return doc.exists;
   };
   
-  canMessage = ({ uid }) => {
-    return (isValidKey(uid) && uid !== this.uid);
-  }
-  getChatGroupCollection = () => this.db.collection('chat_groups');
+  getChatGroupCollection = () => this.db.collection(Settings.refs.channels);
 
   getChatGroupDoc = groupId => this.getChatGroupCollection().doc(groupId);
 
   getMessagesCollection = groupId =>
-    this.getChatGroupDoc(groupId).collection('messages');
+    this.getChatGroupDoc(groupId).collection(Settings.refs.channels);
 
   _createChatGroup = async (key, uids) => this.getChatGroupDoc(key).set({ members: uids });
 
   /*
     Get paged messages for populating chat or getting last message
   */
-  getMessagesForChatGroup = ({ groupId, size, start }) =>
-    this.getDataPaged({
+ getMessagesForChatGroup = ({ groupId, size, start, order }) =>
+ this.getDataPaged({
       start,
       ref: this.getMessagesCollection(groupId)
-        .orderBy('timestamp', 'desc')
+        .orderBy('timestamp', order || 'desc')
         .limit(size || 25),
     });
 
@@ -233,6 +142,7 @@ class Fire {
     this.getMessagesForChatGroup({
       groupId,
       size: 1,
+      order: 'asc',
     });
 
   loadMoreFromChatGroup = async ({ groupId, startBefore }) => {
@@ -264,6 +174,49 @@ class Fire {
     });
   };
 
+
+  formatMessageForPreview = (
+    {
+      uid, name, image,
+    },
+    message,
+    groupId,
+    members,
+  ) => {
+    const isGroupChat = members.length > 1;
+
+    let preview = '';
+    let timeAgo;
+    let isSeen;
+    if (message) {
+      timeAgo = moment(message.timestamp).fromNow(true);
+      isSeen = message.seen != null;
+      if (message.text) {
+        preview = message.text;
+      } else if (message.location) {
+        preview = 'Sent a location';
+      } else if (message.image) {
+        preview = 'Sent an image';
+      } else {
+        preview = '😅 404: Message not found!';
+      }
+    } else {
+      preview = 'Start Chatting!';
+    }
+
+    return {
+      name,
+      groupId,
+      image,
+      uid,
+      isGroupChat,
+      message: preview,
+      isSeen,
+      isSent: uid === this.uid,
+      timeAgo,
+    };
+  };
+
   getMessageList = async () => {
     // / lol debug....
 
@@ -286,48 +239,7 @@ class Fire {
 
     const chatGroups = await this.getChatGroups({});
 
-    const parseMessage = (
-      {
-        uid, name, image,
-      },
-      message,
-      groupId,
-      members,
-    ) => {
-      const isGroupChat = members.length > 1;
-
-      let preview = '';
-      let timeAgo;
-      let isSeen;
-      if (message) {
-        timeAgo = moment(message.timestamp).fromNow(true);
-        isSeen = message.seen != null;
-        if (message.text) {
-          preview = message.text;
-        } else if (message.location) {
-          preview = 'Sent a location';
-        } else if (message.image) {
-          preview = 'Sent an image';
-        } else {
-          preview = '😅 404: Message not found!';
-        }
-      } else {
-        preview = 'Start Chatting!';
-      }
-
-      return {
-        name,
-        groupId,
-        image,
-        uid,
-        isGroupChat,
-        message: preview,
-        isSeen,
-        isSent: uid === this.uid,
-        timeAgo,
-      };
-    };
-
+ 
     const uid = this.uid;
     if (!chatGroups) {
       return null;
@@ -351,7 +263,7 @@ class Fire {
       const sender = group[0];
       const user = await (new Promise(res => dispatch.users.ensureUserIsLoadedAsync({ uid: sender, callback: res }) ));
 
-      const previewMessage = parseMessage(user, message, groupId, group);
+      const previewMessage = this.formatMessageForPreview(user, message, groupId, group);
 
       previewMessages[groupId] = previewMessage;
     }
@@ -362,7 +274,7 @@ class Fire {
   };
 
   getUserAsync = async ({ uid, forceUpdate }) => {
-    if (!isValidKey(uid)) {
+    if (!IdManager.isValid(uid)) {
       console.warn('getUserAsync: Invalid Key', { uid });
       return null;
     }
@@ -413,7 +325,7 @@ class Fire {
   // TODO: dont get all data for each user
   _getUserInfoAsync = ({ uid }) =>
     this.db
-      .collection('users')
+      .collection(Settings.refs.users)
       .doc(uid)
       .get();
 
@@ -498,11 +410,6 @@ class Fire {
       throw new Error(`Error getting documents: ${message}`);
     }
   };
-
-
-  get collection() {
-    return this.db.collection(collectionName);
-  }
 
   get doc() {
     return this.collection.doc(this.uid);

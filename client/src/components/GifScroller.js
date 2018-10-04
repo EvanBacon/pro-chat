@@ -1,11 +1,10 @@
 import qs from 'qs';
 import React, { Component } from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
-import Image from 'react-native-image-progress';
-
 import Settings from '../constants/Settings';
+import Image from './Image/ProgressImage';
 
-const apiKey = Settings.giphyAPI.debug;
+const apiKey = Settings.giphyAPI;
 export default class GifScroller extends Component {
   constructor(props) {
     super(props);
@@ -80,7 +79,11 @@ export default class GifScroller extends Component {
 
   render() {
     const imageList = this.state.gifs.map((gif, index) => (
-      <TouchableOpacity onPress={() => this.handleGifSelect(index, gif)} key={`a-${index + 0}`} index={index}>
+      <TouchableOpacity
+        onPress={() => this.handleGifSelect(index, gif)}
+        key={`a-${index + 0}`}
+        index={index}
+      >
         <Image source={{ uri: gif }} style={styles.image} />
       </TouchableOpacity>
     ));

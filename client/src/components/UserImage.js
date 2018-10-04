@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { View } from 'react-native';
 
 import Circle from './Circle';
-import LoadingImage from './LoadingImage';
 import NotificationDot from './NotificationDot';
 import AvatarImage from './Image/AvatarImage';
 

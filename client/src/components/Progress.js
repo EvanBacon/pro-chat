@@ -1,6 +1,6 @@
 import { Font } from 'expo';
 import React, { Component } from 'react';
-import * as Progress from 'react-native-progress';
+import Circle from 'react-native-progress/Circle';
 
 import Colors from '../constants/Colors';
 
@@ -19,7 +19,7 @@ export default class Indicator extends Component {
     } = this.props;
 
     return (
-      <Progress.Circle
+      <Circle
         textStyle={[
           {
             ...Font.style('DINPro-medium'),

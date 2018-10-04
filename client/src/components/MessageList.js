@@ -3,55 +3,50 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import Meta from '../constants/Meta';
+import Fire from '../Fire';
+import IdManager from '../IdManager';
 import Images from '../Images';
+import NavigationService from '../navigation/NavigationService';
+import firebase from '../universal/firebase';
 import EmptyListMessage from './EmptyListMessage';
 import MessageRow from './MessageRow';
 import UserList from './UserList';
-import Settings from '../constants/Settings';
 
-import NavigationService from '../navigation/NavigationService';
-import Fire from '../Fire';
-// import { findMessageChannels, removedMessageChannel } from '../redux/messages';
 class MessageList extends React.Component {
   state = {
     refreshing: false,
   };
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.badgeCount !== this.props.badgeCount) {
-      // firebase.messaging().setBadgeNumber(nextProps.badgeCount);
+  componentDidMount() {
+    dispatch.notifications.registerAsync();
+
+    this.unsubscribe = firebase.messaging().onMessage(async ({ type }) => {
+      if (type.split('-').shift() === 'message') {
+        await Fire.shared.getMessageList();
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe();
+  }
+
+  componentWillReceiveProps({ badgeCount }) {
+    if (badgeCount !== this.props.badgeCount) {
+      firebase.messaging().setBadgeNumber(badgeCount);
     }
   }
 
-  componentWillMount() {
-    // dispatch.chats.findMessageChannels();
-  }
-
-  componentDidMount() {
-    // firebase.messaging().onMessage(({ notification, type, nid }) => {
-    //   if (type.split('-').shift() === 'message') {
-    //     this._onRefresh();
-    //   }
-    // });
-  }
-
-  _onRefresh = async () => {
+  onRefresh = async () => {
     this.setState({ refreshing: true });
-    const messages = this.props.channels.map(({ uid, groupId: channel }) =>
-      dispatch.chats.getLastMessage({ uid, channel }));
-
-    await Promise.all(messages);
-
+    await Fire.shared.getMessageList();
     this.setState({ refreshing: false });
-
-    dispatch.notifications.registerAsync();
   };
 
   onPressRow = async ({ item: { groupId: channel } }) => {
-    const uid = Fire.shared.getOtherUsersFromChatGroup(channel)[0];
-    console.log('CHAT', uid, channel);
-
-    if (Fire.shared.canMessage({ uid })) {
+    const uid = IdManager.getOtherUserFromChatGroup(channel);
+    console.log('Int', uid, channel);
+    if (IdManager.isInteractable(uid)) {
       NavigationService.navigateToUserSpecificScreen('Chat', uid);
     }
   };
@@ -65,87 +60,39 @@ class MessageList extends React.Component {
     />
   );
 
-  renderEmpty = () => (
-    <EmptyListMessage
-      onPress={this.props.goHome}
-      image={Images.empty.messages}
-      buttonTitle={Meta.no_messages_action}
-      title={Meta.no_messages_title}
-      subtitle={Meta.no_messages_subtitle}
-    />
-  );
-
-  render = () => (
-    <UserList
-      ListEmptyComponent={this.renderEmpty}
-      style={this.props.style}
-      refreshing={this.state.refreshing}
-      onRefresh={this._onRefresh}
-      data={this.props.channels}
-      renderItem={this.renderItem}
-    />
-  );
+  render() {
+    return (
+      <UserList
+        ListEmptyComponent={MessagesEmptyListMessage}
+        style={this.props.style}
+        refreshing={this.state.refreshing}
+        onRefresh={this.onRefresh}
+        data={this.props.data}
+        renderItem={this.renderItem}
+      />
+    );
+  }
 }
+
+const MessagesEmptyListMessage = () => (
+  <EmptyListMessage
+    onPress={() => NavigationService.goBack()}
+    image={Images.empty.messages}
+    buttonTitle={Meta.no_messages_action}
+    title={Meta.no_messages_title}
+    subtitle={Meta.no_messages_subtitle}
+  />
+);
+
 const MessageScreen = connect(
   ({ messages = {} }) => {
-    // const combined = messages; // { ...matches, ...chats };
-
-    // All messages ever [ { [key]: { ... } } ]
-    // const _channels = Object.keys(combined).map(val => ({
-    //   messages: combined[val],
-    //   id: val,
-    // }));
-    // // .sort((a, b) => b.date - a.date);
-
-    // const firstMessages = [];
-
-    // for (const channel of _channels) {
-    //   const messages = Object.values(channel.messages);
-    //   if (messages.length && messages[0]) {
-    //     firstMessages.push({
-    //       channel: channel.id,
-    //       ...messages[0],
-    //     });
-    //   } else {
-    //     // TODO: Empty...
-    //     firstMessages.push({
-    //       channel: channel.id,
-    //     });
-    //   }
-    // }
-
     const badgeCount = 0;
-    // for (const channel of _channels) {
-    //   if (channel.seen === false) {
-    //     badgeCount += 1;
-    //   }
-    // }
-
-    // let messages = [];
-
-    // for (let message of channels) {
-    //   messages.push()
-    // }
-
-    // const messages = Object.values(messages);
-
-    console.log('MessageList: Props: Users: ONEEEPUNCH', {
-      messages,
-    });
-
     return {
-      channels: Object.values(messages),
+      data: Object.values(messages),
       badgeCount,
     };
   },
-  {
-    // goHome: () => dispatch =>
-    //   dispatch(NavigationActions.navigate({ routeName: 'Home' })),
-    // navigate: (routeName, params) => dispatch =>
-    //   dispatch(NavigationActions.navigate({ routeName, params })),
-    // findMessageChannels,
-    // removedMessageChannel,
-  },
+  {},
 )(MessageList);
 
 MessageScreen.navigation = { title: 'Messages' };

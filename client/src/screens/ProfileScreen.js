@@ -15,6 +15,7 @@ import Meta from '../constants/Meta';
 import Fire from '../Fire';
 import Relationship from '../models/Relationship';
 import Settings from '../constants/Settings';
+import IdManager from '../IdManager';
 
 const { width } = Dimensions.get('window');
 
@@ -220,16 +221,16 @@ const mergeProps = (
 ) => {
   const { params = {} } = localProps.navigation.state;
 
-  const mainUserId = Fire.shared.uid;
-  const userId = params.uid || uid || Fire.shared.uid;
+  const mainUserId = IdManager.uid;
+  const userId = params.uid || uid || IdManager.uid;
 
   const isUser = mainUserId === userId;
 
   let relationship = Relationship.none;
   if (!isUser) {
-    relationship = relationships[Fire.shared.getGroupId(userId)];
+    relationship = relationships[IdManager.getGroupId(userId)];
   }
-  
+
   const user = users[userId] || {};
   // console.warn(user, uid);
   const { about, rating } = user;

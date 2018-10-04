@@ -1,5 +1,5 @@
 import React from 'react';
-
+import firebase from '../universal/firebase';
 import AppNavigator from './AppNavigator';
 // import firebase from 'expo-firebase-app';
 // import 'expo-firebase-analytics';
@@ -27,8 +27,7 @@ export default () => (
       const currentScreen = getActiveRouteName(currentState);
       const prevScreen = getActiveRouteName(prevState);
       if (prevScreen !== currentScreen) {
-        console.log('New Screen', currentScreen);
-        // firebase.analytics().setCurrentScreen(currentScreen);
+        firebase.analytics().setCurrentScreen(currentScreen);
       }
     }}
   />

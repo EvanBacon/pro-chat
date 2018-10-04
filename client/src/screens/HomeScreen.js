@@ -14,6 +14,7 @@ import Fire from '../Fire';
 import Relationship from '../models/Relationship';
 import NavigationService from '../navigation/NavigationService';
 import isUnderAge from '../utils/isUnderAge';
+import IdManager from '../IdManager';
 
 // [
 //             "0a944021-1ba5-c51a-0e98-fc2dd3834eeb",
@@ -120,7 +121,7 @@ class HomeScreen extends React.Component {
         <BrowseUsers
           onLike={(uid) => {
             if (!firstLike) {
-              dispatch.onBoarding.setItem({ firstLike: Date.now() });
+              dispatch.onBoarding.set({ firstLike: Date.now() });
               this.alert(
                 Meta.info_like_title,
                 Meta.info_like_subtitle,
@@ -135,7 +136,7 @@ class HomeScreen extends React.Component {
           }}
           onDislike={(uid) => {
             if (!firstDislike) {
-              dispatch.onBoarding.setItem({ firstDislike: Date.now() });
+              dispatch.onBoarding.set({ firstDislike: Date.now() });
               this.alert(
                 Meta.info_dislike_title,
                 Meta.info_dislike_subtitle,
@@ -150,7 +151,7 @@ class HomeScreen extends React.Component {
           }}
           onIndexChange={(uid) => {
             if (!wantMoreInfo) {
-              dispatch.onBoarding.setItem({ wantMoreInfo: Date.now() });
+              dispatch.onBoarding.set({ wantMoreInfo: Date.now() });
               this.alert(
                 Meta.meta_info_learn_more_title,
                 Meta.meta_info_learn_more_subtitle,
@@ -179,14 +180,14 @@ export default connect(({
 }) => {
   const { [Fire.shared.uid]: currentUser, ...otherUsers } = users;
 
-  console.log('otherUsers', { otherUsers });
+  // console.log('otherUsers', { otherUsers });
   return {
     user,
     firstLike,
     firstDislike,
     wantMoreInfo,
     users: Object.values(otherUsers).filter(({ uid }) =>
-      Fire.shared.canMessage({ uid })),
+      IdManager.isInteractable(uid)),
   };
 
   // return {

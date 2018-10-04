@@ -11,6 +11,7 @@ import Assets from '../Assets';
 import { dispatch } from '@rematch/core';
 import NavigationService from '../navigation/NavigationService';
 import Fire from '../Fire';
+import IdManager from '../IdManager';
 
 const Images = Assets.images;
 const EmptyMatchesScreen = ({ goHome }) => (
@@ -46,7 +47,7 @@ class MatchesList extends React.PureComponent {
 
   onPressRow = async ({ uid }) => {
     console.log('GO TO:', { uid });
-    if (Fire.shared.canMessage({ uid })) {
+    if (IdManager.isInteractable(uid)) {
       // NavigationService.navigateToUserSpecificScreen('Profile', uid);
       NavigationService.navigateToUserSpecificScreen(
         'Chat',
@@ -85,7 +86,7 @@ const MatchesScreen = connect(({ users }) => {
 
   return {
     data: Object.values(otherUsers).filter(({ uid }) =>
-      Fire.shared.canMessage({ uid })),
+      IdManager.isInteractable(uid)),
   };
 })(MatchesList);
 

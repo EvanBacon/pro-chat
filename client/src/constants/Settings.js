@@ -4,6 +4,7 @@ import { Constants } from 'expo';
 import { Platform } from 'react-native';
 
 import sizeInfo from '../utils/whatAmI';
+import Secret from '../../Secret';
 
 const isInAppleReview = false;
 
@@ -24,13 +25,34 @@ const fields = [
   'likes',
 ];
 
+const debugging =
+  global.isDebuggingInChrome ||
+  __DEV__ ||
+  process.env.NODE_ENV === 'development';
+
+const giphyAPI = debugging ? Secret.giphy.debug : Secret.giphy.production;
+
+const googleLoginProps = {
+  // behavior: "web", "system" //<= this should be best by default >:(
+
+  // https://gsuite-developers.googleblog.com/2012/01/tips-on-using-apis-discovery-service.html
+  scopes: ['profile', 'email'],
+  androidClientId: '',
+  iosClientId: '',
+  androidStandaloneAppClientId: '',
+  iosStandaloneAppClientId: '',
+  webClientId: '',
+};
+
 const Settings = {
   refs: {
-    channels: 'channels',
+    channels: 'chat_groups',
     relationships: 'relationships',
     users: 'users',
+    complaints: 'complaints',
   },
   isDetached: false,
+  googleLoginProps,
   facebookFields: fields,
   facebookLoginProps: {
     permissions: [
@@ -82,14 +104,8 @@ const Settings = {
   name: isInAppleReview ? 'Beauty' : 'Bütē',
   user: isInAppleReview ? 'Art' : 'Bütē',
   userPlural: isInAppleReview ? 'Artists' : 'Bütēs',
-  debugging:
-    global.isDebuggingInChrome ||
-    __DEV__ ||
-    process.env.NODE_ENV === 'development',
-  giphyAPI: {
-    debug: '8fd94ebef2e642a29137cc7d09412907',
-    production: '',
-  },
+  debugging,
+  giphyAPI,
   fakeLikes: [
     {
       name: 'Young Thug',

@@ -1,16 +1,15 @@
 import { MapView } from 'expo';
-import firebase from 'firebase';
 import React from 'react';
 import {
   Linking,
-  StyleSheet,
   Platform,
+  StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 
-import LoadingImage from '../components/LoadingImage';
+import LoadingImage from '../components/Image/ProgressImage';
 import Fire from '../Fire';
 
 export default class CustomView extends React.Component {

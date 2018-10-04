@@ -17,7 +17,8 @@
     "prettier": "prettier --write '*.js'",
     "format-code": "yarn run prettier && yarn run lint:fix",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d public"
+    "deploy": "gh-pages -d public",
+    "licenses": "npm-license-crawler -onlyDirectDependencies -json licenses.json"
   },
   "homepage": "https://evanbacon.github.io/Bute",
   "lint-staged": {

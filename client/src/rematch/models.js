@@ -1,16 +1,18 @@
 import { dispatch } from '@rematch/core';
 import firebase from 'firebase';
+import moment from 'moment';
 import { Alert } from 'react-native';
 
 import Settings from '../constants/Settings';
 import Fire from '../Fire';
-import { Constants,Permissions, Notifications, Facebook } from '../universal/Expo';
-import PantryStorage from '../universal/PantryStorage';
-import getDeviceInfo from '../utils/getUserInfo';
-
-import NavigationService from '../navigation/NavigationService';
+import IdManager from '../IdManager';
 import Relationship from '../models/Relationship';
+import NavigationService from '../navigation/NavigationService';
+import { Constants, Facebook, Notifications, Permissions } from '../universal/Expo';
+import PantryStorage from '../universal/PantryStorage';
+import getGithubTokenAsync from '../utils/getGithubTokenAsync';
 import getPermission from '../utils/getPermission';
+import getDeviceInfo from '../utils/getUserInfo';
 
 // import GameStates from '../Game/GameStates';
 
@@ -65,6 +67,7 @@ function reduceFirebaseUser(user) {
 
   if (user.providerData && user.providerData.length > 0) {
     const facebookData = user.providerData[0];
+    console.log("ugh, provider", facebookData)
     nextUser.fbuid = facebookData.uid;
     const keysToCheck = ['displayName', 'photoURL'];
     for (const key of keysToCheck) {
@@ -136,11 +139,6 @@ export const onBoarding = {
     update: (state, props) => ({ ...state, ...props }),
     set: (state, props) => props,
     clear: () => {},
-  },
-  effects: {
-    setItem: async (...props) => {
-      console.warn("TODO: onBoarding.setItem", props)
-    }
   }
 };
 
@@ -152,6 +150,9 @@ export const user = {
     clear: () => null,
   },
   effects: {
+    updateUserProfile: () => {
+      console.warn("TODO: user.updateUserProfile")
+    },
     logoutAsync: async () => {
       try {
         await firebase.auth().signOut();
@@ -174,9 +175,10 @@ export const user = {
         if (!auth) {
           // TODO: Evan: Y tho...
           dispatch.user.clear();
-          dispatch.user.signInAnonymously();
+          // dispatch.user.signInAnonymously();
           NavigationService.navigate('Auth');
         } else {
+
           dispatch.user.getAsync();
           dispatch.popular.getAsync();
           Fire.shared.getMessageList();
@@ -220,7 +222,9 @@ export const user = {
         uid: combinedUserData.uid,
         user: combinedUserData,
       });
+      
 
+      console.log("Main:userdata:", combinedUserData)
       if (Settings.isCacheProfileUpdateActive) {
         const shouldUpdateKey = '@Bute/shouldUpdateProfile';
         const something = await PantryStorage.getItemWithExpiration(shouldUpdateKey);
@@ -241,7 +245,7 @@ export const user = {
     mergeDataWithFirebase: async (props) => {
       const doc = await firebase
         .firestore()
-        .collection('users')
+        .collection(Settings.refs.users)
         .doc(Fire.shared.uid);
       doc.set(props, { merge: true });
     },
@@ -256,17 +260,9 @@ export const user = {
       console.log('syncLocalToFirebase', otherUserProps);
       const doc = await firebase
         .firestore()
-        .collection('users')
+        .collection(Settings.refs.users)
         .doc(Fire.shared.uid);
       doc.set(otherUserProps, { merge: true });
-    },
-    setGameData: (props) => {
-      const { uid, doc } = Fire.shared;
-      if (!uid) {
-        // todo: add error
-        return;
-      }
-      doc.set(props, { merge: true });
     },
   },
 };
@@ -279,7 +275,6 @@ export const notifications = {
     setStatus: (state, status) => ({ ...state, status })
   },
   effects: {
-
     registerAsync: async () => {
       console.log("registerAsync")
       const { status: existingStatus } = await Permissions.askAsync(
@@ -298,8 +293,7 @@ export const notifications = {
     
       // Stop here if the user did not grant permissions
       if (finalStatus !== 'granted') {
-        console.log("registerAsync:C--fuck", existingStatus)
-
+        console.log("registerAsync:C", existingStatus)
         return;
       }
     
@@ -311,7 +305,6 @@ export const notifications = {
   },
 };
 
-
 export const relationships = {
   state: {},
   reducers: {
@@ -320,8 +313,8 @@ export const relationships = {
   effects: {
     whenWasUserRated: () => {},
     updateAsync: async ({ uid: otherId, type }) => {
-      const userId = Fire.shared.uid;
-      if (!Fire.shared.canMessage({ uid: otherId })) {
+      const userId = IdManager.uid;
+      if (!IdManager.isInteractable(otherId)) {
         console.warn("Cannot Rate urself")
         return;
       }
@@ -332,7 +325,7 @@ export const relationships = {
         throw new Error(`Cannot set relationship to ${type} in the client`);
       }
 
-      const groupId = Fire.shared.getGroupId(userId, otherId);
+      const groupId = IdManager.getGroupId(userId, otherId);
       console.log('relationships.updateAsync', { otherId, type, groupId });
 
       // const props = {
@@ -348,7 +341,7 @@ export const relationships = {
       const doc = await firebase.firestore().collection(Settings.refs.relationships).doc(groupId);
 
       function createGroupAsync(...ids) {
-        const members = ids.sort((a, b) => a > b);
+        const members = IdManager.sortIDs(...ids);
         console.log("Relationship.updateAsync: createGroupAsync", {members})
 
         return doc.set({ members });
@@ -460,7 +453,7 @@ export const relationships = {
       const userId = Fire.shared.uid;
       if (otherId === userId) return;
       // console.log({ uid });
-      const groupId = Fire.shared.getGroupId(userId, otherId);
+      const groupId = IdManager.getGroupId(userId, otherId);
 
       const doc = await firebase.firestore().collection(Settings.refs.relationships).doc(groupId);
 
@@ -491,164 +484,6 @@ export const relationships = {
   },
 };
 
-const FacebookLoginTypes = {
-  Success: 'success',
-  Cancel: 'cancel',
-};
-
-function deleteUserAsync(uid) {
-  const db = firebase.firestore();
-
-  return Promise.all([
-    db
-      .collection(Settings.slug)
-      .doc(uid)
-      .delete(),
-    db
-      .collection('users')
-      .doc(uid)
-      .delete(),
-  ]);
-}
-
-export const facebook = {
-  state: null,
-  reducers: {
-    set: (state, props) => props,
-    setAuth: (state, props) => ({ ...(state || {}), auth: props }),
-    setGraphResults: (state = {}, props) => {
-      const { graph = {}, ...otherState } = state;
-      return {
-        ...otherState,
-        graph: {
-          ...graph,
-          ...props,
-        },
-      };
-    },
-  },
-  effects: {
-    upgradeAccount: () => {
-      dispatch.facebook.getToken(dispatch.facebook.upgradeAccountWithToken);
-    },
-    login: () => {
-      dispatch.facebook.getToken(dispatch.facebook.loginToFirebaseWithToken);
-    },
-    getToken: async (callback) => {
-      let auth;
-      try {
-        auth = await Facebook.logInWithReadPermissionsAsync(
-          Constants.manifest.facebookAppId,
-          Settings.facebookLoginProps,
-        );
-      } catch ({ message }) {
-        Alert.alert('Facebook Login Error:', message);
-      }
-      if (auth) {
-        const { type, expires, token } = auth;
-        if (type === FacebookLoginTypes.Success) {
-          dispatch.facebook.set({ expires, token });
-        } else if (type === FacebookLoginTypes.Cancel) {
-          // do nothing, user cancelled
-        } else {
-          // unknown type, this should never happen
-          Alert.alert('Failed to authenticate', type);
-        }
-        if (callback) callback(token);
-      }
-    },
-    upgradeAccountWithToken: async (token, { facebook }) => {
-      if (!token && (!facebook || !facebook.token)) {
-        console.warn("upgradeAccountWithToken: Can't upgrade account without a token");
-        return;
-      }
-      const _token = token || facebook.token;
-      try {
-        const user = await linkAndRetrieveDataWithToken(_token);
-        console.log('upgradeAccountWithToken: Upgraded Successful');
-        dispatch.facebook.authorized(user);
-      } catch ({ message, code, ...error }) {
-        if (code === 'auth/credential-already-in-use') {
-          // Delete current account while signed in
-          // TODO: This wont work
-          const { uid } = Fire.shared;
-          if (uid) {
-            console.log('Should delete:', uid);
-            await deleteUserAsync(uid);
-            console.log('All deleted');
-          } else {
-            console.log('??? do something:', uid);
-          }
-          await dispatch.facebook.loginToFirebaseWithToken(_token);
-        } else {
-          // If the account is already linked this error will be thrown
-          console.log('Error: upgradeAccountWithToken', message);
-          console.log('error', code, error);
-          Alert.alert(message);
-        }
-      }
-    },
-    loginToFirebaseWithToken: async (token, { facebook }) => {
-      if (!token && (!facebook || !facebook.token)) {
-        console.warn("loginToFirebaseWithToken: Can't login to firebase without a token");
-        return;
-      }
-      const _token = token || facebook.token;
-      try {
-        const user = await signInWithToken(_token);
-        dispatch.facebook.authorized(user);
-      } catch ({ message }) {
-        console.log('Error: loginToFirebase');
-        Alert.alert(message);
-      }
-    },
-    callGraphWithToken: async ({ token, params, callback }, { facebook }) => {
-      if (!token && (!facebook || !facebook.token)) {
-        console.warn("callGraphWithToken: Can't call the Facebook graph API without a Facebook Auth token");
-        return;
-      }
-      const _token = token || facebook.token;
-
-      // const paramString = (params || ['id', 'name', 'email', 'picture']).join(',');
-      let results;
-      try {
-        const response = await fetch(`https://graph.facebook.com/me?access_token=${_token}&fields=${params.join(',')}`);
-        results = await response.json();
-        dispatch.facebook.setGraphResults(results);
-      } catch ({ message }) {
-        console.log('Error: callGraphWithToken', message);
-        Alert.alert(message);
-      }
-      if (callback) callback(results);
-    },
-    authorized: (user) => {
-      console.log('Authorized Facebook', user);
-      // dispatch.facebook.setAuth(user);
-      let _user = user;
-      if (_user.toJSON) {
-        _user = user.toJSON();
-      }
-      dispatch.user.update(_user);
-    },
-  },
-};
-
-function linkAndRetrieveDataWithToken(token) {
-  const credential = firebase.auth.FacebookAuthProvider.credential(token);
-  return firebase
-    .auth()
-    .currentUser.linkAndRetrieveDataWithCredential(credential);
-}
-
-function signInWithToken(token) {
-  const credential = firebase.auth.FacebookAuthProvider.credential(token);
-  return firebase.auth().signInAndRetrieveDataWithCredential(credential);
-}
-
-
-function isValidKey(key) {
-  return key && typeof key === 'string' && key !== '';
-}
 
 /*
 image, name, message, timestamp, seen, sender, groupId
@@ -686,8 +521,6 @@ function filterUser(user) {
 
  return nextUser;
 }
-
-import moment from 'moment';
 
 const lessThanHoursAgo = (date, hours = 1) => {
   return moment(date).isAfter(moment().subtract(hours, 'hours'));
@@ -739,8 +572,8 @@ export const users = {
     },
     ensureUserIsLoadedAsync: async ({ uid, callback }, { users }) => {
       let cb = callback || function() {}
-      console.log("ensureUserIsLoadedAsync:A", !Fire.shared.canMessage({ uid }));
-      if (!Fire.shared.canMessage({ uid })) {
+      console.log("ensureUserIsLoadedAsync:A", !IdManager.isInteractable(uid));
+      if (!IdManager.isInteractable(uid)) {
         // The current user should always be loaded and up to date.
         cb(null);
         return
@@ -795,7 +628,7 @@ export const users = {
     },
     getPropertyForUser: async ({ propName, uid, forceUpdate, callback: _cb }, { users }) => {
       let callback = _cb || function() {}
-      if (!isValidKey(uid)) {
+      if (!IdManager.isValid(uid)) {
         console.warn('getPropertyForUser: Invalid Key', { uid });
         callback();
         return null;
@@ -840,15 +673,6 @@ export const channelHasMore = {
 };
 
 export const isLoadingEarlier = {
-  state: {
-
-  },
-  reducers: {
-    update: (state, payload) => ({ ...state, ...payload }),
-  },
-};
-
-export const firstMessage = {
   state: {
 
   },
@@ -1069,3 +893,6 @@ function transformMessageForGiftedChat({ message, user }) {
     },
   };
 }
+
+
+export { default as auth } from './auth';

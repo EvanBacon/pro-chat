@@ -1,13 +1,13 @@
+import { dispatch } from '@rematch/core';
 import React, { Component } from 'react';
+import { Text } from 'react-native';
 import TouchableBounce from 'react-native/Libraries/Components/Touchable/TouchableBounce';
 import { connect } from 'react-redux';
-import { Text } from 'react-native';
 
-import { dispatch } from '@rematch/core';
-// import { getProfileImage, getPropertyForUser } from '../../redux/profiles';
 import Circle from '../Circle';
-import LoadingImage from '../LoadingImage';
+import LoadingImage from '../Image/ProgressImage';
 
+// import { getProfileImage, getPropertyForUser } from '../../redux/profiles';
 class Cell extends Component {
   componentWillMount() {
     this.load(this.props.uid);
@@ -67,11 +67,7 @@ class Cell extends Component {
           />
         </Circle>
 
-        {true && (
-          <Text style={{ textAlign: 'center' }}>
-            {firstName}
-          </Text>
-        )}
+        <Text style={{ textAlign: 'center' }}>{firstName}</Text>
       </TouchableBounce>
     );
   }

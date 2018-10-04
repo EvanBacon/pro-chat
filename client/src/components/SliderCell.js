@@ -4,10 +4,9 @@ import { StyleSheet, View } from 'react-native';
 import TouchableBounce from 'react-native/Libraries/Components/Touchable/TouchableBounce';
 import { connect } from 'react-redux';
 
-import LoadingImage from './LoadingImage';
+import LoadingImage from './Image/ProgressImage';
 import Meta from './Meta';
 
-// import { getProfileImage, getPropertyForUser } from '../redux/profiles';
 class SliderCell extends React.PureComponent {
   componentWillMount() {
     this.load(this.props.uid);

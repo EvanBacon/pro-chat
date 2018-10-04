@@ -1,0 +1,269 @@
+{
+    "@expo/react-native-action-sheet@1.1.2": {
+        "licenses": "MIT",
+        "repository": "https://github.com/expo/react-native-action-sheet",
+        "licenseUrl": "https://github.com/expo/react-native-action-sheet/raw/master/LICENSE",
+        "parents": "bute"
+    },
+    "@expo/status-bar-height@0.0.1": {
+        "licenses": "MIT",
+        "repository": "https://github.com/expo/status-bar-height",
+        "licenseUrl": "https://github.com/expo/status-bar-height",
+        "parents": "bute"
+    },
+    "@expo/vector-icons@6.3.1": {
+        "licenses": "MIT",
+        "repository": "https://github.com/expo/vector-icons",
+        "licenseUrl": "https://github.com/expo/vector-icons",
+        "parents": "bute"
+    },
+    "@rematch/core@0.6.0": {
+        "licenses": "ISC",
+        "repository": "https://github.com/rematch/rematch",
+        "licenseUrl": "https://github.com/rematch/rematch/raw/master/LICENSE",
+        "parents": "bute"
+    },
+    "@rematch/persist@0.2.1": {
+        "licenses": "ISC",
+        "licenseUrl": "https://github.com/rematch/rematch/tree/master/plugins/persist#readme",
+        "parents": "bute"
+    },
+    "babel-eslint@8.1.1": {
+        "licenses": "MIT",
+        "repository": "https://github.com/babel/babel-eslint",
+        "licenseUrl": "https://github.com/babel/babel-eslint/raw/master/LICENSE",
+        "parents": "bute"
+    },
+    "babel-preset-expo@4.0.0": {
+        "licenses": "MIT",
+        "repository": "https://github.com/expo/babel-preset-expo",
+        "licenseUrl": "https://github.com/expo/babel-preset-expo",
+        "parents": "bute"
+    },
+    "expo-asset-utils@0.0.4-alpha.3": {
+        "licenses": "MIT",
+        "repository": "https://github.com/expo/expo-asset-utils",
+        "licenseUrl": "https://github.com/expo/expo-asset-utils/raw/master/LICENSE",
+        "parents": "bute"
+    },
+    "expo-web@0.0.14": {
+        "licenses": "BSD-3-Clause",
+        "repository": "https://github.com/raarts/expo-web",
+        "licenseUrl": "https://github.com/raarts/expo-web",
+        "parents": "bute"
+    },
+    "expo@30.0.1": {
+        "licenses": "MIT",
+        "repository": "https://github.com/expo/expo-sdk",
+        "licenseUrl": "https://github.com/expo/expo-sdk",
+        "parents": "bute"
+    },
+    "faker@4.1.0": {
+        "licenses": "MIT",
+        "repository": "http://github.com/Marak/Faker.js",
+        "licenseUrl": "http://github.com/Marak/Faker.js/raw/master/MIT-LICENSE.txt",
+        "parents": "bute"
+    },
+    "firebase@5.5.2": {
+        "licenses": "Apache-2.0",
+        "repository": "https://github.com/firebase/firebase-js-sdk",
+        "licenseUrl": "https://github.com/firebase/firebase-js-sdk",
+        "parents": "bute"
+    },
+    "gsap@2.0.2": {
+        "licenses": "Standard 'no charge' license: https://greensock.com/standard-license. Club GreenSock members get more: https://greensock.com/licensing/. Why GreenSock doesn't employ an MIT license: https://greensock.com/why-license/",
+        "repository": "https://github.com/greensock/GreenSock-JS",
+        "licenseUrl": "https://github.com/greensock/GreenSock-JS",
+        "parents": "bute"
+    },
+    "husky@0.14.3": {
+        "licenses": "MIT",
+        "repository": "https://github.com/typicode/husky",
+        "licenseUrl": "https://github.com/typicode/husky/raw/master/LICENSE",
+        "parents": "bute"
+    },
+    "lint-staged@6.1.1": {
+        "licenses": "MIT",
+        "repository": "https://github.com/okonet/lint-staged",
+        "licenseUrl": "https://github.com/okonet/lint-staged/raw/master/LICENSE",
+        "parents": "bute"
+    },
+    "moment@2.22.2": {
+        "licenses": "MIT",
+        "repository": "https://github.com/moment/moment",
+        "licenseUrl": "https://github.com/moment/moment/raw/master/LICENSE",
+        "parents": "bute"
+    },
+    "prop-types@15.6.2": {
+        "licenses": "MIT",
+        "repository": "https://github.com/facebook/prop-types",
+        "licenseUrl": "https://github.com/facebook/prop-types/raw/master/LICENSE",
+        "parents": "bute"
+    },
+    "qs@6.5.2": {
+        "licenses": "BSD-3-Clause",
+        "repository": "https://github.com/ljharb/qs",
+        "licenseUrl": "https://github.com/ljharb/qs/raw/master/LICENSE",
+        "parents": "bute"
+    },
+    "query-string@5.1.1": {
+        "licenses": "MIT",
+        "repository": "https://github.com/sindresorhus/query-string",
+        "licenseUrl": "https://github.com/sindresorhus/query-string/raw/master/license",
+        "parents": "bute"
+    },
+    "randomcolor@0.5.3": {
+        "licenses": "CC0",
+        "repository": "https://github.com/davidmerfield/randomColor",
+        "licenseUrl": "https://github.com/davidmerfield/randomColor/raw/master/LICENSE.md",
+        "parents": "bute"
+    },
+    "react-art@16.5.2": {
+        "licenses": "MIT",
+        "repository": "https://github.com/facebook/react",
+        "licenseUrl": "https://github.com/facebook/react/raw/master/LICENSE",
+        "parents": "bute"
+    },
+    "react-dom@16.5.2": {
+        "licenses": "MIT",
+        "repository": "https://github.com/facebook/react",
+        "licenseUrl": "https://github.com/facebook/react/raw/master/LICENSE",
+        "parents": "bute"
+    },
+    "react-native-animatable@1.3.0": {
+        "licenses": "MIT",
+        "repository": "https://github.com/oblador/react-native-animatable",
+        "licenseUrl": "https://github.com/oblador/react-native-animatable/raw/master/LICENSE",
+        "parents": "bute"
+    },
+    "react-native-communications@2.2.1": {
+        "licenses": "MIT",
+        "repository": "https://github.com/anarchicknight/react-native-communications",
+        "licenseUrl": "https://github.com/anarchicknight/react-native-communications/blob/master/LICENSE",
+        "parents": "bute"
+    },
+    "react-native-deck-swiper@1.5.22": {
+        "licenses": "ISC",
+        "repository": "https://github.com/alexbrillant/react-native-deck-swiper",
+        "licenseUrl": "https://github.com/alexbrillant/react-native-deck-swiper/raw/master/LICENSE",
+        "parents": "bute"
+    },
+    "react-native-dotenv@0.1.1": {
+        "licenses": "MIT",
+        "parents": "bute"
+    },
+    "react-native-gifted-chat@0.4.3": {
+        "licenses": "MIT",
+        "repository": "https://github.com/FaridSafi/react-native-gifted-chat",
+        "licenseUrl": "https://github.com/FaridSafi/react-native-gifted-chat/raw/master/LICENSE",
+        "parents": "bute"
+    },
+    "react-native-google-analytics@1.3.2": {
+        "licenses": "UNKNOWN",
+        "repository": "https://github.com/lwansbrough/react-native-google-analytics",
+        "licenseUrl": "https://github.com/lwansbrough/react-native-google-analytics/raw/master/LICENSE",
+        "parents": "bute"
+    },
+    "react-native-image-progress@1.1.1": {
+        "licenses": "MIT",
+        "repository": "https://github.com/oblador/react-native-image-progress",
+        "licenseUrl": "https://github.com/oblador/react-native-image-progress/raw/master/LICENSE",
+        "parents": "bute"
+    },
+    "react-native-nav@2.0.2": {
+        "licenses": "MIT",
+        "repository": "https://github.com/jineshshah36/react-native-nav",
+        "licenseUrl": "https://github.com/jineshshah36/react-native-nav/raw/master/LICENSE",
+        "parents": "bute"
+    },
+    "react-native-paper@2.0.1": {
+        "licenses": "MIT",
+        "repository": "https://github.com/callstack/react-native-paper",
+        "licenseUrl": "https://github.com/callstack/react-native-paper/raw/master/LICENSE.md",
+        "parents": "bute"
+    },
+    "react-native-parsed-text@0.0.20": {
+        "licenses": "MIT",
+        "repository": "https://github.com/taskrabbit/react-native-parsed-text",
+        "licenseUrl": "https://github.com/taskrabbit/react-native-parsed-text/raw/master/LICENSE.txt",
+        "parents": "bute"
+    },
+    "react-native-progress@3.5.0": {
+        "licenses": "MIT",
+        "repository": "https://github.com/oblador/react-native-progress",
+        "licenseUrl": "https://github.com/oblador/react-native-progress/raw/master/LICENSE",
+        "parents": "bute"
+    },
+    "react-native-web@0.8.11": {
+        "licenses": "MIT",
+        "repository": "https://github.com/necolas/react-native-web",
+        "licenseUrl": "https://github.com/necolas/react-native-web",
+        "parents": "bute"
+    },
+    "react-native@0.55.4": {
+        "licenses": "MIT",
+        "repository": "https://github.com/facebook/react-native",
+        "licenseUrl": "https://github.com/facebook/react-native/raw/master/LICENSE",
+        "parents": "bute"
+    },
+    "react-navigation-header-buttons@2.1.0": {
+        "licenses": "MIT",
+        "repository": "https://github.com/vonovak/react-navigation-header-buttons",
+        "licenseUrl": "https://github.com/vonovak/react-navigation-header-buttons/raw/master/LICENSE",
+        "parents": "bute"
+    },
+    "react-navigation-material-bottom-tabs@0.3.0": {
+        "licenses": "MIT",
+        "repository": "https://github.com/react-navigation/react-navigation-material-bottom-tab-navigator",
+        "licenseUrl": "https://github.com/react-navigation/react-navigation-material-bottom-tab-navigator/raw/master/LICENSE.md",
+        "parents": "bute"
+    },
+    "react-navigation@2.17.0": {
+        "licenses": "BSD-2-Clause",
+        "repository": "https://github.com/react-navigation/react-navigation",
+        "licenseUrl": "https://github.com/react-navigation/react-navigation/raw/master/LICENSE",
+        "parents": "bute"
+    },
+    "react-redux@5.0.7": {
+        "licenses": "MIT",
+        "repository": "https://github.com/reactjs/react-redux",
+        "licenseUrl": "https://github.com/reactjs/react-redux/raw/master/LICENSE.md",
+        "parents": "bute"
+    },
+    "react-scripts@1.0.17": {
+        "licenses": "MIT",
+        "repository": "https://github.com/facebookincubator/create-react-app",
+        "licenseUrl": "https://github.com/facebookincubator/create-react-app",
+        "parents": "bute"
+    },
+    "react@16.5.2": {
+        "licenses": "MIT",
+        "repository": "https://github.com/facebook/react",
+        "licenseUrl": "https://github.com/facebook/react/raw/master/LICENSE",
+        "parents": "bute"
+    },
+    "redux-persist@5.10.0": {
+        "licenses": "MIT",
+        "repository": "https://github.com/rt2zz/redux-persist",
+        "licenseUrl": "https://github.com/rt2zz/redux-persist/raw/master/LICENSE",
+        "parents": "bute"
+    },
+    "ua-parser-js@0.7.18": {
+        "licenses": "(GPL-2.0 OR MIT)",
+        "repository": "https://github.com/faisalman/ua-parser-js",
+        "licenseUrl": "https://github.com/faisalman/ua-parser-js",
+        "parents": "bute"
+    },
+    "uuid@3.3.2": {
+        "licenses": "MIT",
+        "repository": "https://github.com/kelektiv/node-uuid",
+        "licenseUrl": "https://github.com/kelektiv/node-uuid/raw/master/LICENSE.md",
+        "parents": "bute"
+    },
+    "webpack@3.12.0": {
+        "licenses": "MIT",
+        "repository": "https://github.com/webpack/webpack",
+        "licenseUrl": "https://github.com/webpack/webpack/raw/master/LICENSE",
+        "parents": "bute"
+    }
+}

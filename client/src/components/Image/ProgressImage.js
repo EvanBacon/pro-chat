@@ -1,7 +1,7 @@
 import React from 'react';
 import { createAnimatableComponent } from 'react-native-animatable';
 import Image from 'react-native-image-progress';
-import { Circle } from 'react-native-progress';
+import Circle from 'react-native-progress/Circle';
 
 const ProgressFadeInImage = createAnimatableComponent(Image);
 
@@ -10,7 +10,9 @@ export default class ProgressImage extends React.PureComponent {
     const { onLoad, ...props } = this.props;
     return (
       <ProgressFadeInImage
-        ref={e => (this.imageRef = e)}
+        ref={(e) => {
+          this.imageRef = e;
+        }}
         indicator={Circle}
         {...props}
         onLoad={() => {

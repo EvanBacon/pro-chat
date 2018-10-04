@@ -31,6 +31,7 @@ import Gallery from './Gallery';
 import ShareLocation from './ShareLocation';
 import Camera from './Camera';
 import Chat from './Chat';
+import Settings from './Settings';
 
 export default {
   Chat,
@@ -51,4 +52,5 @@ export default {
   Logout,
   Store,
   Outline,
+  Settings,
 };

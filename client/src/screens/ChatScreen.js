@@ -1,22 +1,20 @@
 import { dispatch } from '@rematch/core';
+import { Keyboard } from 'expo';
 import firebase from 'firebase';
 import React from 'react';
 import { Clipboard, InteractionManager, LayoutAnimation, StyleSheet, Text, View } from 'react-native';
 import { Bubble, GiftedChat, MessageText } from 'react-native-gifted-chat';
 import { connect } from 'react-redux';
-import { Keyboard } from 'expo';
 
 import AccessoryBar from '../components/AccessoryBar';
-import CustomActions from '../components/chat/Actions';
 import EmptyChat from '../components/EmptyChat';
 import GifScroller from '../components/GifScroller';
-import Loading from '../components/Loading';
 import Time from '../components/Time';
 import Meta from '../constants/Meta';
 import Fire from '../Fire';
-import CustomView from './CustomView';
+import IdManager from '../IdManager';
 import NavigationService from '../navigation/NavigationService';
-import Settings from '../constants/Settings';
+import CustomView from './CustomView';
 
 class Chat extends React.Component {
   static navigationOptions = ({ navigation }) => ({
@@ -47,18 +45,15 @@ class Chat extends React.Component {
   constructor(props) {
     super(props);
 
-    const { title } = props; 
+    const { title } = props;
     if (title && title !== '') {
       props.navigation.setParams({ title });
     }
   }
   componentWillReceiveProps({ title }) {
-    console.log({title});
     if (this.props.title !== title) {
       this.props.navigation.setParams({ title });
     }
-    
-
   }
 
   async componentDidMount() {
@@ -93,10 +88,7 @@ class Chat extends React.Component {
       ['image', 'text', 'location'].forEach((key) => {
         if (message[key]) chat[key] = message[key];
       });
-      Fire.shared.sendMessage(
-        chat,
-        this.props.groupId,
-      );
+      Fire.shared.sendMessage(chat, this.props.groupId);
     }
   };
 
@@ -109,9 +101,15 @@ class Chat extends React.Component {
 
     this._isUserEditing = value;
     if (value) {
-      this.userStartedTyping();
+      dispatch.isTyping.setAsync({
+        isTyping: true,
+        groupId: this.props.groupId,
+      });
     } else {
-      this.userFinishedTyping();
+      dispatch.isTyping.setAsync({
+        isTyping: false,
+        groupId: this.props.groupId,
+      });
     }
   }
 
@@ -167,38 +165,15 @@ class Chat extends React.Component {
     // this.setState({ messages: _messages });
   };
 
-  renderBackground = () =>
-    // if (this.props.firstMessage) return null;
-
-    (
-      <View style={StyleSheet.absoluteFill}>
-        <EmptyChat uid={this.props.targetUID} />
-      </View>
-    )
-  ;
-
+  renderBackground = () => (<ButeBackground name={this.props.otherUser.name} image={this.props.otherUser.image} timestamp={this.props.matchedTimestamp} />);
   // renderActions={CustomActions}
 
-  userStartedTyping = () =>
-    dispatch.isTyping.setAsync({ isTyping: true, groupId: this.props.groupId });
-
-  userFinishedTyping = () =>
-    dispatch.isTyping.setAsync({
-      isTyping: false,
-      groupId: this.props.groupId,
-    });
-
-  renderCustomView = props => <CustomView {...props} />;
+  renderCustomView = props => (<CustomView {...props} />);
 
   renderFooter = () => {
-    if (this.props.isTyping) {
-      return (
-        <View style={styles.footerContainer}>
-          <Text style={styles.footerText}>
-            {`${this.props.otherUser.name} ${Meta.is_typing}`}
-          </Text>
-        </View>
-      );
+    const { isTyping, otherUser } = this.props;
+    if (isTyping) {
+      return (<ButeFooter name={otherUser.name} />);
     }
     return null;
   };
@@ -208,36 +183,18 @@ class Chat extends React.Component {
     // Eg: Navigate to the user profile
   };
 
-  renderBubble = (props) => {
-    const { currentMessage } = props;
-
-    let backgroundColor;
-    if (currentMessage.imageUrl || currentMessage.location) {
-      backgroundColor = 'transparent';
-    }
-
-    const _wrapperStyle = {
-      right: {
-        backgroundColor: backgroundColor || wrapperStyle.right.backgroundColor,
-      },
-      left: {
-        backgroundColor: backgroundColor || wrapperStyle.left.backgroundColor,
-      },
-    };
-    // {...props} wrapperStyle={_wrapperStyle}
-    return <Bubble {...props} wrapperStyle={_wrapperStyle} />;
-  };
+  renderBubble = (props) => (<ButeBubble {...props} />);
 
   onLoadEarlier = () => dispatch.chats.loadEarlier(this.props.channel);
 
   onPressAvatar = ({ _id: uid }) =>
-  NavigationService.navigateToUserSpecificScreen('Profile', uid);
+    NavigationService.navigateToUserSpecificScreen('Profile', uid);
 
   renderAccessory = () => (
     <AccessoryBar
       channel={this.props.channel}
       text={this.state.userInput}
-      gifActive={this.props.gifOpened}
+      gifActive={this.state.gifActive}
       onSend={this.onSendMessage}
       onGif={this.onGif}
     />
@@ -250,15 +207,12 @@ class Chat extends React.Component {
   };
 
   renderChatFooter = () => {
-    if (
-      this.state.gifActive &&
-      this.state.userInput &&
-      this.state.userInput.length > 0
-    ) {
+    const { gifActive, userInput } = this.state;
+    if (gifActive && userInput && userInput.length > 0) {
       return (
         <GifScroller
           style={{ width: '100%', height: 100, backgroundColor: 'white' }}
-          inputText={this.state.userInput}
+          inputText={userInput}
           handleGifSelect={this.handleGifSelect}
         />
       );
@@ -268,15 +222,13 @@ class Chat extends React.Component {
 
   handleGifSelect = (url) => {
     this.onSendMessage([{ image: { uri: url, name: this.state.userInput } }]);
-    if (firebase.analytics) {
-      // firebase
-      //   .analytics()
-      //   .logEvent('sent_gif', { channel: this.props.channel, url });
-    }
+    firebase
+      .analytics()
+      .logEvent('sent_gif', { channel: this.props.channel, url });
   };
 
   onInputTextChanged = (text) => {
-    let gifOpen = this.props.gifOpened;
+    let gifOpen = this.state.gifActive;
     if (gifOpen && !text) {
       gifOpen = false;
     }
@@ -333,20 +285,22 @@ class Chat extends React.Component {
   render() {
     return (
       <View style={[styles.container]}>
-        {false && this.renderBackground()}
+        {this.props.messages.length === 0 && this.renderBackground()}
         <GiftedChat
           ref={(c) => {
             this._GiftedMessenger = c;
           }}
           messages={this.props.messages}
           onSend={this.onSendMessage}
-
           keyboardShouldPersistTaps="handled"
           onPressAvatar={this.onPressAvatar}
           renderAccessory={this.renderAccessory}
           renderChatFooter={this.renderChatFooter}
           parseText
           isAnimated
+          renderCustomView={this.renderCustomView}
+          renderAvatarOnTop={false}
+          onLongPress={this.onLongPress}
           onInputTextChanged={this.onInputTextChanged}
           renderFooter={this.renderFooter}
           renderTime={props => <Time {...props} />}
@@ -362,24 +316,49 @@ class Chat extends React.Component {
             keyboardShouldPersistTaps: 'handled',
           }}
           user={this.user}
-
         />
       </View>
     );
   }
 }
 
-// onLongPress={this.onLongPress}
-// renderAvatarOnTop={false}
-// renderCustomView={this.renderCustomView}
+const ButeFooter = ({ name }) =>  (
+      <View style={styles.footerContainer}>
+        <Text style={styles.footerText}>
+          {`${name} ${Meta.is_typing}`}
+        </Text>
+      </View>
+    );
+  
+const ButeBackground = ({ image, timestamp, name }) => ( <View style={StyleSheet.absoluteFill}>
+  <EmptyChat image={image} timestamp={timestamp} name={name} />
+</View>)
+
+const ButeBubble = (props) => {
+  const { currentMessage } = props;
+
+  let backgroundColor;
+  if (currentMessage.imageUrl || currentMessage.location) {
+    backgroundColor = 'transparent';
+  }
+
+  const _wrapperStyle = {
+    right: {
+      backgroundColor: backgroundColor || wrapperStyle.right.backgroundColor,
+    },
+    left: {
+      backgroundColor: backgroundColor || wrapperStyle.left.backgroundColor,
+    },
+  };
+  // {...props} wrapperStyle={_wrapperStyle}
+  return <Bubble {...props} wrapperStyle={_wrapperStyle} />;
+  
+}
+
 // loadEarlier={this.props.channelHasMore}
 // onLoadEarlier={this.onLoadEarlier}
 // isLoadingEarlier={this.props.isLoadingEarlier}
-//
-
 // renderLoading={Loading}
-//
-
 
 const wrapperStyle = {
   right: {
@@ -396,7 +375,7 @@ const mergeProps = (state, dispatchProps, ownProps) => {
   const { params = {} } = ownProps.navigation.state;
   const { uid } = params;
 
-  const groupId = Fire.shared.getGroupId(uid);
+  const groupId = IdManager.getGroupId(uid);
   const {
     chats,
     users,
@@ -409,8 +388,7 @@ const mergeProps = (state, dispatchProps, ownProps) => {
 
   let chatProps = {};
   if (groupId) {
-    // const otherUsers = Fire.shared.getOtherUsersFromChatGroup(groupId);
-    const otherUserUid = uid; // otherUsers[0];
+    const otherUserUid = uid;
     const otherUser = users[otherUserUid] || {};
     const messages = chats[groupId] || {};
     console.log({ messages });
@@ -435,6 +413,7 @@ const mergeProps = (state, dispatchProps, ownProps) => {
       messages: Object.values(messages).sort((a, b) => a.createdAt < b.createdAt),
     };
   }
+  // TODO: Add: matchedTimestamp
   return {
     ...ownProps,
     ...dispatchProps,

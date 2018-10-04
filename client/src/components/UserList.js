@@ -24,8 +24,7 @@ export default class UserList extends React.Component {
         ListEmptyComponent={ListEmptyComponent}
         refreshControl={
           <RefreshControl
-            tintColor="#B996FC"
-            titleColor="#B996FC"
+            color="#B996FC"
             refreshing={refreshing}
             onRefresh={onRefresh}
           />
