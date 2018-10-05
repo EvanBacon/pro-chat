@@ -15,6 +15,8 @@ import Relationship from '../models/Relationship';
 import NavigationService from '../navigation/NavigationService';
 import isUnderAge from '../utils/isUnderAge';
 import IdManager from '../IdManager';
+import tabBarImage from '../components/Tabs/tabBarImage';
+import Assets from '../Assets';
 
 // [
 //             "0a944021-1ba5-c51a-0e98-fc2dd3834eeb",
@@ -173,7 +175,7 @@ class HomeScreen extends React.Component {
   }
 }
 
-export default connect(({
+const ConnectedHomeScreen = connect(({
   user,
   users, // geo: { nearbyUsers: users },
   onBoarding: { firstLike, firstDislike, wantMoreInfo },
@@ -198,3 +200,13 @@ export default connect(({
   //   wantMoreInfo,
   // }
 })(HomeScreen);
+
+ConnectedHomeScreen.navigationOptions = {
+  title: 'Matches',
+  tabBarIcon: tabBarImage({
+    active: Assets.images.home_active,
+    inactive: Assets.images.home_inactive,
+  }),
+};
+
+export default ConnectedHomeScreen;

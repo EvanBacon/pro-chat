@@ -2,7 +2,8 @@ import { connectActionSheet } from '@expo/react-native-action-sheet';
 import React from 'react';
 import { Animated, Dimensions, FlatList, Image, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
-
+import {dispatch} from '@rematch/core';
+import { Permissions } from '../universal/Expo';
 import Meta from '../constants/Meta';
 import Settings from '../constants/Settings';
 import Images from '../Images';
@@ -48,7 +49,7 @@ class Edit extends React.Component {
               try {
                 this.props.setupImage(image);
 
-                this.props.updateProfileImage(image, this.props.onProgress);
+                dispatch.user.updateProfileImage(image, this.props.onProgress);
                 this.props.onComplete(image.uri || image);
               } catch (error) {
                 if (this.props.onError) this.props.onError(error);
@@ -106,7 +107,7 @@ class Slider extends React.Component {
 
   renderItem = ({ item, index }) => (
     <OnBoardSliderCard
-      onPress={_ => item.pushNext && this.scrollToNext()}
+      onPress={() => item.pushNext && this.scrollToNext()}
       index={index}
       scroll={this.scroll}
       itemWidth={this.state.itemWidth}
@@ -192,7 +193,9 @@ class OnboardSlider extends React.Component {
     onSelectIndex: (index, key) => {},
   };
 
-  componentWillMount = () => this.props.getLocationPermission();
+  componentWillMount() {
+    // dispatch.permissions.getAsync(Permissions.LOCATION);
+  }
 
   gatherItems = () => {
     const {
@@ -254,8 +257,8 @@ class OnboardSlider extends React.Component {
     return (
       <InputSlider
         include={items}
-        updateProfileImage={this.props.updateProfileImage}
-        updateUserProfile={this.props.updateUserProfile}
+        updateProfileImage={dispatch.user.updateProfileImage}
+        updateUserProfile={dispatch.user.updateUserProfile}
         style={style}
         onSelectCamera={this.props.onSelectCamera}
         onSettingSelected={onSettingSelected}
@@ -485,7 +488,7 @@ class InputSlider extends React.Component {
           }}
         >
           <Edit
-            updateProfileImage={this.props.updateProfileImage}
+            updateProfileImage={dispatch.user.updateProfileImage}
             onSelectCamera={this.props.onSelectCamera}
             setupImage={(image) => {
               // this.setState({image})
@@ -548,6 +551,6 @@ class InputSlider extends React.Component {
   }
 }
 
-export default connect(state => ({
-  locationPermission: state.permissions.location,
+export default connect(({ permissions: { location } }) => ({
+  locationPermission: location,
 }))(OnboardSlider);

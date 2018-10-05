@@ -1,13 +1,16 @@
 import React from 'react';
 import { View } from 'react-native';
 import {
-  createBottomTabNavigator,
+  createMaterialTopTabNavigator,
   createStackNavigator,
   createSwitchNavigator,
 } from 'react-navigation';
 
 import Button from '../components/Button';
+import ChooseInterestScreen from '../components/ChooseInterest';
 import Header from '../components/Header';
+import LicensesScreen from '../components/Licenses';
+import MessageScreen from '../components/MessageList';
 import { BAR_HEIGHT } from '../components/styles';
 import Colors from '../constants/Colors';
 import Settings from '../constants/Settings';
@@ -15,53 +18,63 @@ import AccountUnderReviewScreen from '../screens/AccountUnderReviewScreen';
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 import ChatScreen from '../screens/ChatScreen';
 import CommunicationsScreen from '../screens/CommunicationsScreen';
+import DevTeamScreen from '../screens/DevTeamScreen';
 import HomeScreen from '../screens/HomeScreen';
-import MessagesScreen from '../screens/MessagesScreen';
+import MatchesScreen from '../screens/MatchesScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import SignInScreen from '../screens/SignInScreen';
-import NavigationService from './NavigationService';
-import ChooseInterestScreen from '../components/ChooseInterest';
-// import ExploreScreen from '../screens/ExploreScreen';
-// import CameraScreen from '../screens/CameraScreen';
-import DevTeamScreen from '../screens/DevTeamScreen';
-// import ReportScreen from '../screens/ReportScreen';
 import UnderAgeScreen from '../screens/UnderAgeScreen';
 import WebsiteScreen from '../screens/WebsiteScreen';
-import LicensesScreen from '../components/Licenses';
+import NavigationService from './NavigationService';
 
+// import CameraScreen from '../screens/CameraScreen';
+// import ReportScreen from '../screens/ReportScreen';
 // const { tintColor } = Constants.manifest;
 const tintColor = '#52416A';
 
-const MainTab = createBottomTabNavigator(
+const MainTab = createMaterialTopTabNavigator(
   {
     MainProfile: ProfileScreen,
     Main: HomeScreen,
-    Communications: CommunicationsScreen,
+    Messages: MessageScreen,
+    Matches: MatchesScreen,
   },
   {
     initialRouteName: 'Main',
-    swipeEnabled: true,
-    animationEnabled: true,
     cardStyle: {},
+    navigationOptions: () => ({
+      swipeEnabled: true,
+      // Put tab bar on bottom of screen on both platforms
+      // tabBarComponent: TabBarBottom,
+      tabBarPosition: 'bottom',
+      // Disable animation so that iOS/Android have same behaviors
+      animationEnabled: true,
+      lazy: true,
+    }),
     tabBarOptions: {
       // tabBarButtonComponent: () => <Text>
-      activeTintColor: '#e91e63',
-      activeBackgroundColor: tintColor,
-      inactiveBackgroundColor: tintColor,
-      inactiveTintColor: tintColor,
-      showIcon: false,
+      // activeTintColor: '#e91e63',
+      // activeBackgroundColor: '#52416A',
+      // inactiveBackgroundColor: tintColor,
+      // inactiveTintColor: tintColor,
+      showIcon: true,
+      showLabel: false,
+
       labelStyle: {
         fontSize: 16,
         fontFamily: 'DIN-Pro-Medium',
         color: 'white',
       },
       tabStyle: {
-        backgroundColor: tintColor,
-        padding: 0,
+        // backgroundColor: 'white',
+        // padding: 0,
+      },
+      indicatorStyle: {
+        backgroundColor: 'white',
       },
       style: {
-        padding: 0,
+        // padding: 0,
         backgroundColor: tintColor,
       },
     },
@@ -94,7 +107,6 @@ const AppStack = createStackNavigator(
     AccountUnderReview: AccountUnderReviewScreen,
     Chat: ChatScreen,
     Communications: CommunicationsScreen,
-    Messages: MessagesScreen,
     Profile: ProfileScreen,
     Licenses: LicensesScreen,
     ChooseInterest: ChooseInterestScreen,

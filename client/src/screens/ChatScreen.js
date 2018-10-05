@@ -12,7 +12,6 @@ import GifScroller from '../components/GifScroller';
 import Time from '../components/Time';
 import Meta from '../constants/Meta';
 import Fire from '../Fire';
-import IdManager from '../IdManager';
 import NavigationService from '../navigation/NavigationService';
 import CustomView from './CustomView';
 
@@ -31,67 +30,16 @@ class Chat extends React.Component {
     userInput: '',
   };
 
+  get uid() {
+    return Fire.shared.uid;
+  }
+
   get user() {
     return {
       _id: this.uid, // sent messages should have same user._id
       name: this.props.name,
     };
   }
-
-  get uid() {
-    return Fire.shared.uid;
-  }
-
-  constructor(props) {
-    super(props);
-
-    const { title } = props;
-    if (title && title !== '') {
-      props.navigation.setParams({ title });
-    }
-  }
-  componentWillReceiveProps({ title }) {
-    if (this.props.title !== title) {
-      this.props.navigation.setParams({ title });
-    }
-  }
-
-  async componentDidMount() {
-    const { otherUserUid, groupId } = this.props;
-    // dispatch.chats.clear({ uid: groupId });
-    // await Fire.shared.getUserAsync({ uid: otherUserUid });
-    dispatch.chats.startChatting({
-      uids: otherUserUid,
-      callback: (unsubscribe) => {
-        this.unsubscribe = unsubscribe;
-        dispatch.isTyping.observe({ groupId, uid: otherUserUid }); // TODO: UNSUB
-        // dispatch.users.getProfileImage({ uid: otherUserUid });
-      },
-    });
-  }
-
-  componentWillUnmount() {
-    // const { channel } = this.state;
-    this.isUserEditing = false;
-    // const uid = this.uid;
-    // console.log("sukapunch", `messages/${channel}/users/${uid}`);
-    // this.ref(`messages/${channel}/users/${uid}`).orderByKey().limitToLast(pageSize).off('child_added', snapshot => this.didRecieveMessageKey(snapshot.key))
-    // this.ref(`messages/${channel}/typing/${uid}`).off('value', this.didRecieveTyping)
-  }
-
-  onSendMessage = async (messages = []) => {
-    this.isUserEditing = false;
-    for (const message of messages) {
-      const chat = {
-        seen: null,
-      };
-      ['image', 'text', 'location'].forEach((key) => {
-        if (message[key]) chat[key] = message[key];
-      });
-      Fire.shared.sendMessage(chat, this.props.groupId);
-    }
-  };
-
   get isUserEditing() {
     return this._isUserEditing;
   }
@@ -115,18 +63,68 @@ class Chat extends React.Component {
 
   _isUserEditing = false;
 
-  ref = route => firebase.database().ref(route);
+  constructor(props) {
+    super(props);
+
+    const { title } = props;
+    if (title && title !== '') {
+      props.navigation.setParams({ title });
+    }
+  }
+
+  componentWillReceiveProps({ title }) {
+    if (this.props.title !== title) {
+      this.props.navigation.setParams({ title });
+    }
+  }
+
+  _startChattingAsync = uids =>
+    new Promise(res =>
+      dispatch.chats.startChatting({
+        uids,
+        callback: res,
+      }));
+
+  async componentDidMount() {
+    const { otherUserId, groupId } = this.props;
+    // dispatch.chats.clear({ uid: groupId });
+    this.unsubscribe = await this._startChattingAsync(otherUserId);
+    dispatch.isTyping.observe({ groupId, uid: otherUserId }); // TODO: UNSUB
+    // dispatch.users.getProfileImage({ uid: otherUserId });
+  }
+
+  componentWillUnmount() {
+    // const { channel } = this.state;
+    this.isUserEditing = false;
+    // TODO: unsubscribe: this.unsubscribe();
+
+    dispatch.isTyping.unsubscribe({
+      groupId: this.props.groupId,
+    });
+  }
 
   componentWillUpdate() {
     LayoutAnimation.easeInEaseOut();
   }
+
+  onSendMessage = async (messages = []) => {
+    this.isUserEditing = false;
+    for (const message of messages) {
+      const chat = {
+        seen: null,
+      };
+      ['image', 'text', 'location'].forEach((key) => {
+        if (message[key]) chat[key] = message[key];
+      });
+      Fire.shared.sendMessage(chat, this.props.groupId);
+    }
+  };
 
   _keyboardDidShow = () => {
     // this.setState({ keyboard: 0 })
     // this.setState({gifOpen: false })
     InteractionManager.runAfterInteractions(() => {
       dispatch.chats.updatedGifOpened({
-        channel: this.props.channel,
         isOpened: false,
       });
       this._GiftedMessenger.setBottomOffset(this._GiftedMessenger.getKeyboardHeight());
@@ -137,15 +135,6 @@ class Chat extends React.Component {
     // this.setState({ keyboard: 0 })
     // this.setState({ keyboard: 0 });
   };
-
-  // loadMessages = async ({ channel }) => {
-  //   const { uid, first_name } = firebase.user();
-  //   // const image = await ImageProvider.getProfileImage({uid: this.props.targetUID});
-  //   dispatch.users.getProfileImage({ uid: this.props.targetUID });
-  //   dispatch.chats.observeTyping({ channel, uid: this.props.targetUID });
-  //   // dispatch.chats.subscribeToChannel(channel);
-  //   dispatch.chats.observeTyping({ channel, uid: this.props.targetUID });
-  // };
 
   deleteMessage = (key) => {
     dispatch.chats.deleteMessageFromChannel({
@@ -165,25 +154,26 @@ class Chat extends React.Component {
     // this.setState({ messages: _messages });
   };
 
-  renderBackground = () => (<ButeBackground name={this.props.otherUser.name} image={this.props.otherUser.image} timestamp={this.props.matchedTimestamp} />);
+  renderBackground = () => (
+    <ButeBackground
+      name={this.props.otherUser.name}
+      image={this.props.otherUser.image}
+      timestamp={this.props.matchedTimestamp}
+    />
+  );
   // renderActions={CustomActions}
 
-  renderCustomView = props => (<CustomView {...props} />);
+  renderCustomView = props => <CustomView {...props} />;
 
   renderFooter = () => {
     const { isTyping, otherUser } = this.props;
     if (isTyping) {
-      return (<ButeFooter name={otherUser.name} />);
+      return <ButeFooter name={otherUser.name} />;
     }
     return null;
   };
 
-  onUserProfilePicturePressed = () => {
-    // Your logic here
-    // Eg: Navigate to the user profile
-  };
-
-  renderBubble = (props) => (<ButeBubble {...props} />);
+  renderBubble = props => <ButeBubble {...props} />;
 
   onLoadEarlier = () => dispatch.chats.loadEarlier(this.props.channel);
 
@@ -202,7 +192,6 @@ class Chat extends React.Component {
 
   onGif = (active) => {
     this.setState({ gifActive: active });
-    // dispatch.chats.updatedGifOpened({ channel: this.props.channel, isOpened: active });
     Keyboard.dismiss();
   };
 
@@ -322,17 +311,17 @@ class Chat extends React.Component {
   }
 }
 
-const ButeFooter = ({ name }) =>  (
-      <View style={styles.footerContainer}>
-        <Text style={styles.footerText}>
-          {`${name} ${Meta.is_typing}`}
-        </Text>
-      </View>
-    );
-  
-const ButeBackground = ({ image, timestamp, name }) => ( <View style={StyleSheet.absoluteFill}>
-  <EmptyChat image={image} timestamp={timestamp} name={name} />
-</View>)
+const ButeFooter = ({ name }) => (
+  <View style={styles.footerContainer}>
+    <Text style={styles.footerText}>{`${name} ${Meta.is_typing}`}</Text>
+  </View>
+);
+
+const ButeBackground = ({ image, timestamp, name }) => (
+  <View style={StyleSheet.absoluteFill}>
+    <EmptyChat image={image} timestamp={timestamp} name={name} />
+  </View>
+);
 
 const ButeBubble = (props) => {
   const { currentMessage } = props;
@@ -352,8 +341,7 @@ const ButeBubble = (props) => {
   };
   // {...props} wrapperStyle={_wrapperStyle}
   return <Bubble {...props} wrapperStyle={_wrapperStyle} />;
-  
-}
+};
 
 // loadEarlier={this.props.channelHasMore}
 // onLoadEarlier={this.onLoadEarlier}
@@ -373,13 +361,11 @@ const wrapperStyle = {
 
 const mergeProps = (state, dispatchProps, ownProps) => {
   const { params = {} } = ownProps.navigation.state;
-  const { uid } = params;
+  const { uid, groupId } = params;
 
-  const groupId = IdManager.getGroupId(uid);
   const {
     chats,
     users,
-    // firstMessages,
     channelHasMore,
     isLoadingEarlier,
     isTyping,
@@ -388,28 +374,22 @@ const mergeProps = (state, dispatchProps, ownProps) => {
 
   let chatProps = {};
   if (groupId) {
-    const otherUserUid = uid;
-    const otherUser = users[otherUserUid] || {};
-    const messages = chats[groupId] || {};
-    console.log({ messages });
-
-    const _channelHasMore = channelHasMore[groupId];
-    // const firstMessage = firstMessages[groupId];
-    const _isTyping = isTyping[groupId];
-    const _isLoadingEarlier = isLoadingEarlier[groupId];
+    const otherUserId = uid;
+    const { [otherUserId]: otherUser = {} } = users;
+    const { [groupId]: messages = {} } = chats;
+    const { [groupId]: _channelHasMore = false } = channelHasMore;
+    const { [groupId]: _isTyping = false } = isTyping;
+    const { [groupId]: _isLoadingEarlier = false } = isLoadingEarlier;
 
     chatProps = {
       groupId,
-      // otherUsers,
-      otherUserUid,
+      otherUserId,
       otherUser,
-      title: otherUser.name,
 
-      // firstMessage,
+      title: otherUser.name,
       channelHasMore: _channelHasMore,
       isTyping: _isTyping,
       isLoadingEarlier: _isLoadingEarlier,
-
       messages: Object.values(messages).sort((a, b) => a.createdAt < b.createdAt),
     };
   }
@@ -426,14 +406,12 @@ export default connect(
   ({
     isTyping,
     isLoadingEarlier,
-    // firstMessages,
     channelHasMore,
     chats,
     users,
   }) => ({
     isTyping,
     isLoadingEarlier,
-    // firstMessages,
     channelHasMore,
     chats,
     users,

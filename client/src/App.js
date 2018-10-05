@@ -12,6 +12,7 @@ import AssetUtils from './universal/AssetUtils';
 import { AppLoading } from './universal/Expo';
 import { ActionSheetProvider } from './universal/ActionSheet';
 import Loading from './components/Loading';
+import { dispatch } from '@rematch/core';
 
 console.ignoredYellowBox = Settings.ignoredYellowBox;
 
@@ -50,6 +51,9 @@ export default class App extends React.Component {
   componentDidMount() {
     StatusBar.setBarStyle('light-content', true);
     this._setupExperienceAsync();
+    for (const permission of Settings.permissions) {
+      dispatch.permissions.getAsync({ permission });
+    }
     Fire.shared.init();
   }
 

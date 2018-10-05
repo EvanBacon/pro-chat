@@ -11,6 +11,8 @@ import firebase from '../universal/firebase';
 import EmptyListMessage from './EmptyListMessage';
 import MessageRow from './MessageRow';
 import UserList from './UserList';
+import tabBarImage from './Tabs/tabBarImage';
+import Assets from '../Assets';
 
 class MessageList extends React.Component {
   state = {
@@ -95,6 +97,12 @@ const MessageScreen = connect(
   {},
 )(MessageList);
 
-MessageScreen.navigation = { title: 'Messages' };
+MessageScreen.navigationOptions = {
+  title: 'Chat',
+  tabBarIcon: tabBarImage({
+    active: Assets.images.chat_active,
+    inactive: Assets.images.chat_inactive,
+  }),
+};
 
 export default MessageScreen;

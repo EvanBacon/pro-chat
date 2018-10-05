@@ -12,6 +12,7 @@ import { dispatch } from '@rematch/core';
 import NavigationService from '../navigation/NavigationService';
 import Fire from '../Fire';
 import IdManager from '../IdManager';
+import tabBarImage from './Tabs/tabBarImage';
 
 const Images = Assets.images;
 const EmptyMatchesScreen = ({ goHome }) => (
@@ -90,6 +91,12 @@ const MatchesScreen = connect(({ users }) => {
   };
 })(MatchesList);
 
-MatchesScreen.navigation = { title: 'Matches' };
+MatchesScreen.navigationOptions = {
+  title: 'Matches',
+  tabBarIcon: tabBarImage({
+    active: Assets.images.match_active,
+    inactive: Assets.images.match_inactive,
+  }),
+};
 
 export default MatchesScreen;

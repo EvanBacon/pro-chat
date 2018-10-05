@@ -1,7 +1,8 @@
 // NavigationService.js
-
-import { NavigationActions } from 'react-navigation';
 import { dispatch } from '@rematch/core';
+import { NavigationActions } from 'react-navigation';
+
+import IdManager from '../IdManager';
 
 let _navigator;
 
@@ -18,7 +19,11 @@ function navigate(routeName, params) {
 
 function navigateToUserSpecificScreen(routeName, uid, params = {}) {
   dispatch.users.ensureUserIsLoadedAsync({ uid });
-  navigate(routeName, { ...params, uid });
+
+  let groupId;
+  if (IdManager.isInteractable(uid)) groupId = IdManager.getGroupId(uid);
+
+  navigate(routeName, { groupId, ...params, uid });
 }
 
 function goBack(routeName) {

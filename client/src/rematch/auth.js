@@ -141,6 +141,23 @@ const auth = {
       //   console.log('True User', _user);
       dispatch.user.update(_user);
     },
+    logoutAsync: async () => {
+      try {
+        await firebase.auth().signOut();
+      } catch ({ message }) {
+        console.log('ERROR: user.logoutAsync: ', message);
+        Alert.alert(message);
+      }
+    },
+
+    signInAnonymously: () => {
+      try {
+        firebase.auth().signInAnonymously();
+      } catch ({ message }) {
+        console.log('Error: signInAnonymously', message);
+        Alert.alert(message);
+      }
+    },
   },
 };
 

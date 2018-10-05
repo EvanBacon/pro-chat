@@ -30,10 +30,6 @@ class Fire {
     // dispatch.user.clear();
   };
 
-  upgradeAccount = async () => {
-    dispatch.auth.upgrade();
-  };
-
   submitComplaint = (targetUid, complaint) => {
     this.db.collection(Settings.refs.complaints).add({
       slug: Constants.manifest.slug,
@@ -272,56 +268,6 @@ class Fire {
     dispatch.messages.update(previewMessages);
     return previewMessages;
   };
-
-  getUserAsync = async ({ uid, forceUpdate }) => {
-    if (!IdManager.isValid(uid)) {
-      console.warn('getUserAsync: Invalid Key', { uid });
-      return null;
-    }
-    const { users } = store.getState();
-
-    console.log('getUserAsync', uid, users[uid]);
-    if (
-      forceUpdate === true ||
-      !users[uid] ||
-      Object.keys(users[uid]).length === 0
-    ) {
-      try {
-        const snapshot = await this._getUserInfoAsync({ uid });
-        // yolo pull some stuff -- todo: do this in the rules
-        const userData = snapshot.data();
-        if (userData) {
-          const {
-            stsTokenManager,
-            redirectEventId,
-            phoneNumber,
-            apiKey,
-            authDomain,
-            emailVerified,
-            appName,
-            ...user
-          } = snapshot.data();
-          dispatch.users.update({
-            uid,
-            user,
-            // {
-            //   ...user,
-            //   name: user.displayName,
-            //   avatar: user.photoURL,
-            //   _id: uid,
-            // },
-          });
-          return user;
-        }
-        console.log('Invalid user data', { uid, userData });
-      } catch (error) {
-        console.error(error);
-      }
-    }
-
-    return users[uid];
-  };
-
   // TODO: dont get all data for each user
   _getUserInfoAsync = ({ uid }) =>
     this.db

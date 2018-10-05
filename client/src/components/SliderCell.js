@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 
 import LoadingImage from './Image/ProgressImage';
 import Meta from './Meta';
+import IdManager from '../IdManager';
 
 class SliderCell extends React.PureComponent {
   componentWillMount() {
@@ -19,7 +20,7 @@ class SliderCell extends React.PureComponent {
   }
 
   load = async (uid) => {
-    if (typeof uid === 'string') {
+    if (IdManager.isInteractable(uid)) {
       dispatch.users.ensureUserIsLoadedAsync({ uid });
     }
   };

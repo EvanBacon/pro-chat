@@ -1,6 +1,6 @@
 // @flow
 
-import { Constants } from 'expo';
+import { Constants, Permissions } from 'expo';
 import { Platform } from 'react-native';
 
 import sizeInfo from '../utils/whatAmI';
@@ -61,6 +61,11 @@ const Settings = {
       // 'user_friends'
     ],
   },
+  permissions: [
+    Permissions.LOCATION,
+    Permissions.NOTIFICATIONS,
+    Permissions.CONTACTS,
+  ],
   hideBooty: true,
   noName: 'Sasuke Uchiha',
   isIos: Platform.OS === 'ios',
@@ -79,7 +84,7 @@ const Settings = {
   isCacheProfileUpdateActive: !debug || false,
   shouldDelayFirebaseProfileSyncInMinutes: 60,
   canEditPhoto: false,
-  mainInitialRouteName: 'MainTab', // 'Settings', // 'UnderAge', // 'MainTab', // 'Chat'
+  mainInitialRouteName: 'MainTab', // 'ChooseInterest', // 'Settings', // 'UnderAge', // 'MainTab', // 'Chat'
   testOnboarding: false,
   needsProfileImage: true,
   location: {

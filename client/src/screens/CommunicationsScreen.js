@@ -1,6 +1,7 @@
 import React from 'react';
-import { createMaterialTopTabNavigator } from 'react-navigation';
 import { Text } from 'react-native';
+import { createMaterialTopTabNavigator } from 'react-navigation';
+
 import MatchesList from '../components/MatchesList';
 import MessageList from '../components/MessageList';
 import Colors from '../constants/Colors';

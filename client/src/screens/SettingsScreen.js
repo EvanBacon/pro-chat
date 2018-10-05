@@ -403,12 +403,12 @@ class SettingsScreen extends React.Component {
       privacy: () => {},
       eula: () => this.openWeb(urls.eula, Meta.eula),
       team: () => {
-        NavigationService.navigate('Team');
+        NavigationService.navigate('DevTeam');
       },
       interest: () => {
         NavigationService.navigate('ChooseInterest');
       },
-      logout: () => dispatch.user.logoutAsync(),
+      logout: () => dispatch.auth.logoutAsync(),
       delete: () => {},
       update: () => Expo.Util.reload(),
       privacypolicy: () => this.openWeb(urls.privacy, Meta.privacy_policy),

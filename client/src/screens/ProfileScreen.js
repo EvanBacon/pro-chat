@@ -16,6 +16,8 @@ import Fire from '../Fire';
 import Relationship from '../models/Relationship';
 import Settings from '../constants/Settings';
 import IdManager from '../IdManager';
+import tabBarImage from '../components/Tabs/tabBarImage';
+import Assets from '../Assets';
 
 const { width } = Dimensions.get('window');
 
@@ -255,7 +257,7 @@ const mergeProps = (
   };
 };
 
-export default connect(
+const ProfileScreen = connect(
   ({ users = {}, relationships = {}, popular = {} }) => ({
     users,
     popular: users,
@@ -264,3 +266,13 @@ export default connect(
   {},
   mergeProps,
 )(Profile);
+
+ProfileScreen.navigationOptions = {
+  title: 'Profile',
+  tabBarIcon: tabBarImage({
+    active: Assets.images.profile_active,
+    inactive: Assets.images.profile_inactive,
+  }),
+};
+
+export default ProfileScreen;

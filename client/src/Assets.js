@@ -8,6 +8,12 @@ export default {
     arrow_left: require('./assets/images/arrow_left.png'),
     arrow_right: require('./assets/images/arrow_right.png'),
     camera: require('./assets/images/camera.png'),
+
+    home_active: require('./assets/images/home_active.png'),
+    home_inactive: require('./assets/images/home_inactive.png'),
+    match_active: require('./assets/images/match_active.png'),
+    match_inactive: require('./assets/images/match_inactive.png'),
+
     chat_active: require('./assets/images/chat_active.png'),
     chat_inactive: require('./assets/images/chat_inactive.png'),
     close: require('./assets/images/close.png'),
