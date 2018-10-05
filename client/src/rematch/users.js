@@ -1,8 +1,9 @@
 import { dispatch } from '@rematch/core';
 import Fire from '../Fire';
 import IdManager from '../IdManager';
+import moment from 'moment';
 
-function filterUser(user) {
+export function filterUser(user) {
   function isV(s) {
     if (s && s !== '') return s;
     return null;
@@ -42,10 +43,10 @@ function filterUser(user) {
   return nextUser;
 }
 
-const lessThanHoursAgo = (date, hours = 1) =>
+export const lessThanHoursAgo = (date, hours = 1) =>
   moment(date).isAfter(moment().subtract(hours, 'hours'));
 
-function isValidUser(user, fields = ['name', 'image', 'uid']) {
+export function isValidUser(user, fields = ['name', 'image', 'uid']) {
   if (user == null || typeof user === 'undefined') {
     return false;
   }
@@ -66,10 +67,11 @@ const users = {
   state: {},
   reducers: {
     update: (state, { uid, user }) => {
-      const { [uid]: currentUser = {}, ...otherUsers } = state;
+      const _uid = uid || user.uid;
+      const { [_uid]: currentUser = {}, ...otherUsers } = state;
       return {
         ...otherUsers,
-        [uid]: { ...currentUser, ...user },
+        [_uid]: { ...currentUser, ...user },
       };
     },
     set: (state, { uid, user }) => {
@@ -128,10 +130,9 @@ const users = {
     getPaged: async ({ size, start }) => {
       const { data } = await Fire.shared.getUsersPaged({ size, start });
       for (const user of data) {
-        dispatch.users.update({ uid, user: filterUser(user) });
+        dispatch.users.update({ user: filterUser(user) });
       }
     },
-
     update: ({ uid, user }, { users }) => {
       if (!uid || !user) {
         throw new Error(`dispatch.users.update: You must pass in a valid uid and user: ${uid} - ${JSON.stringify(user || {})}`);

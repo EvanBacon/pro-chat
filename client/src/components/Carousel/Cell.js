@@ -1,98 +1,47 @@
-import { dispatch } from '@rematch/core';
-import React, { Component } from 'react';
-import { Text } from 'react-native';
+import React from 'react';
+import { StyleSheet, Text } from 'react-native';
 import TouchableBounce from 'react-native/Libraries/Components/Touchable/TouchableBounce';
-import { connect } from 'react-redux';
+import NavigationService from '../../navigation/NavigationService';
+import AvatarImage from '../Image/AvatarImage';
 
-import Circle from '../Circle';
-import LoadingImage from '../Image/ProgressImage';
-
-// import { getProfileImage, getPropertyForUser } from '../../redux/profiles';
-class Cell extends Component {
-  componentWillMount() {
-    this.load(this.props.uid);
-  }
-
-  componentWillReceiveProps(next) {
-    if (this.props.uid !== next.uid) {
-      this.load(next.uid);
-    }
-  }
-
-  load = async (uid) => {
-    if (uid) {
-      if (!this.props.image) {
-        dispatch.users.getProfileImage({ uid });
-      }
-      if (!this.props.first_name) {
-        dispatch.users.getPropertyForUser({ uid, property: 'first_name' });
-      }
-    }
+const IMAGE_SIZE = 64;
+class Cell extends React.PureComponent {
+  onPress = () => {
+    NavigationService.navigateToUserSpecificScreen('Profile', this.props.uid);
   };
-
   render() {
-    const {
-      image, firstName, style, onPress,
-    } = this.props;
+    const { image, name } = this.props;
 
-    const size = 64;
     return (
-      <TouchableBounce style={{ marginHorizontal: 12 }} onPress={onPress}>
-        <Circle
-          style={[
-            {
-              overflow: 'visible',
-              backgroundColor: '#eee',
-              maxWidth: size,
-              minWidth: size,
-              aspectRatio: 1,
-              borderRadius: size / 2,
-              borderColor: 'white',
-            },
-            style,
-          ]}
-        >
-          <LoadingImage
-            source={image}
-            style={{
-              flex: 1,
-              maxWidth: size,
-              minWidth: size,
-              minHeight: size,
-              maxHeight: size,
-              borderRadius: size / 2,
-              borderWidth: 2,
-              borderColor: 'white',
-            }}
-          />
-        </Circle>
-
-        <Text style={{ textAlign: 'center' }}>{firstName}</Text>
+      <TouchableBounce style={styles.touchable} onPress={this.onPress}>
+        <AvatarImage
+          name={name}
+          avatar={image}
+          avatarStyle={styles.avatarStyle}
+        />
+        <Text style={styles.text}>{name}</Text>
       </TouchableBounce>
     );
   }
 }
 
-const mergeProps = (state, actions, { uid, ...localProps }) => {
-  const { users, ...props } = state;
-
-  const user = users[uid] || {};
-  // const image = images[uid];
-
-  return {
-    ...localProps,
-    ...props,
-    image: user.photoURL,
-    uid,
-    firstName: user.firstName,
-    ...actions,
-  };
-};
-
-export default connect(
-  ({ users }) => ({ users }),
-  {
-    // getPropertyForUser, getProfileImage
+const styles = StyleSheet.create({
+  touchable: {
+    marginHorizontal: 12,
   },
-  mergeProps,
-)(Cell);
+  text: {
+    textAlign: 'center',
+  },
+  avatarStyle: {
+    flex: 1,
+    maxWidth: IMAGE_SIZE,
+    minWidth: IMAGE_SIZE,
+    minHeight: IMAGE_SIZE,
+    maxHeight: IMAGE_SIZE,
+    borderRadius: IMAGE_SIZE / 2,
+    borderWidth: 2,
+    borderColor: 'white',
+  },
+});
+
+export default Cell;

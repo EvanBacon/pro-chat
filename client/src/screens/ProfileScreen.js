@@ -92,30 +92,17 @@ class Profile extends Component {
     this.setState({ refreshing: false });
   };
 
-  renderPopular = () => {
-    // const users = Object.keys(this.props.popular);
-    const users = [
-      'fake-a',
-      'fake-b',
-      'fake-c',
-      'fake-d',
-      'fake-e',
-      'fake-01',
-      'fake-02',
-    ];
-    return (
-      <Carousel
-        title={Meta.popular_title}
-        navigation={this.props.navigation}
-        style={{
+  renderPopular = () => (
+    <Carousel
+      title={Meta.popular_title}
+      style={{
           minHeight: 128,
           marginTop: 16,
           minWidth: '100%',
         }}
-        users={users}
-      />
-    );
-  };
+      data={this.props.users}
+    />
+  );
 
   renderTags = (tags, isUser, name) => (
     <TagCollection
@@ -233,7 +220,8 @@ const mergeProps = (
     relationship = relationships[IdManager.getGroupId(userId)];
   }
 
-  const user = users[userId] || {};
+  const { [userId]: user = {}, ...otherUsers } = users;
+  console.log('raw', otherUsers);
   // console.warn(user, uid);
   const { about, rating } = user;
   const userProps = {
@@ -253,14 +241,14 @@ const mergeProps = (
     ...localProps,
     ...actions,
     ...userProps,
+    users: Object.values(otherUsers),
     relationship,
   };
 };
 
 const ProfileScreen = connect(
-  ({ users = {}, relationships = {}, popular = {} }) => ({
+  ({ users = {}, relationships = {} }) => ({
     users,
-    popular: users,
     relationships,
   }),
   {},

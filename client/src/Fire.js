@@ -327,14 +327,15 @@ class Fire {
     dispatch.chats._parseMessage({ message: { ...message, key }, groupId });
   };
 
-  getUsersPaged = ({ size, start }) =>
+  getUsersPaged = ({ size, start, orderBy }) =>
     this.getDataPaged({
       start,
       ref: this.db
         .collection(Settings.refs.users)
-        .orderBy('timestamp', 'desc')
+        .orderBy(orderBy || 'timestamp', 'desc')
         .limit(size),
     });
+    
 
   getDataPaged = async ({ ref, start }) => {
     // let ref = this.db.collection(key).orderBy(key, 'desc').limit(size);
