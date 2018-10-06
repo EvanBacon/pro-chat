@@ -47,7 +47,8 @@ class Fire {
       .get();
 
   ensureChatGroupExists = async (uids) => {
-    const keys = [...IdManager.ensureUidGroup(uids), this.uid];
+    const keys = [...IdManager.ensureIdArray(uids), this.uid];
+    console.log("keys", keys);
     const key = IdManager.getGroupId(keys);
     const chatGroupExists = await this._checkChatGroupExistence(key);
     console.log({ key, chatGroupExists });
@@ -68,7 +69,7 @@ class Fire {
   getChatGroupDoc = groupId => this.getChatGroupCollection().doc(groupId);
 
   getMessagesCollection = groupId =>
-    this.getChatGroupDoc(groupId).collection(Settings.refs.channels);
+    this.getChatGroupDoc(groupId).collection(Settings.refs.messages);
 
   _createChatGroup = async (key, uids) => this.getChatGroupDoc(key).set({ members: uids });
 
@@ -332,7 +333,7 @@ class Fire {
       start,
       ref: this.db
         .collection(Settings.refs.users)
-        .orderBy(orderBy || 'timestamp', 'desc')
+        .orderBy(orderBy || 'uid', 'desc')
         .limit(size),
     });
     

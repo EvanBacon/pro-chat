@@ -20,13 +20,24 @@ function transformMessageForGiftedChat({ message, user }) {
   };
 }
 
-export const chats = {
+const chats = {
   state: {
     // [groupId]: {}
   },
   reducers: {
     update: (state, payload) => ({ ...state, ...payload }),
     set: (state, payload) => payload,
+    removeMessage: (state, { groupId, messageId }) => {
+      if (!groupId || !messageId) {
+        return state;
+      }
+      const { [groupId]: currentMessages = {}, ...nextState } = state;
+      const { [messageId]: messageToRemove, ...messages } = currentMessages;
+      return {
+        ...nextState,
+        [groupId]: messages,
+      };
+    },
     addMessages: (state, { groupId, messages }) => {
       if (!groupId || !messages) {
         return state;
@@ -85,8 +96,10 @@ export const chats = {
         throw new Error("Invalid UID, can't parse message");
       }
 
+      // TODO: Nope...
       const user = await new Promise(res =>
         dispatch.users.ensureUserIsLoadedAsync({ uid, callback: res }));
+      console.log('_parseMessage: has user', !!user, uid);
       //   const user = await Fire.shared.getUserAsync({ uid });
       if (user == null) {
         throw new Error("Invalid User data found, can't parse message");
@@ -99,13 +112,15 @@ export const chats = {
         },
       });
     },
-    startChatting: async ({ uids, callback }, { chats }) => {
-      const groupId = Fire.shared.getGroupId(uids);
-      console.log('start chatting');
+    startChatting: async ({ uids, callback, groupId }, { chats }) => {
+      console.log('start chatting', !chats[groupId]);
       if (!chats[groupId]) {
         const exists = await Fire.shared.ensureChatGroupExists(uids);
+        console.log('startChatting.exists', exists);
         if (exists) {
           dispatch.chats.update({ [groupId]: {} });
+        } else {
+          throw new Error("Couldn't create chat group", groupId);
         }
       }
       let startAt;
@@ -135,16 +150,21 @@ export const chats = {
         // if (exists) {
         dispatch.chats.update({ [groupId]: {} });
         // }
+        throw new Error("Error: chats.receivedMessage: chat group doesn't exist yet.");
       }
+
       snapshot.docChanges().forEach(({ type, doc }) => {
         console.log('Found message: parseMessagesSnapshot: ', type, doc.id);
         if (type === 'added') {
           const message = { key: doc.id, ...doc.data() };
           dispatch.chats._parseMessage({ message, groupId });
-        } else {
+        } else if (type === 'removed') {
           // removed
-          console.log('TODO: parseMessagesSnapshot: ', type);
+          const messageKey = doc.id;
+          dispatch.chats.removeMessage({ messageKey, groupId });
           // TODO: Maybe remove
+        } else {
+          console.warn('TODO: parseMessagesSnapshot: ', type);
         }
       });
       if (!firstCursorCollection[groupId]) {

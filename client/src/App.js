@@ -1,18 +1,17 @@
-import React from 'react';
-import { View, StatusBar } from 'react-native';
-
 import './utils/disableLogs';
+
+import { dispatch } from '@rematch/core';
+import React from 'react';
+import { StatusBar } from 'react-native';
 
 import Assets from './Assets';
 import Settings from './constants/Settings';
 import Fire from './Fire';
 import Navigation from './navigation';
 import Gate from './rematch/Gate';
+import { ActionSheetProvider } from './universal/ActionSheet';
 import AssetUtils from './universal/AssetUtils';
 import { AppLoading } from './universal/Expo';
-import { ActionSheetProvider } from './universal/ActionSheet';
-import Loading from './components/Loading';
-import { dispatch } from '@rematch/core';
 
 console.ignoredYellowBox = Settings.ignoredYellowBox;
 

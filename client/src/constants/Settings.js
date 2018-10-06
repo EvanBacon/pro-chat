@@ -47,6 +47,7 @@ const googleLoginProps = {
 const Settings = {
   refs: {
     channels: 'chat_groups',
+    messages: 'messages',
     relationships: 'relationships',
     users: 'users',
     complaints: 'complaints',

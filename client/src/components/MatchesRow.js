@@ -3,13 +3,11 @@ import React from 'react';
 import { StyleSheet, Text, TouchableHighlight, View } from 'react-native';
 
 import UserImage from './UserImage';
-import Settings from '../constants/Settings';
 
 export default class MatchesRow extends React.Component {
   static defaultProps = {
     underlayColor: '#ddd',
-    name: Settings.noName,
-    // image: require('../assets/icons/expo.png'),
+    image: null,
   };
 
   static propTypes = {

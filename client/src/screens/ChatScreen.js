@@ -78,17 +78,17 @@ class Chat extends React.Component {
     }
   }
 
-  _startChattingAsync = uids =>
-    new Promise(res =>
-      dispatch.chats.startChatting({
-        uids,
-        callback: res,
-      }));
-
   async componentDidMount() {
     const { otherUserId, groupId } = this.props;
     // dispatch.chats.clear({ uid: groupId });
-    this.unsubscribe = await this._startChattingAsync(otherUserId);
+    console.log("mounted chat", otherUserId);
+    dispatch.chats.startChatting({
+      groupId,
+      uids: otherUserId,
+      callback: (unsubscribe) => {
+        this.unsubscribe = unsubscribe;
+      },
+    })
     dispatch.isTyping.observe({ groupId, uid: otherUserId }); // TODO: UNSUB
     // dispatch.users.getProfileImage({ uid: otherUserId });
   }

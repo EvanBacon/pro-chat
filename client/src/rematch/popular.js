@@ -21,7 +21,7 @@ const popular = {
 
       // TODO: Pull users into redux.users then host them here...
       // TODO: Just get the IDs of the popular people, maybe through https
-      const { data } = await Fire.shared.getUsersPaged({
+      const { data, cursor } = await Fire.shared.getUsersPaged({
         size,
         start,
         orderBy: 'lastLoginAt',

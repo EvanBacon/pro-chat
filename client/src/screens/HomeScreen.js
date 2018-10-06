@@ -62,7 +62,10 @@ class HomeScreen extends React.Component {
     // this.props.navigation.navigate("OtherProfile", {uid: "PWy2WOA1nFNc8vwMBDYeFmJIKoT2" })
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    // const { data } = await Fire.shared.getUsersPaged({ size: 50 });
+    // console.log({ BillyGoat: data });
+
     if (Settings.debugGoToChat) {
       if (Fire.shared.uid === 'fHgE92IvgLbUmbG2nU7DOyLsk5e2') {
         NavigationService.navigateToUserSpecificScreen(

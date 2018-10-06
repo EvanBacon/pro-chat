@@ -9,8 +9,9 @@ import * as models from './models';
 
 const persistPlugin = createRematchPersist({
   whiteList: ['user', 'onBoarding'],
+  blackList: ['users', 'hasMoreUsers', 'isLoadingUsers'],
   //   throttle: 5000,
-  version: 2,
+  version: 3,
   storage: AsyncStorage,
 });
 

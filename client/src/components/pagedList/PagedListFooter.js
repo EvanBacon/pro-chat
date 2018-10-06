@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
-class Footer extends React.Component {
+class PagedListFooter extends React.Component {
   static propTypes = {
     hasMore: PropTypes.bool,
     isLoading: PropTypes.bool,
@@ -51,4 +51,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Footer;
+export default PagedListFooter;

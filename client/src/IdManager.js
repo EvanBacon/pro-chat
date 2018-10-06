@@ -14,6 +14,9 @@ class IdManager {
     return key && typeof key === 'string' && key !== '';
   }
 
+  isThoroughlyValid = key =>
+    this.isValid(key) && key !== 'undefined' && key.length > 5;
+
   ensureIdArray(input) {
     if (input != null) {
       if (Array.isArray(input)) {
@@ -22,7 +25,7 @@ class IdManager {
         return input.split('_');
       }
     }
-    throw new Error('ensureUidGroup: requires valid input');
+    throw new Error('ensureIdArray: requires valid input');
   }
 
   sortIDs(...ids) {

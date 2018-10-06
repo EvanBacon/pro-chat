@@ -3,7 +3,7 @@ import { Text, TouchableHighlight, View } from 'react-native';
 
 import UserImage from './UserImage';
 
-export default class MessageRow extends React.Component {
+export default class MessageRow extends React.PureComponent {
   render() {
     const {
       message: {
@@ -12,9 +12,6 @@ export default class MessageRow extends React.Component {
       onPress,
       onLongPress,
     } = this.props;
-
-    console.log({ tickle: this.props.message });
-    // const { name, avatar: image } = user || {};
     return (
       <TouchableHighlight
         underlayColor="#ddd"

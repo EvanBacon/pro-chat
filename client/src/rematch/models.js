@@ -29,6 +29,8 @@ export const permissions = {
   },
 };
 
+export { default as isLoadingUsers } from './isLoadingUsers';
+export { default as hasMoreUsers } from './hasMoreUsers';
 export { default as auth } from './auth';
 export { default as channelHasMore } from './channelHasMore';
 export { default as chats } from './chats';

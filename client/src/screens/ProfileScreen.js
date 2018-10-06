@@ -32,7 +32,7 @@ class Profile extends Component {
 
   componentDidMount() {
     const { uid } = this.props;
-    this.updateWithUID(uid);
+    // this.updateWithUID(uid);
     // ProfileProvider.observePropertyForUser({
     //   uid,
     //   property: 'rating',
@@ -49,7 +49,7 @@ class Profile extends Component {
   updateRating = ({ val }) => this.setState({ rating: val() });
   componentWillReceiveProps(nextProps) {
     if (nextProps.uid !== this.props.uid) {
-      this.updateWithUID(nextProps.uid);
+      // this.updateWithUID(nextProps.uid);
     }
   }
 
@@ -96,10 +96,10 @@ class Profile extends Component {
     <Carousel
       title={Meta.popular_title}
       style={{
-          minHeight: 128,
-          marginTop: 16,
-          minWidth: '100%',
-        }}
+        minHeight: 128,
+        marginTop: 16,
+        minWidth: '100%',
+      }}
       data={this.props.users}
     />
   );

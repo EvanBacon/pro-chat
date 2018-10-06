@@ -1,59 +1,51 @@
+import { dispatch } from '@rematch/core';
 import React from 'react';
-import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 
-import Meta from '../constants/Meta';
-
-import EmptyListMessage from './EmptyListMessage';
-import MatchesRow from './MatchesRow';
-import UserList from './UserList';
 import Assets from '../Assets';
-import { dispatch } from '@rematch/core';
-import NavigationService from '../navigation/NavigationService';
+import Meta from '../constants/Meta';
 import Fire from '../Fire';
 import IdManager from '../IdManager';
+import NavigationService from '../navigation/NavigationService';
+import EmptyListMessage from './EmptyListMessage';
+import MatchesRow from './MatchesRow';
 import tabBarImage from './Tabs/tabBarImage';
+import UserList from './UserList';
+import PagedListFooter from './pagedList/PagedListFooter';
 
-const Images = Assets.images;
-const EmptyMatchesScreen = ({ goHome }) => (
+const EmptyMatchesScreen = () => (
   <EmptyListMessage
-    onPress={goHome}
+    onPress={() => NavigationService.goBack()}
     buttonTitle={Meta.no_matches_action}
-    image={Images.empty.matches}
+    image={Assets.images.empty.matches}
     title={Meta.no_matches_title}
     subtitle={Meta.no_matches_subtitle}
   />
 );
-// const ConnectedEmptyMatchScreen = connect(
-//   () => ({}),
-//   {
-//     goHome: () => dispatch =>
-//       dispatch(NavigationActions.navigate({ routeName: 'Home' })),
-//   },
-// )(EmptyMatchesScreen);
-
 class MatchesList extends React.PureComponent {
   state = {
     refreshing: false,
   };
 
-  componentDidMount() {
-    dispatch.users.getPaged({ size: 2 });
-  }
+  componentDidMount() {}
 
   _onRefresh = () => {
-    this.setState({ refreshing: true }, () =>
-      this.setState({ refreshing: false }));
+    this.setState({ refreshing: true });
+
+    dispatch.hasMoreUsers.clear();
+    dispatch.isLoadingUsers.end();
+
+    dispatch.users.refreshAsync({
+      callback: () => this.setState({ refreshing: false }),
+    });
   };
 
+  // Nic: anon PeVeHK92uoWQceDHqcOZokFsUHY2
   onPressRow = async ({ uid }) => {
     console.log('GO TO:', { uid });
     if (IdManager.isInteractable(uid)) {
       // NavigationService.navigateToUserSpecificScreen('Profile', uid);
-      NavigationService.navigateToUserSpecificScreen(
-        'Chat',
-        'fHgE92IvgLbUmbG2nU7DOyLsk5e2',
-      );
+      NavigationService.navigateToUserSpecificScreen('Chat', uid);
     }
   };
   renderItem = ({ item }) => {
@@ -68,8 +60,20 @@ class MatchesList extends React.PureComponent {
     );
   };
 
+  // TODOD: This...
+  // getItemLayout = (data, index) => ({
+  //   length: itemSize,
+  //   offset: itemSize * index,
+  //   index,
+  // });
+
+  handleLoadMore = () => {
+    dispatch.users.getPaged({ size: 5 });
+  };
   render() {
-    const { style, data } = this.props;
+    const {
+      style, data, hasMore, isLoading,
+    } = this.props;
     return (
       <UserList
         style={style}
@@ -77,17 +81,25 @@ class MatchesList extends React.PureComponent {
         renderItem={this.renderItem}
         refreshing={this.state.refreshing}
         onRefresh={this._onRefresh}
+        onEndReached={this.handleLoadMore}
+        onEndReachedThreshold={0.1}
         ListEmptyComponent={EmptyMatchesScreen}
+        ListFooterComponent={
+          <PagedListFooter hasMore={hasMore} isLoading={isLoading} />
+        }
       />
     );
   }
 }
-const MatchesScreen = connect(({ users }) => {
+
+const MatchesScreen = connect(({ users, hasMoreUsers, isLoadingUsers }) => {
   const { [Fire.shared.uid]: currentUser, ...otherUsers } = users;
 
   return {
     data: Object.values(otherUsers).filter(({ uid }) =>
       IdManager.isInteractable(uid)),
+    hasMore: hasMoreUsers,
+    isLoading: isLoadingUsers,
   };
 })(MatchesList);
 
