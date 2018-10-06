@@ -1,4 +1,4 @@
-import firebase from 'firebase';
+import firebase from '../universal/firebase';
 import React from 'react';
 import { Alert, Linking, Text } from 'react-native';
 

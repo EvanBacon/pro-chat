@@ -1,5 +1,5 @@
 import { MaterialIcons } from '@expo/vector-icons';
-import firebase from 'firebase';
+import firebase from '../universal/firebase';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';

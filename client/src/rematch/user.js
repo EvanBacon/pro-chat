@@ -1,5 +1,5 @@
 import { dispatch } from '@rematch/core';
-import firebase from 'firebase';
+import firebase from '../universal/firebase';
 import { Alert } from 'react-native';
 
 import Settings from '../constants/Settings';
@@ -106,7 +106,7 @@ const user = {
         if (!auth) {
           // TODO: Evan: Y tho...
           dispatch.user.clear();
-          // dispatch.user.signInAnonymously();
+          dispatch.auth.signInAnonymously();
           NavigationService.navigate('Auth');
         } else {
           dispatch.user.getAsync();

@@ -61,6 +61,7 @@ const Settings = {
       'email',
       // 'user_friends'
     ],
+    behavior: 'system',
   },
   permissions: [
     Permissions.LOCATION,

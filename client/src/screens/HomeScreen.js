@@ -1,22 +1,21 @@
 import { Ionicons } from '@expo/vector-icons';
 import { dispatch } from '@rematch/core';
-import firebase from 'firebase';
 import React from 'react';
 import { Alert } from 'react-native';
 import HeaderButtons from 'react-navigation-header-buttons';
 import { connect } from 'react-redux';
 
+import Assets from '../Assets';
 import BrowseUsers from '../components/BrowseUsers';
 import Gradient from '../components/Gradient';
+import tabBarImage from '../components/Tabs/tabBarImage';
 import Meta from '../constants/Meta';
 import Settings from '../constants/Settings';
 import Fire from '../Fire';
+import IdManager from '../IdManager';
 import Relationship from '../models/Relationship';
 import NavigationService from '../navigation/NavigationService';
 import isUnderAge from '../utils/isUnderAge';
-import IdManager from '../IdManager';
-import tabBarImage from '../components/Tabs/tabBarImage';
-import Assets from '../Assets';
 
 // [
 //             "0a944021-1ba5-c51a-0e98-fc2dd3834eeb",

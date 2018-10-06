@@ -9,8 +9,8 @@ import IdManager from './IdManager';
 import { store } from './rematch/Gate';
 import { Constants } from './universal/Expo';
 
-
-const firebase = require('firebase');
+import firebase from './universal/firebase'
+// const firebase = require('firebase');
 // Required for side-effects
 require('firebase/firestore');
 
@@ -22,8 +22,9 @@ class Fire {
     //   return;
     // }
 
-    firebase.initializeApp(Secret.firebase);
-    firebase.firestore().settings({ timestampsInSnapshots: true });
+
+    // firebase.initializeApp(Secret.firebase);
+    // firebase.firestore().settings({ timestampsInSnapshots: true });
     dispatch.user.observeAuth();
 
     // dispatch.users.clear();
@@ -263,7 +264,7 @@ class Fire {
       const previewMessage = this.formatMessageForPreview(message, groupId, user, group);
       previewMessages[groupId] = previewMessage;
     }
-    
+
     if (force) {
       dispatch.messages.clear();
     }

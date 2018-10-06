@@ -1,6 +1,5 @@
 import { dispatch } from '@rematch/core';
 import { Keyboard } from 'expo';
-import firebase from 'firebase';
 import React from 'react';
 import { Clipboard, InteractionManager, LayoutAnimation, StyleSheet, Text, View } from 'react-native';
 import { Bubble, GiftedChat, MessageText } from 'react-native-gifted-chat';
@@ -13,6 +12,7 @@ import Time from '../components/Time';
 import Meta from '../constants/Meta';
 import Fire from '../Fire';
 import NavigationService from '../navigation/NavigationService';
+import firebase from '../universal/firebase';
 import CustomView from './CustomView';
 
 class Chat extends React.Component {

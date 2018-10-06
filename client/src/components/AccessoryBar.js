@@ -1,4 +1,4 @@
-import firebase from 'firebase';
+import firebase from '../universal/firebase';
 import React, { Component } from 'react';
 import { View } from 'react-native';
 
@@ -38,7 +38,11 @@ export default class AccessoryBar extends Component {
             const image = await fromLibrary();
             if (image) {
               onSend([{ image }]);
-              if (firebase.analytics) firebase.analytics().logEvent('sent_library_picture', { url: image, channel });
+              if (firebase.analytics) {
+firebase
+                  .analytics()
+                  .logEvent('sent_library_picture', { url: image, channel });
+}
             }
           }}
         />
@@ -48,7 +52,11 @@ export default class AccessoryBar extends Component {
             const image = await fromCamera();
             if (image) {
               onSend([{ image }]);
-              if (firebase.analytics) firebase.analytics().logEvent('sent_camera_picture', { url: image, channel });
+              if (firebase.analytics) {
+firebase
+                  .analytics()
+                  .logEvent('sent_camera_picture', { url: image, channel });
+}
             }
           }}
         />
@@ -57,7 +65,11 @@ export default class AccessoryBar extends Component {
             const location = await getLocation();
             if (location) {
               onSend([{ location }]);
-              if (firebase.analytics) firebase.analytics().logEvent('shared_location', { location, channel });
+              if (firebase.analytics) {
+firebase
+                  .analytics()
+                  .logEvent('shared_location', { location, channel });
+}
             }
           }}
         />

@@ -1,8 +1,8 @@
-import firebase from 'firebase';
 import Communications from 'react-native-communications';
 
-import Settings from '../constants/Settings';
 import Meta from '../constants/Meta';
+import Settings from '../constants/Settings';
+import firebase from '../universal/firebase';
 
 export const Subjects = {
   general: Meta.email_subject_general,
