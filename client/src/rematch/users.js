@@ -208,8 +208,10 @@ const users = {
       console.log('refreshAsync: refreshed users', _users);
       callback(_users);
     },
-    update: ({ uid, user }, { users }) => {
-      if (!uid || !user) {
+    update: ({ uid: _uid, user = {} }, { users }) => {
+      const uid = _uid || user.uid;
+      
+      if (!uid) {
         throw new Error(`dispatch.users.update: You must pass in a valid uid and user: ${uid} - ${JSON.stringify(user || {})}`);
       }
       const currentUser = users[uid] || {};

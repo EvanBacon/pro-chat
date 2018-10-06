@@ -204,7 +204,7 @@ class Profile extends Component {
 }
 
 const mergeProps = (
-  { users, relationships, ...state },
+  { users = {}, relationships = {}, ...state },
   actions,
   { uid, ...localProps },
 ) => {

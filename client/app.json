@@ -22,7 +22,6 @@
     "packagerOpts": {
       "assetExts": ["ttf", "mp4", "otf", "xml", "mp3"]
     },
-    "assetBundlePatterns": ["src/assets/**/*"],
     "notification": {
       "icon": "./src/assets/icons/ios.png",
       "color": "#52416A"

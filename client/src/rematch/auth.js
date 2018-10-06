@@ -153,7 +153,7 @@ const auth = {
 
     signInAnonymously: () => {
       try {
-        firebase.auth().signInAnonymously();
+        firebase.auth().signInAnonymouslyAndRetrieveData();
       } catch ({ message }) {
         console.log('Error: signInAnonymously', message);
         Alert.alert(message);

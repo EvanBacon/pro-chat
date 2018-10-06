@@ -179,10 +179,12 @@ class Fire {
     // members,
   ) => {
     // const isGroupChat = members.length > 1;
-
+    if (!message) {
+      return null;
+    }
     const {
       uid, name, image,
-    } = user || message.user;
+    } = user || message.user || {};
 
     let preview = '';
     let timeAgo;
@@ -262,6 +264,7 @@ class Fire {
       const sender =  group[0]; //message.uid ||
       const user = await (new Promise(res => dispatch.users.ensureUserIsLoadedAsync({ uid: sender, callback: res }) ));
       const previewMessage = this.formatMessageForPreview(message, groupId, user, group);
+      if (!previewMessage) return null;
       previewMessages[groupId] = previewMessage;
     }
 

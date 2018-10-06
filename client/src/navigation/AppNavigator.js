@@ -129,7 +129,7 @@ const AppStack = createStackNavigator(
       headerTintColor: 'white',
       headerBackground: <Header />,
       headerTitleStyle: {
-        fontFamily: 'DINPro-Regular',
+        // fontFamily: 'DINPro-Regular',
         fontSize: 20,
         color: Colors.white,
       },

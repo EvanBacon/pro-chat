@@ -52,7 +52,7 @@ export default class MessageText extends React.Component {
           style={[
             styles[this.props.position].text,
             this.props.textStyle[this.props.position],
-            { fontWeight: 'DINPro-medium' },
+            // { fontWeight: 'DINPro-medium' },
           ]}
           parse={[
             {

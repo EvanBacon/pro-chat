@@ -37,7 +37,8 @@ export const permissions = {
     set: (state, payload) => payload,
   },
   effects: {
-    getAsync: async ({ permission }) => {
+    getAsync: async (props={}) => {
+      const { permission } = props;
       const { status } = await Permissions.getAsync(permission);
       dispatch.permissions.update({ [permission]: status });
     },

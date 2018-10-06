@@ -22,7 +22,7 @@ const relationships = {
       if (isPerformingInvalidAction) {
         throw new Error(`Cannot set relationship to ${type} in the client`);
       }
-      const groupId = IdManager.getGroupId(userId, otherId);
+      const groupId = IdManager.getGroupId(otherId);
       console.log('relationships.updateAsync', { otherId, type, groupId });
       // const props = {
       //   members: [userId, otherId],
@@ -151,9 +151,9 @@ const relationships = {
     },
     getAsync: async ({ uid: otherId }) => {
       const userId = Fire.shared.uid;
-      if (otherId === userId) return;
+      if (!IdManager.isInteractable(otherId)) return;
       // console.log({ uid });
-      const groupId = IdManager.getGroupId(userId, otherId);
+      const groupId = IdManager.getGroupId(otherId);
       const doc = await firebase
         .firestore()
         .collection(Settings.refs.relationships)

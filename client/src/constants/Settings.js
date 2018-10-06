@@ -69,7 +69,7 @@ const Settings = {
     Permissions.NOTIFICATIONS,
     Permissions.CONTACTS,
   ],
-  hideBooty: true,
+  hideBooty: false,
   noName: 'Sasuke Uchiha',
   isIos: Platform.OS === 'ios',
   osVersion: sizeInfo.osVersion,

@@ -101,17 +101,19 @@ export default class ProfileImage extends React.Component {
   render() {
     const { size } = this.props;
 
-    let containerStyle = styles.container;
+    let containerStyle = styles.container || {};
     if (size) {
-      containerStyle = {
-        ...containerStyle,
-        minWidth: size,
-        maxWidth: size,
-        minHeight: size,
-        maxHeight: size,
-        borderRadius: size / 2,
-        overflow: 'hidden',
-      };
+      containerStyle = StyleSheet.flatten([
+        containerStyle,
+        {
+          minWidth: size,
+          maxWidth: size,
+          minHeight: size,
+          maxHeight: size,
+          borderRadius: size / 2,
+          overflow: 'hidden',
+        },
+      ]);
     }
 
     return (

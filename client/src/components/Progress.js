@@ -22,7 +22,7 @@ export default class Indicator extends Component {
       <Circle
         textStyle={[
           {
-            ...Font.style('DINPro-medium'),
+            // ...Font.style('DINPro-medium'),
             color: Colors.statusBar.fontColor,
             fontSize: 24,
             textShadowColor: 'black',

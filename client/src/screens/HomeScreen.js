@@ -1,3 +1,5 @@
+'use-strict';
+
 import { Ionicons } from '@expo/vector-icons';
 import { dispatch } from '@rematch/core';
 import React from 'react';
@@ -65,21 +67,22 @@ class HomeScreen extends React.Component {
     // const { data } = await Fire.shared.getUsersPaged({ size: 50 });
     // console.log({ BillyGoat: data });
     // dispatch.chats.set({});
-    if (Settings.debugGoToChat) {
-      if (Fire.shared.uid === 'fHgE92IvgLbUmbG2nU7DOyLsk5e2') {
-        NavigationService.navigateToUserSpecificScreen(
-          'Chat',
-          'pfrNeWLaXxMUnB2LBsG84OeSi732',
-        );
-      } else {
-        NavigationService.navigateToUserSpecificScreen(
-          'Chat',
-          'fHgE92IvgLbUmbG2nU7DOyLsk5e2',
-        );
-      }
-    }
+    // if (Settings.debugGoToChat) {
+    //   if (Fire.shared.uid === 'fHgE92IvgLbUmbG2nU7DOyLsk5e2') {
+    //     NavigationService.navigateToUserSpecificScreen(
+    //       'Chat',
+    //       'pfrNeWLaXxMUnB2LBsG84OeSi732',
+    //     );
+    //   } else {
+    //     NavigationService.navigateToUserSpecificScreen(
+    //       'Chat',
+    //       'fHgE92IvgLbUmbG2nU7DOyLsk5e2',
+    //     );
+    //   }
+    // }
 
     // firebase.messaging().requestPermissions();
+
     this.checkBanned((this.props.user || {}).isBlocked);
     this.checkUnderage((this.props.user || {}).birthday);
   }
@@ -183,14 +186,13 @@ const ConnectedHomeScreen = connect(({
 }) => {
   const { [Fire.shared.uid]: currentUser, ...otherUsers } = users;
 
-  // console.log('otherUsers', { otherUsers });
+  console.log('otherUsers', { otherUsers });
   return {
     user,
     firstLike,
     firstDislike,
     wantMoreInfo,
-    users: Object.values(otherUsers).filter(({ uid }) =>
-      IdManager.isInteractable(uid)),
+    users: Object.values(otherUsers)
   };
 
   // return {

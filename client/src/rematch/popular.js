@@ -16,7 +16,8 @@ const popular = {
     clear: () => ({}),
   },
   effects: {
-    getAsync: async ({ size = 2, start }) => {
+    getAsync: async (props = {}) => {
+      const { size = 2, start } = props;
       return;
 
       // TODO: Pull users into redux.users then host them here...

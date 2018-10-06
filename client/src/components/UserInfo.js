@@ -51,10 +51,6 @@ export default class UserInfo extends Component {
           source={this.props.image}
           isUser={this.props.isUser}
           isEditing={this.state.isEditing}
-          onEditingChanged={(isEditing) => {
-              NavigationService.navigate('EditProfile', {});
-              // this.setState({ isEditing: !this.state.isEditing });
-            }}
         />)}
         <Meta
           onRatingPressed={this.props.onRatingPressed}

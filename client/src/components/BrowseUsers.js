@@ -1,3 +1,5 @@
+'use-strict';
+
 import { dispatch } from '@rematch/core';
 import React, { Component } from 'react';
 import { LayoutAnimation, View } from 'react-native';
