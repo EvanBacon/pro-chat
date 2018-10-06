@@ -19,7 +19,7 @@ platform :ios do
   before_all do
      # Set project for commit_version_bump, which seems to get confused by projects in other folders
      ENV['FL_BUILD_NUMBER_PROJECT'] = "b-t-.xcodeproj"
-     ensure_git_status_clean unless ENV['FL_NO_ENSURE_CLEAN']
+  #   ensure_git_status_clean unless ENV['FL_NO_ENSURE_CLEAN']
   end
 
   desc "Increment the app version patch"
@@ -47,5 +47,7 @@ platform :ios do
   lane :release do
     build_app(workspace: "b-t-.xcworkspace", scheme: "b-t-")
     upload_to_app_store
+
+    
   end
 end

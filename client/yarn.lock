@@ -4764,6 +4764,14 @@ expo-firebase-firestore@^1.0.0-rc.1:
     expo-core "^1.0.0"
     expo-firebase-app "^1.0.0-rc.1"
 
+expo-firebase-functions@^1.0.0-rc.1:
+  version "1.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/expo-firebase-functions/-/expo-firebase-functions-1.0.0-rc.1.tgz#d30c752596af977d0776ea28adc08fe440248ee3"
+  integrity sha512-CFfTbBnhcth8xQbwcu5ek6GxSwiWA0IUiOQgZwufYf3uLgyXjwCwvogBZAkoVCcuVeMkztpt7k5Hf45XDVAPVg==
+  dependencies:
+    expo-core "^1.0.0"
+    expo-firebase-app "^1.0.0-rc.1"
+
 expo-firebase-instance-id@^1.0.0-rc.1:
   version "1.0.0-rc.1"
   resolved "https://registry.yarnpkg.com/expo-firebase-instance-id/-/expo-firebase-instance-id-1.0.0-rc.1.tgz#2ffdf6d67a334096b5d3be95ce4f32956ff957fd"

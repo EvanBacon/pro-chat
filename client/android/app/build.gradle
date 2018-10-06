@@ -194,7 +194,7 @@ dependencies {
   // api project(':expo-firebase-crashlytics')
   api project(':expo-firebase-database')
   api project(':expo-firebase-firestore')
-  api project(':expo-firebase-functions')
+  // api project(':expo-firebase-functions')
   api project(':expo-firebase-instance-id')
   // api project(':expo-firebase-invites')
   // api project(':expo-firebase-links')

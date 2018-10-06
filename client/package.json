@@ -45,6 +45,7 @@
     "expo-firebase-auth": "^1.0.0-rc.1",
     "expo-firebase-database": "^1.0.0-rc.1",
     "expo-firebase-firestore": "^1.0.0-rc.1",
+    "expo-firebase-functions": "^1.0.0-rc.1",
     "expo-firebase-instance-id": "^1.0.0-rc.1",
     "expo-firebase-messaging": "^1.0.0-rc.1",
     "expo-firebase-notifications": "^1.0.0-rc.1",
