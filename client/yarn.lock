@@ -4688,7 +4688,7 @@ expo-contacts@~1.0.0:
     expo-core "~1.1.0"
     uuid-js "^0.7.5"
 
-expo-core@~1.1.0:
+expo-core@^1.0.0, expo-core@~1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/expo-core/-/expo-core-1.1.0.tgz#c6c81282cc33b7de3913e5c3e46462b8e8f733ec"
   integrity sha512-R6U7AGkIWdzFP/gf8ZtOA6A/vBIQQz/YG4wZiFw4q+UtVOzpaLAs6P9NxOSPlIoRY+lFAeCM+UY1skfwpToAHQ==
@@ -4724,6 +4724,85 @@ expo-file-system@~1.0.2:
     expo-core "~1.1.0"
     expo-file-system-interface "~1.0.2"
     uuid-js "^0.7.5"
+
+expo-firebase-analytics@^1.0.0-rc.1:
+  version "1.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/expo-firebase-analytics/-/expo-firebase-analytics-1.0.0-rc.1.tgz#4c0741ee86fb602803b3ea146b2d4b5a9ba5d7e9"
+  integrity sha512-ba9n/8IGF65e3ABQPjG50WMGIE9FJv0UOrC3SjqvVmNnXHlrsGt44Xgb2gaUJkRzL01wAGc01CdmkDDzFhEKZw==
+  dependencies:
+    expo-core "^1.0.0"
+    expo-firebase-app "^1.0.0-rc.1"
+
+expo-firebase-app@^1.0.0-rc.1:
+  version "1.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/expo-firebase-app/-/expo-firebase-app-1.0.0-rc.1.tgz#cf117c51e9f774f23560c9439de4c709f29fb21d"
+  integrity sha512-er6faGjP57T76su9wMUs37eNMv6Gn8JxxDP/mQmJGozvaRJIyjoscRPUi0jY03tdSn22dKLREHTf/jHcqkREMA==
+  dependencies:
+    expo-core "^1.0.0"
+
+expo-firebase-auth@^1.0.0-rc.1:
+  version "1.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/expo-firebase-auth/-/expo-firebase-auth-1.0.0-rc.1.tgz#c1e5edc6dd8fd2d6264866d8c19e30332d8d9a06"
+  integrity sha512-yFd5NScgbB1zgz5nFQ6CyJpaVWeBVi/Il+l1VuHUKYuQ1/8rG1give8PNk/dBNT+2dHlgjQEA2+XEbljsg1qYw==
+  dependencies:
+    expo-core "^1.0.0"
+    expo-firebase-app "^1.0.0-rc.1"
+
+expo-firebase-database@^1.0.0-rc.1:
+  version "1.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/expo-firebase-database/-/expo-firebase-database-1.0.0-rc.1.tgz#3a7da2a907b12921c0a4ba829cd4ac4fe8ef4f22"
+  integrity sha512-KtvHMf2/3RxITruPKdpgJM6uBudfacisF25mqxTm9ttqG4g7C3NgLaiSNkY9OORKeEv1Uqm9XqIBJP8XV8CwbA==
+  dependencies:
+    expo-core "^1.0.0"
+    expo-firebase-app "^1.0.0-rc.1"
+
+expo-firebase-firestore@^1.0.0-rc.1:
+  version "1.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/expo-firebase-firestore/-/expo-firebase-firestore-1.0.0-rc.1.tgz#f608c62cc9dd8780c0227b1398b7c288e50e3940"
+  integrity sha512-0tRk+oLzVZtcY34LLJccj7mG9Km+Xatlagyd7DaFSUyaNwsxYwxOtPGdHnIqkd0e/V/gcvVcRZzYmzvPoGEgSw==
+  dependencies:
+    expo-core "^1.0.0"
+    expo-firebase-app "^1.0.0-rc.1"
+
+expo-firebase-instance-id@^1.0.0-rc.1:
+  version "1.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/expo-firebase-instance-id/-/expo-firebase-instance-id-1.0.0-rc.1.tgz#2ffdf6d67a334096b5d3be95ce4f32956ff957fd"
+  integrity sha512-Opa1EKPxpXRJlmR9L2AhIEW6VS5ijwYyq8Nk7gs2CzKwdMPd4qNIquRZTSJgwV5qpku5PFoqxraTRcqL4Xsvsg==
+  dependencies:
+    expo-core "^1.0.0"
+    expo-firebase-app "^1.0.0-rc.1"
+
+expo-firebase-messaging@^1.0.0-rc.1:
+  version "1.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/expo-firebase-messaging/-/expo-firebase-messaging-1.0.0-rc.1.tgz#b3a5d5916231a42b5b1c1cd4563a2eafc4cefa8b"
+  integrity sha512-FWPIRVQGZB7kVBZhLiK5Pfeot6V55vAEkzYRUK+LKHLRE5vZR5JBOkwfEg9G3JvEdlP45Nr/nE59LMmYG8Hzog==
+  dependencies:
+    expo-core "^1.0.0"
+    expo-firebase-app "^1.0.0-rc.1"
+
+expo-firebase-notifications@^1.0.0-rc.1:
+  version "1.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/expo-firebase-notifications/-/expo-firebase-notifications-1.0.0-rc.1.tgz#af32cb20edbd898a4fcfc8381d7856100792098e"
+  integrity sha512-5JfkK6fgxczmHcPgbzT0xH6+yPsPP00yYK5y7Nb5fVBS0EzhbHtQA+klHnVFNX3AXY2KowQ5l6I2POqEQwaGYA==
+  dependencies:
+    expo-core "^1.0.0"
+    expo-firebase-app "^1.0.0-rc.1"
+
+expo-firebase-performance@^1.0.0-rc.1:
+  version "1.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/expo-firebase-performance/-/expo-firebase-performance-1.0.0-rc.1.tgz#6ee06692099b066865da687008c9f75f7a1554d3"
+  integrity sha512-G1x6vSR619kCpK6U8PN/FkFQVcPWrzwjgiwF+/C+YGpfDYHP4d+/JLA0Tom3Q+fM+Y2Mbl6Hhwgb4sBb8tUVyw==
+  dependencies:
+    expo-core "^1.0.0"
+    expo-firebase-app "^1.0.0-rc.1"
+
+expo-firebase-storage@^1.0.0-rc.1:
+  version "1.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/expo-firebase-storage/-/expo-firebase-storage-1.0.0-rc.1.tgz#35dd937d95c8b3d930d28b2aa4600913485c571b"
+  integrity sha512-Q75QGCgSsdvSn2cTL7ZtweY8PVXNT0v6iVSCnVgYzS94B8wFcs8tUZbeCvRA4oBX1qCFFrzv6PGbi2lXUQvJcA==
+  dependencies:
+    expo-core "^1.0.0"
+    expo-firebase-app "^1.0.0-rc.1"
 
 expo-font-interface@~1.0.0:
   version "1.0.0"

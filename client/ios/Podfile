@@ -100,6 +100,34 @@ target 'b-t-' do
     :inhibit_warnings => true
 
 
+  pod 'EXFirebaseApp', 
+    path: '../node_modules/expo-firebase-app/ios'
+
+  pod 'EXFirebaseAnalytics', 
+    path: '../node_modules/expo-firebase-analytics/ios'
+  pod 'EXFirebaseAuth', 
+    path: '../node_modules/expo-firebase-auth/ios'
+  pod 'EXFirebaseDatabase',
+    path: '../node_modules/expo-firebase-database/ios'
+  pod 'EXFirebaseFirestore',
+    path: '../node_modules/expo-firebase-firestore/ios'
+  pod 'EXFirebaseInstanceID',
+    path: '../node_modules/expo-firebase-instance-id/ios'
+
+  # pod 'EXFirebaseLinks',
+  #   path: '../node_modules/expo-firebase-links/ios'
+  # pod 'EXFirebaseInvites',
+  #   path: '../node_modules/expo-firebase-invites/ios'
+  pod 'EXFirebaseMessaging',
+    path: '../node_modules/expo-firebase-messaging/ios'
+  pod 'EXFirebaseNotifications',
+    path: '../node_modules/expo-firebase-notifications/ios'
+  pod 'EXFirebasePerformance',
+    path: '../node_modules/expo-firebase-performance/ios'
+  pod 'EXFirebaseStorage',
+    path: '../node_modules/expo-firebase-storage/ios'
+
+
   post_install do |installer|
     installer.pods_project.main_group.tab_width = '2';
     installer.pods_project.main_group.indent_width = '2';
