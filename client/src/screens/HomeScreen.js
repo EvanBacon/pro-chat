@@ -65,7 +65,7 @@ class HomeScreen extends React.Component {
   async componentDidMount() {
     // const { data } = await Fire.shared.getUsersPaged({ size: 50 });
     // console.log({ BillyGoat: data });
-
+    // dispatch.chats.set({});
     if (Settings.debugGoToChat) {
       if (Fire.shared.uid === 'fHgE92IvgLbUmbG2nU7DOyLsk5e2') {
         NavigationService.navigateToUserSpecificScreen(

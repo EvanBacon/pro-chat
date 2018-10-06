@@ -258,7 +258,7 @@ class Fire {
       const message = data[0] || {};
       const group = memberUids;
       // TODO: Evan: Handle groups yolo
-      const sender = message.uid || group[0];
+      const sender =  group[0]; //message.uid ||
       console.log("sender", message);
       const user = await (new Promise(res => dispatch.users.ensureUserIsLoadedAsync({ uid: sender, callback: res }) ));
 

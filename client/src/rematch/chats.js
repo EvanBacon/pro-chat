@@ -1,3 +1,5 @@
+'use-strict';
+
 import { dispatch } from '@rematch/core';
 
 import Fire from '../Fire';
@@ -7,16 +9,21 @@ const firstCursorCollection = {};
 const cursorCollection = {};
 
 function transformMessageForGiftedChat({ message, user }) {
-  const { key: _id, uid, timestamp: createdAt } = message;
+  const {
+    key: _id, uid, timestamp: createdAt, ...existingMessage
+  } = message;
+  console.log('TRANSFORMERESS', user);
+
+  const _userObject = { name: user.name, _id: uid };
+
+  if (user.image && user.image !== '') {
+    _userObject.avatar = user.image;
+  }
   return {
-    ...message,
+    ...existingMessage,
     _id,
     createdAt,
-    user: {
-      name: user.displayName,
-      avatar: user.photoURL,
-      _id: uid,
-    },
+    user: _userObject,
   };
 }
 

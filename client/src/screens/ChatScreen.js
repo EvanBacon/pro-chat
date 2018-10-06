@@ -14,6 +14,7 @@ import Meta from '../constants/Meta';
 import Fire from '../Fire';
 import NavigationService from '../navigation/NavigationService';
 import CustomView from './CustomView';
+import AvatarImage from '../components/Image/AvatarImage';
 
 class Chat extends React.Component {
   static navigationOptions = ({ navigation }) => ({
@@ -37,7 +38,7 @@ class Chat extends React.Component {
   get user() {
     return {
       _id: this.uid, // sent messages should have same user._id
-      name: this.props.name,
+      name: firebase.auth().currentUser.displayName,
     };
   }
   get isUserEditing() {
@@ -287,8 +288,9 @@ class Chat extends React.Component {
           renderChatFooter={this.renderChatFooter}
           parseText
           isAnimated
+          showUserAvatar={true}
+          renderAvatarOnTop
           renderCustomView={this.renderCustomView}
-          renderAvatarOnTop={false}
           onLongPress={this.onLongPress}
           onInputTextChanged={this.onInputTextChanged}
           renderFooter={this.renderFooter}
