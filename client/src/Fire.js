@@ -76,8 +76,7 @@ class Fire {
   /*
     Get paged messages for populating chat or getting last message
   */
- getMessagesForChatGroup = ({ groupId, size, start, order }) =>
- this.getDataPaged({
+ getMessagesForChatGroup = ({ groupId, size, start, order }) => this.getDataPaged({
       start,
       ref: this.getMessagesCollection(groupId)
         .orderBy('timestamp', order || 'desc')
@@ -139,7 +138,7 @@ class Fire {
     this.getMessagesForChatGroup({
       groupId,
       size: 1,
-      order: 'asc',
+      //order: 'asc',
     });
 
   loadMoreFromChatGroup = async ({ groupId, startBefore }) => {
@@ -173,14 +172,16 @@ class Fire {
 
 
   formatMessageForPreview = (
-    {
-      uid, name, image,
-    },
     message,
     groupId,
-    members,
+    user,
+    // members,
   ) => {
-    const isGroupChat = members.length > 1;
+    // const isGroupChat = members.length > 1;
+
+    const {
+      uid, name, image,
+    } = user || message.user;
 
     let preview = '';
     let timeAgo;
@@ -203,10 +204,10 @@ class Fire {
 
     return {
       name,
-      groupId,
+      groupId: groupId || message.groupId,
       image,
       uid,
-      isGroupChat,
+      // isGroupChat,
       message: preview,
       isSeen,
       isSent: uid === this.uid,
@@ -214,7 +215,7 @@ class Fire {
     };
   };
 
-  getMessageList = async () => {
+  getMessageList = async (force = true) => {
     // / lol debug....
 
     // console.log('debugging getMessageList()');
@@ -254,18 +255,24 @@ class Fire {
 
       // TODO: Evan: Promise.all([])
       const { data } = await this.getLastMessageForChatGroup({ groupId });
-      const message = data[0];
+      const message = data[0] || {};
       const group = memberUids;
       // TODO: Evan: Handle groups yolo
-      const sender = group[0];
+      const sender = message.uid || group[0];
+      console.log("sender", message);
       const user = await (new Promise(res => dispatch.users.ensureUserIsLoadedAsync({ uid: sender, callback: res }) ));
 
-      const previewMessage = this.formatMessageForPreview(user, message, groupId, group);
+      const previewMessage = this.formatMessageForPreview(message, groupId, user, group);
 
       previewMessages[groupId] = previewMessage;
     }
 
     // console.log('heeyyooo',previewMessages)// JSON.stringify(previewMessages));
+
+    if (force) {
+      dispatch.messages.clear();
+    }
+    
     dispatch.messages.update(previewMessages);
     return previewMessages;
   };

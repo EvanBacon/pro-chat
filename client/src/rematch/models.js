@@ -4,12 +4,27 @@ image, name, message, timestamp, seen, sender, groupId
 import { Permissions } from '../universal/Expo';
 
 import { dispatch } from '@rematch/core';
+import Fire from '../Fire';
 
 export const messages = {
   state: {},
   reducers: {
     update: (state, payload) => ({ ...state, ...payload }),
     set: (state, payload) => payload,
+    remove: (state, { id }) => {
+      const { [id]: thingToRemove, ...otherThings } = state;
+      return {
+        ...otherThings,
+      };
+    },
+    clear: () => ({}),
+  },
+  effects: {
+    updateWithMessage: ({ groupId, message }) => {
+      dispatch.messages.update({
+        [groupId]: Fire.shared.formatMessageForPreview(message, groupId),
+      });
+    },
   },
 };
 

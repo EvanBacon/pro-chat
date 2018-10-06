@@ -45,32 +45,32 @@ class MessageList extends React.Component {
     this.setState({ refreshing: false });
   };
 
-  onPressRow = async ({ item: { groupId: channel } }) => {
-    const uid = IdManager.getOtherUserFromChatGroup(channel);
-    console.log('Int', uid, channel);
-    if (IdManager.isInteractable(uid)) {
-      NavigationService.navigateToUserSpecificScreen('Chat', uid);
-    }
-  };
-
-  renderItem = ({ item, index }) => (
+  renderItem = ({
+    item: {
+      name, image, isSeen, isSent, message, timeAgo, groupId,
+    },
+  }) => (
     <MessageRow
-      key={item.uid}
-      message={item || {}}
-      onPress={event => this.onPressRow({ item, index, event })}
-      onLongPress={() => dispatch.chats.deleteChannel(item.channel)}
+      name={name}
+      image={image}
+      isSeen={isSeen}
+      isSent={isSent}
+      message={message}
+      timeAgo={timeAgo}
+      groupId={groupId}
     />
   );
 
   render() {
+    const { style, data } = this.props;
     return (
       <UserList
-        ListEmptyComponent={MessagesEmptyListMessage}
-        style={this.props.style}
+        style={style}
+        data={data}
         refreshing={this.state.refreshing}
         onRefresh={this.onRefresh}
-        data={this.props.data}
         renderItem={this.renderItem}
+        ListEmptyComponent={MessagesEmptyListMessage}
       />
     );
   }

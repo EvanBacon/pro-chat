@@ -105,11 +105,23 @@ const chats = {
         throw new Error("Invalid User data found, can't parse message");
       }
       console.log('Add Message', message.key);
+
+      const messages = {
+        ...chats[groupId],
+        [message.key]: transformMessageForGiftedChat({ message, user }),
+      };
+
       dispatch.chats.addMessages({
         groupId,
-        messages: {
-          [message.key]: transformMessageForGiftedChat({ message, user }),
-        },
+        messages,
+      });
+
+      // / UGH
+
+      const sortedMessages = Object.values(messages).sort((a, b) => a.timestamp < b.timestamp);
+      dispatch.messages.updateWithMessage({
+        groupId,
+        message: sortedMessages[0],
       });
     },
     startChatting: async ({ uids, callback, groupId }, { chats }) => {
