@@ -51,6 +51,8 @@ export { default as channelHasMore } from './channelHasMore';
 export { default as chats } from './chats';
 export { default as isLoadingEarlier } from './isLoadingEarlier';
 export { default as isTyping } from './isTyping';
+export { default as iid } from './iid';
+
 export { default as location } from './location';
 export { default as notifications } from './notifications';
 export { default as onBoarding } from './onBoarding';

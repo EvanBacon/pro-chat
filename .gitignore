@@ -5,3 +5,6 @@ secret
 ios/fastlane/screenshots/en-US/preview.mp4
 *.sketch
 archive
+*.p12
+*.pem
+*.pkey

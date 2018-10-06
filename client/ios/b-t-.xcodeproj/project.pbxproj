@@ -18,7 +18,7 @@
 		B5CFBF4F1EDE419400B4BE24 /* EXBuildConstants.plist in Resources */ = {isa = PBXBuildFile; fileRef = B5CFBF4E1EDE419400B4BE24 /* EXBuildConstants.plist */; };
 		B5DB04801F3A684600E91581 /* shell-app-manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = B5DB047E1F3A684600E91581 /* shell-app-manifest.json */; };
 		B5DB04811F3A684600E91581 /* shell-app.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B5DB047F1F3A684600E91581 /* shell-app.bundle */; };
-		CD88B78721685EB800677617 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CD88B78621685EB700677617 /* GoogleService-Info.plist */; };
+		CD88B78A21686A5700677617 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CD88B78921686A5700677617 /* GoogleService-Info.plist */; };
 		EBB8117C1BFA0514F79CAF74 /* libPods-b-t-.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C4A88D15726AD99E8A257BC7 /* libPods-b-t-.a */; };
 /* End PBXBuildFile section */
 
@@ -40,7 +40,8 @@
 		B5DB047E1F3A684600E91581 /* shell-app-manifest.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "shell-app-manifest.json"; sourceTree = "<group>"; };
 		B5DB047F1F3A684600E91581 /* shell-app.bundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "shell-app.bundle"; sourceTree = "<group>"; };
 		C4A88D15726AD99E8A257BC7 /* libPods-b-t-.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-b-t-.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CD88B78621685EB700677617 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../GoogleService-Info.plist"; sourceTree = "<group>"; };
+		CD88B788216864AC00677617 /* b-t-.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "b-t-.entitlements"; sourceTree = "<group>"; };
+		CD88B78921686A5700677617 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,7 +94,7 @@
 		B56386431DB9693800A0598C /* b-t- */ = {
 			isa = PBXGroup;
 			children = (
-				CD88B78621685EB700677617 /* GoogleService-Info.plist */,
+				CD88B788216864AC00677617 /* b-t-.entitlements */,
 				B56386471DB9693800A0598C /* AppDelegate.h */,
 				B56386481DB9693800A0598C /* AppDelegate.m */,
 				B56386501DB9693800A0598C /* Assets.xcassets */,
@@ -105,6 +106,7 @@
 		B563865B1DB96A5E00A0598C /* Supporting */ = {
 			isa = PBXGroup;
 			children = (
+				CD88B78921686A5700677617 /* GoogleService-Info.plist */,
 				B5693E8F1FABD46800307FA4 /* launch_background_image.png */,
 				B5693E901FABD46800307FA4 /* launch_icon.png */,
 				B5693E8D1FABD16A00307FA4 /* LaunchScreen.xib */,
@@ -156,6 +158,14 @@
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = QQ57RJ5UTD;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -189,7 +199,7 @@
 				B5693E921FABD46800307FA4 /* launch_icon.png in Resources */,
 				B5693E8E1FABD16A00307FA4 /* LaunchScreen.xib in Resources */,
 				B5DB04801F3A684600E91581 /* shell-app-manifest.json in Resources */,
-				CD88B78721685EB800677617 /* GoogleService-Info.plist in Resources */,
+				CD88B78A21686A5700677617 /* GoogleService-Info.plist in Resources */,
 				B5DB04811F3A684600E91581 /* shell-app.bundle in Resources */,
 				B56386511DB9693800A0598C /* Assets.xcassets in Resources */,
 			);
@@ -402,6 +412,7 @@
 			baseConfigurationReference = 2C1548D9E4CB1AEFA5CCAE6D /* Pods-b-t-.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "b-t-/b-t-.entitlements";
 				DEVELOPMENT_TEAM = QQ57RJ5UTD;
 				INFOPLIST_FILE = "$(SRCROOT)/b-t-/Supporting/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -416,6 +427,7 @@
 			baseConfigurationReference = A47FE4D7F70906B7DC8CE39B /* Pods-b-t-.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "b-t-/b-t-.entitlements";
 				DEVELOPMENT_TEAM = QQ57RJ5UTD;
 				INFOPLIST_FILE = "$(SRCROOT)/b-t-/Supporting/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

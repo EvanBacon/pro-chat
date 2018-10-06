@@ -51,6 +51,7 @@ const Settings = {
     relationships: 'relationships',
     users: 'users',
     complaints: 'complaints',
+    instanceID: 'instance_id',
   },
   isDetached: false,
   googleLoginProps,

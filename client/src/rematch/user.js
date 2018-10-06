@@ -111,6 +111,7 @@ const user = {
         } else {
           dispatch.user.getAsync();
           dispatch.popular.getAsync();
+          dispatch.iid.setAsync();
           Fire.shared.getMessageList();
           NavigationService.navigate('App');
           // dispatch.leaders.getAsync({ uid: user.uid });

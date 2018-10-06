@@ -467,7 +467,8 @@ class SettingsScreen extends React.Component {
                 Haptic.selection();
               }
               if (notificationsEnabled) {
-                firebase.messaging().requestPermissions();
+                dispatch.notifications.registerAsync();
+                dispatch.iid.setAsync();
               }
 
               this.setState({ notificationsEnabled }, _ =>
