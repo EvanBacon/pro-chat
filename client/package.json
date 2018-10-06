@@ -41,6 +41,7 @@
     "expo": "^30.0.0",
     "expo-asset-utils": "^0.0.4-alpha.2",
     "expo-web": "^0.0.14",
+    "expokit": "1.7.1",
     "faker": "^4.1.0",
     "firebase": "^5.1.0",
     "gsap": "^2.0.1",

@@ -5,11 +5,13 @@
     "slug": "bute",
     "privacy": "unlisted",
     "sdkVersion": "30.0.0",
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "version": "0.0.0",
     "orientation": "portrait",
     "primaryColor": "#52416A",
-
     "icon": "./src/assets/icons/expo.png",
     "facebookScheme": "fb214548308980520",
     "facebookAppId": "214548308980520",
@@ -21,9 +23,17 @@
       "resizeMode": "cover"
     },
     "packagerOpts": {
-      "assetExts": ["ttf", "mp4", "otf", "xml", "mp3"]
+      "assetExts": [
+        "ttf",
+        "mp4",
+        "otf",
+        "xml",
+        "mp3"
+      ]
     },
-    "assetBundlePatterns": ["src/assets/**/*"],
+    "assetBundlePatterns": [
+      "src/assets/**/*"
+    ],
     "notification": {
       "icon": "./src/assets/icons/ios.png",
       "color": "#52416A"
@@ -38,14 +48,23 @@
         "NSCameraUsageDescription": "Take pictures to send to your friends",
         "NSPhotoLibraryUsageDescription": "Send your photos to people you chat with",
         "NSContactsUsageDescription": "Find your friends who also use this app"
-      }
+      },
+      "publishBundlePath": "ios/b-t-/Supporting/shell-app.bundle",
+      "publishManifestPath": "ios/b-t-/Supporting/shell-app-manifest.json"
     },
     "android": {
       "playStoreUrl": "https://play.google.com/store/apps/details?id=com.bacon.bute",
       "icon": "./src/assets/icons/expo.png",
       "versionCode": 0,
-      "package": "com.bacon.bute"
+      "package": "com.bacon.bute",
+      "publishBundlePath": "android/app/src/main/assets/shell-app.bundle",
+      "publishManifestPath": "android/app/src/main/assets/shell-app-manifest.json"
     },
-    "scheme": "expf323ea36d115447fa3827c6dcb512227"
+    "scheme": "expf323ea36d115447fa3827c6dcb512227",
+    "isDetached": true,
+    "detach": {
+      "iosExpoViewUrl": "https://s3.amazonaws.com/exp-exponent-view-code/ios-v2.8.4-sdk30.0.0-3de13133-1adc-4ba1-8569-a84011e570b4.tar.gz",
+      "androidExpoViewUrl": "https://s3.amazonaws.com/exp-exponent-view-code/android-v2.8.1-sdk30.0.0-271c32ab-0715-4dfb-8270-ecead3679bb4.tar.gz"
+    }
   }
 }
