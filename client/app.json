@@ -5,10 +5,7 @@
     "slug": "bute",
     "privacy": "unlisted",
     "sdkVersion": "30.0.0",
-    "platforms": [
-      "ios",
-      "android"
-    ],
+    "platforms": ["ios", "android"],
     "version": "0.0.0",
     "orientation": "portrait",
     "primaryColor": "#52416A",
@@ -23,17 +20,9 @@
       "resizeMode": "cover"
     },
     "packagerOpts": {
-      "assetExts": [
-        "ttf",
-        "mp4",
-        "otf",
-        "xml",
-        "mp3"
-      ]
+      "assetExts": ["ttf", "mp4", "otf", "xml", "mp3"]
     },
-    "assetBundlePatterns": [
-      "src/assets/**/*"
-    ],
+    "assetBundlePatterns": ["src/assets/**/*"],
     "notification": {
       "icon": "./src/assets/icons/ios.png",
       "color": "#52416A"
@@ -41,7 +30,7 @@
     "ios": {
       "icon": "./src/assets/icons/ios.png",
       "supportsTablet": true,
-      "buildNumber": "1",
+      "buildNumber": "2",
       "bundleIdentifier": "com.bacon.bute",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Send your location to your friends",
