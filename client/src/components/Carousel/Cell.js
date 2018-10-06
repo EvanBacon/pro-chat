@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text } from 'react-native';
-import TouchableBounce from 'react-native/Libraries/Components/Touchable/TouchableBounce';
+import { StyleSheet, Text, View } from 'react-native';
+
 import NavigationService from '../../navigation/NavigationService';
 import AvatarImage from '../Image/AvatarImage';
 
@@ -13,14 +13,15 @@ class Cell extends React.PureComponent {
     const { image, name } = this.props;
 
     return (
-      <TouchableBounce style={styles.touchable} onPress={this.onPress}>
+      <View style={styles.touchable}>
         <AvatarImage
+          onPress={this.onPress}
           name={name}
           avatar={image}
           avatarStyle={styles.avatarStyle}
         />
         <Text style={styles.text}>{name}</Text>
-      </TouchableBounce>
+      </View>
     );
   }
 }

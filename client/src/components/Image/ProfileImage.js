@@ -116,15 +116,14 @@ export default class ProfileImage extends React.Component {
 
     return (
       <View style={[containerStyle, this.props.style]}>
-        <TouchableOpacity style={containerStyle} onPress={this.onPress}>
-          <AvatarImage
-            progress={this.state.progress}
-            textStyle={styles.text}
-            avatarStyle={styles.avatar}
-            name={this.props.name}
-            avatar={this.props.image}
-          />
-        </TouchableOpacity>
+        <AvatarImage
+          onPress={this.onPress}
+          progress={this.state.progress}
+          textStyle={styles.text}
+          avatarStyle={styles.avatar}
+          name={this.props.name}
+          avatar={this.props.image}
+        />
       </View>
     );
   }

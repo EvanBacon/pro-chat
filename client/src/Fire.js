@@ -259,16 +259,11 @@ class Fire {
       const group = memberUids;
       // TODO: Evan: Handle groups yolo
       const sender =  group[0]; //message.uid ||
-      console.log("sender", message);
       const user = await (new Promise(res => dispatch.users.ensureUserIsLoadedAsync({ uid: sender, callback: res }) ));
-
       const previewMessage = this.formatMessageForPreview(message, groupId, user, group);
-
       previewMessages[groupId] = previewMessage;
     }
-
-    // console.log('heeyyooo',previewMessages)// JSON.stringify(previewMessages));
-
+    
     if (force) {
       dispatch.messages.clear();
     }

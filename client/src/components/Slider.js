@@ -34,12 +34,18 @@ export default class Slider extends React.Component {
 
   renderItem = (item) => {
     if (item) {
-      const { uid, index } = item;
+      const {
+        uid, name, image, about, rating, index,
+      } = item;
       return (
         <SliderCell
           key={uid}
           onPressItem={this.props.onPressItem}
           uid={uid}
+          name={name}
+          image={image}
+          about={about}
+          rating={rating}
           scroll={this.scroll}
           itemWidth={this.state.itemWidth}
           index={index || 0}
@@ -109,7 +115,7 @@ export default class Slider extends React.Component {
 
   get items() {
     const items = this.props.items || [];
-    const data = items.map((val, index) => ({ uid: val, index }));
+    const data = items.map((val, index) => ({ ...val, index }));
 
     return data;
   }
@@ -176,7 +182,14 @@ export default class Slider extends React.Component {
               swipeColor: '#FF6C6C',
               backgroundOpacity: '0.75',
               fontColor: '#FFF',
-              style: { wrapper: {} },
+              style: {
+                wrapper: {
+                },
+                label: {
+                  position: 'absolute',
+                  right: 0,
+                },
+              },
             },
             right: {
               title: 'LIT',

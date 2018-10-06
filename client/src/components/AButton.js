@@ -65,13 +65,16 @@ export default class AButton extends React.Component {
   render() {
     return (
       <TouchableBounce
-        onPressIn={(_) => {
+        onPressIn={() => {
           this.setState({ isPressing: true });
         }}
-        onPressOut={(_) => {
+        onPressOut={() => {
           this.setState({ isPressing: false });
         }}
-        onPress={this.props.onPress || (() => Alert.alert(`${this.props.icon} pressed`))}
+        onPress={
+          this.props.onPress ||
+          (() => Alert.alert(`${this.props.icon} pressed`))
+        }
         style={{
           width: this.props.size,
           height: this.props.size,

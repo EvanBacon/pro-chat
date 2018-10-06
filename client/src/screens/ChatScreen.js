@@ -14,7 +14,6 @@ import Meta from '../constants/Meta';
 import Fire from '../Fire';
 import NavigationService from '../navigation/NavigationService';
 import CustomView from './CustomView';
-import AvatarImage from '../components/Image/AvatarImage';
 
 class Chat extends React.Component {
   static navigationOptions = ({ navigation }) => ({

@@ -113,9 +113,8 @@ class HomeScreen extends React.Component {
   };
 
   alert = (title, subtitle, buttonTitle) => {
-    // Works on both iOS and Android
     Alert.alert(title, subtitle, [{ text: buttonTitle, onPress: () => {} }], {
-      cancelable: false,
+      cancelable: true,
     });
   };
 
@@ -126,11 +125,11 @@ class HomeScreen extends React.Component {
         <BrowseUsers
           onLike={(uid) => {
             if (!firstLike) {
-              dispatch.onBoarding.set({ firstLike: Date.now() });
+              dispatch.onBoarding.update({ firstLike: Date.now() });
               this.alert(
-                Meta.info_like_title,
-                Meta.info_like_subtitle,
-                Meta.info_like_action,
+                Meta.meta_info_like_title,
+                Meta.meta_info_like_subtitle,
+                Meta.meta_info_like_action,
               );
               // if (firebase.analytics) { firebase.analytics().logEvent('first_like', { uid }); }
             }
@@ -141,11 +140,11 @@ class HomeScreen extends React.Component {
           }}
           onDislike={(uid) => {
             if (!firstDislike) {
-              dispatch.onBoarding.set({ firstDislike: Date.now() });
+              dispatch.onBoarding.update({ firstDislike: Date.now() });
               this.alert(
-                Meta.info_dislike_title,
-                Meta.info_dislike_subtitle,
-                Meta.info_dislike_action,
+                Meta.meta_info_dislike_title,
+                Meta.meta_info_dislike_subtitle,
+                Meta.meta_info_dislike_action,
               );
               // if (firebase.analytics) { firebase.analytics().logEvent('first_dislike', { uid }); }
             }
@@ -156,7 +155,7 @@ class HomeScreen extends React.Component {
           }}
           onIndexChange={(uid) => {
             if (!wantMoreInfo) {
-              dispatch.onBoarding.set({ wantMoreInfo: Date.now() });
+              dispatch.onBoarding.update({ wantMoreInfo: Date.now() });
               this.alert(
                 Meta.meta_info_learn_more_title,
                 Meta.meta_info_learn_more_subtitle,

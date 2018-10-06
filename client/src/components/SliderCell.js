@@ -4,39 +4,16 @@ import { StyleSheet, View } from 'react-native';
 import TouchableBounce from 'react-native/Libraries/Components/Touchable/TouchableBounce';
 import { connect } from 'react-redux';
 
-import LoadingImage from './Image/ProgressImage';
+import AvatarImage from './Image/AvatarImage';
 import Meta from './Meta';
 import IdManager from '../IdManager';
 
-class SliderCell extends React.PureComponent {
-  componentWillMount() {
-    this.load(this.props.uid);
-  }
-
-  componentWillReceiveProps(next) {
-    if (this.props.uid !== next.uid) {
-      this.load(next.uid);
-    }
-  }
-
-  load = async (uid) => {
-    if (IdManager.isInteractable(uid)) {
-      dispatch.users.ensureUserIsLoadedAsync({ uid });
-    }
-  };
-
+export default class SliderCell extends React.PureComponent {
   onPress = () => this.props.onPressItem(this.props.uid);
 
   render() {
     const {
-      itemWidth,
-      onPressItem,
-      uid,
-
-      about,
-      rating,
-      firstName,
-      image,
+      itemWidth, about, rating, name, image,
     } = this.props;
 
     const style = {
@@ -46,8 +23,8 @@ class SliderCell extends React.PureComponent {
 
     const styles = {
       image: {
-        backgroundColor: 'white',
-        overflow: 'hidden',
+        // backgroundColor: 'white',
+        // overflow: 'hidden',
         width: itemWidth,
         height: itemWidth,
         borderRadius: itemWidth / 2,
@@ -67,46 +44,15 @@ class SliderCell extends React.PureComponent {
             aspectRatio: 1,
           }}
         >
-          <TouchableBounce
-            activeOpacity={0.7}
-            style={{ flex: 1, overflow: 'hidden' }}
+          <AvatarImage
+            name={name || 'Baby'}
+            avatar={image}
             onPress={this.onPress}
-          >
-            <LoadingImage source={image} style={styles.image} />
-          </TouchableBounce>
+            avatarStyle={styles.image}
+          />
         </View>
-        <Meta
-          color="white"
-          title={firstName}
-          subtitle={about}
-          rating={rating}
-        />
+        <Meta color="white" title={name} subtitle={about} rating={rating} />
       </View>
     );
   }
 }
-
-const mergeProps = ({ users, ...state }, actions, { uid, ...localProps }) => {
-  const user = users[uid] || {};
-  // console.warn(user, uid);
-  const { about, rating } = user;
-  const userProps = {
-    uid,
-    about: about || 'I am not interesting, but I do like to pretend.',
-    rating: 'moth',
-    image: user.photoURL,
-    firstName: user.first_name || user.name || user.displayName,
-  };
-  return {
-    ...state,
-    ...localProps,
-    ...actions,
-    ...userProps,
-  };
-};
-
-export default connect(
-  ({ users }) => ({ users }),
-  {},
-  mergeProps,
-)(SliderCell);

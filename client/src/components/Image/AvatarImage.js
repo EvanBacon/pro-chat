@@ -77,7 +77,11 @@ export default class AvatarImage extends React.PureComponent {
         <ProgressImage
           indicatorProps={indicatorProps}
           source={{ uri: this.props.avatar }}
-          style={[styles.avatarStyle, this.props.avatarStyle]}
+          style={[
+            styles.avatarStyle,
+            { backgroundColor: this.avatarColor },
+            this.props.avatarStyle,
+          ]}
         />
       );
     } else if (typeof this.props.avatar === 'number') {
@@ -85,7 +89,11 @@ export default class AvatarImage extends React.PureComponent {
         <ProgressImage
           indicatorProps={indicatorProps}
           source={this.props.avatar}
-          style={[styles.avatarStyle, this.props.avatarStyle]}
+          style={[
+            styles.avatarStyle,
+            { backgroundColor: this.avatarColor },
+            this.props.avatarStyle,
+          ]}
         />
       );
     }
@@ -101,6 +109,8 @@ export default class AvatarImage extends React.PureComponent {
   }
 
   render() {
+    this.setAvatarColor();
+
     if (!this.props.name && !this.props.avatar) {
       // render placeholder
       return (
@@ -130,8 +140,6 @@ export default class AvatarImage extends React.PureComponent {
         </TouchableOpacity>
       );
     }
-
-    this.setAvatarColor();
 
     return (
       <TouchableOpacity

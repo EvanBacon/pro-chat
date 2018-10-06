@@ -44,7 +44,7 @@ const MainTab = createMaterialTopTabNavigator(
     initialRouteName: 'Main',
     cardStyle: {},
     navigationOptions: () => ({
-      swipeEnabled: true,
+      swipeEnabled: false,
       // Put tab bar on bottom of screen on both platforms
       // tabBarComponent: TabBarBottom,
       tabBarPosition: 'bottom',
