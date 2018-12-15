@@ -1,3 +1,5 @@
-import { store } from './Gate';
-
-export const { dispatch } = store;
+Object.defineProperty(module.exports, 'dispatch', {
+  get: function() {
+    return global.__rematch_dispatch;
+  },
+});

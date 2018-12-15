@@ -1,5 +1,5 @@
 import { dispatch } from '../rematch/dispatch';
-import Expo, { Haptic } from 'expo';
+import { Haptic, Util } from 'expo';
 import React from 'react';
 import {
   Animated,
@@ -410,7 +410,7 @@ class SettingsScreen extends React.Component {
       },
       logout: () => dispatch.auth.logoutAsync(),
       delete: () => {},
-      update: () => Expo.Util.reload(),
+      update: Util.reload,
       privacypolicy: () => this.openWeb(urls.privacy, Meta.privacy_policy),
       tos: () => this.openWeb(urls.terms, Meta.terms_of_service),
       licenses: () => NavigationService.navigate('Licenses'),

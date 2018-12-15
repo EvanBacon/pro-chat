@@ -20,6 +20,7 @@ export const store = init({
   plugins: [persistPlugin],
 });
 
+global.__rematch_dispatch = store.dispatch;
 class Gate extends React.Component {
   render() {
     const { children } = this.props;

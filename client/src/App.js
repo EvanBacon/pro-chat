@@ -12,6 +12,8 @@ import Gate from './rematch/Gate';
 import { ActionSheetProvider } from './universal/ActionSheet';
 import AssetUtils from './universal/AssetUtils';
 import { AppLoading } from './universal/Expo';
+import { Assets as StackAssets } from 'react-navigation-stack';
+import { Asset } from 'expo';
 
 console.ignoredYellowBox = Settings.ignoredYellowBox;
 
@@ -50,16 +52,16 @@ export default class App extends React.Component {
   componentDidMount() {
     StatusBar.setBarStyle('light-content', true);
     this._setupExperienceAsync();
-    // for (const permission of Settings.permissions) {
-    //   dispatch.permissions.getAsync({ permission });
-    // }
+    for (const permission of Settings.permissions) {
+      dispatch.permissions.getAsync({ permission });
+    }
     Fire.shared.init();
   }
 
   componentWillUnmount() {}
 
   _setupExperienceAsync = async () => {
-    await Promise.all(this._preloadAsync());
+    await Promise.all([...this._preloadAsync(), Asset.loadAsync(StackAssets)]);
     // console.timeEnd('Startup');
     this.setState({ loading: false });
   };

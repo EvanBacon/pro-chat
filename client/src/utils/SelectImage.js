@@ -1,10 +1,10 @@
-import { ImagePicker } from 'expo';
-
+import { ImagePicker, Permissions } from 'expo';
 import { NavigationActions } from 'react-navigation';
-import { store } from '../App';
+
+import { store } from '../rematch/Gate';
+
 import Meta from '../constants/Meta';
 import getPermission from './getPermission';
-import { Permissions } from 'expo';
 import reduceImageAsync from './shrinkImageAsync';
 
 // More info on all the options is below in the README...just some common use cases shown here
@@ -39,21 +39,23 @@ export default (selectImage = (show, callback, onSelectCamera) => {
       options,
       cancelButtonIndex,
     },
-    (buttonIndex) => {
+    buttonIndex => {
       switch (buttonIndex) {
         case 0:
           if (onSelectCamera) {
             onSelectCamera();
             return;
           }
-          store.dispatch(NavigationActions.navigate({
-            routeName: 'Camera',
-            params: { complete: callback },
-          }));
+          store.dispatch(
+            NavigationActions.navigate({
+              routeName: 'Camera',
+              params: { complete: callback },
+            }),
+          );
           break;
         case 1:
           // Open Image Library:
-          ImagePicker.launchImageLibrary(_options, (response) => {
+          ImagePicker.launchImageLibrary(_options, response => {
             complete(response, callback);
           });
           break;
@@ -95,7 +97,7 @@ export const fromLibrary = async () => {
   if (!hasit) return;
 
   const { cancelled, uri } = await ImagePicker.launchImageLibraryAsync({
-    allowsEditing: false,
+    allowsEditing: true,
     aspect: [1, 1],
     quality: 0.85,
     base64: false,
@@ -115,13 +117,12 @@ export const fromCamera = async () => {
   if (!hasit) return;
 
   const { cancelled, uri } = await ImagePicker.launchCameraAsync({
-    allowsEditing: false,
+    allowsEditing: true,
     aspect: [1, 1],
     quality: 0.85,
     base64: false,
     exif: true,
   });
-
 
   if (cancelled) {
     return;
