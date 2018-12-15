@@ -1,7 +1,7 @@
+import { Alert } from 'react-native';
 import { dispatch } from './dispatch';
 // import firebase from 'firebase';
 import firebase from '../universal/firebase';
-import { Alert } from 'react-native';
 
 import Settings from '../constants/Settings';
 import Fire from '../Fire';
@@ -13,15 +13,12 @@ const FacebookLoginTypes = {
   Cancel: 'cancel',
 };
 
-function deleteUserAsync(uid) {
+async function deleteUserAsync(uid) {
   const db = firebase.firestore();
-
-  return Promise.all([
-    db
-      .collection(Settings.refs.users)
-      .doc(uid)
-      .delete(),
-  ]);
+  return db
+    .collection(Settings.refs.users)
+    .doc(uid)
+    .delete();
 }
 
 async function getFacebookTokenAsync() {
@@ -32,7 +29,7 @@ async function getFacebookTokenAsync() {
       Settings.facebookLoginProps,
     );
   } catch ({ message }) {
-    Alert.alert('Facebook Login Error:', message);
+    Alert.alert(`Facebook Login Error: ${message}`);
   }
   if (auth) {
     const { type, expires, token } = auth;
@@ -42,7 +39,7 @@ async function getFacebookTokenAsync() {
       // do nothing, user cancelled
     } else {
       // unknown type, this should never happen
-      Alert.alert('Failed to authenticate', type);
+      Alert.alert(`Failed to authenticate ${type}`);
     }
     return token;
   }
@@ -68,7 +65,9 @@ async function getAuthInfoForSocialAccountAsync(loginType) {
       provider = firebase.auth.GithubAuthProvider;
       break;
     default:
-      throw new Error(`getAuthInfoForSocialAccountAsync: Invalid loginType ${loginType}`);
+      throw new Error(
+        `getAuthInfoForSocialAccountAsync: Invalid loginType ${loginType}`,
+      );
   }
   return { token, provider };
 }
@@ -125,12 +124,16 @@ const auth = {
   },
   effects: {
     upgrade: async (socialType) => {
-      const { token, provider } = await getAuthInfoForSocialAccountAsync(socialType);
+      const { token, provider } = await getAuthInfoForSocialAccountAsync(
+        socialType,
+      );
       await upgradeAccountWithAuthAsync({ token, provider });
     },
     login: async (socialType = SocialTypes.Facebook) => {
       console.log('auth.login: A: ', { socialType });
-      const { token, provider } = await getAuthInfoForSocialAccountAsync(socialType);
+      const { token, provider } = await getAuthInfoForSocialAccountAsync(
+        socialType,
+      );
       console.log('auth.login: B: ', { token, provider });
       await loginToFirebaseWithAuthAsync({ token, provider });
     },
