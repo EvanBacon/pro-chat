@@ -116,6 +116,7 @@ class Chat extends React.Component {
     for (const message of messages) {
       const chat = {
         seen: null,
+        senderName: this.user.name,
       };
       ['image', 'text', 'location'].forEach(key => {
         if (message[key]) chat[key] = message[key];

@@ -1,74 +1,89 @@
 const functions = require('firebase-functions');
 
-const Expo = require('expo-server-sdk').default;
+import sendPushNotificationAsync from './sendPushNotificationAsync';
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
+function isValidUserId(key) {
+  return key && typeof key === 'string' && key !== '';
+}
 
-function sendPushNotificationsAsync(
-  token = 'ExponentPushToken[tyjFVoLSDwui4W9msjdOJf]',
-) {
-  const somePushTokens = [token];
-  // Create a new Expo SDK client
-  let expo = new Expo();
+function getOtherUserIDsFromChatGroupId(groupId, omitTargetId) {
+  if (!isValidUserId(groupId)) {
+    console.warn('getOtherUsersFromChatGroup: Invalid group id', { groupId });
+    return [];
+  }
+  // / Remove self from group...
+  const userIDs = groupId.split('_');
+  if (userIDs.length < 2) return [userIDs[1]];
 
-  // Create the messages that you want to send to clents
-  let messages = [];
-  for (let pushToken of somePushTokens) {
-    // Each push token looks like ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]
+  const index = userIDs.indexOf(omitTargetId);
+  if (index > -1) {
+    userIDs.splice(index, 1);
+  }
+  return userIDs;
+}
 
-    // Check that all your push tokens appear to be valid Expo push tokens
-    if (!Expo.isExpoPushToken(pushToken)) {
-      console.error(`Push token ${pushToken} is not a valid Expo push token`);
-      continue;
-    }
-
-    // Construct a message (see https://docs.expo.io/versions/latest/guides/push-notifications.html)
-    messages.push({
-      to: pushToken,
-      sound: 'default',
-      body: 'This is a test notification',
-      data: { withSome: 'data' },
-    });
+function convertChatMessageToPushNotification(chatMessage) {
+  let messageType = 'unknown';
+  let message = '???';
+  if (chatMessage.text) {
+    message = chatMessage.text;
+    messageType = 'text';
+  } else if (chatMessage.location) {
+    message = 'Shared a location';
+    messageType = 'location';
+  } else if (chatMessage.image) {
+    message = 'Sent an image';
+    messageType = 'image';
   }
 
-  // The Expo push notification service accepts batches of notifications so
-  // that you don't need to send 1000 requests to send 1000 notifications. We
-  // recommend you batch your notifications to reduce the number of requests
-  // and to compress them (notifications with similar content will get
-  // compressed).
-  let chunks = expo.chunkPushNotifications(messages);
-  let tickets = [];
-  (async () => {
-    // Send the chunks to the Expo push notification service. There are
-    // different strategies you could use. A simple one is to send one chunk at a
-    // time, which nicely spreads the load out over time:
-    for (let chunk of chunks) {
-      try {
-        let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
-        console.log(ticketChunk);
-        tickets.push(...ticketChunk);
-        // NOTE: If a ticket contains an error code in ticket.details.error, you
-        // must handle it appropriately. The error codes are listed in the Expo
-        // documentation:
-        // https://docs.expo.io/versions/latest/guides/push-notifications#response-format
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  })();
+  return {
+    pushNotification: { type: `message-${messageType}` },
+    pushNotificationUserData: {
+      /* Send the name of the sender as the title of the notification */
+      title: chatMessage.senderName,
+      senderId: chatMessage.uid,
+      /* The parsed message will be sent as the body of the notification */
+      body: message,
+      /* TODO: get the current badge and update it */
+      badge: '1',
+      sound: 'default',
+      /* TODO: I forgot what this does */
+      tag: 'message:' + chatMessage.uid,
+    },
+  };
 }
-exports.helloWorld = functions.https.onRequest((request, response) => {
-  response.send('Hello from Firebase!');
-  //   sendPushNotificationsAsync();
-});
 
-exports.myFunctionName = functions.firestore
+exports.onChatMessageSent = functions.firestore
   .document('chat_groups/{groupId}/messages/{messageId}')
-  .onWrite((change, context) => {
-    // ... Your code here
+  .onCreate(async (snap, context) => {
+    // Get the note document
 
-    console.log('batman', { change, context });
-    // sendPushNotificationsAsync();
+    /*
+  {
+    seen: null
+    text: "What’s gude main"
+    timestamp: 1544857824436
+    uid: "RBtdzxJzzpOEBnSOPinWPO6j2hi1"
+  }
+  */
+    const { groupId, messageId } = context.params;
+
+    const message = snap.data();
+    const {
+      pushNotification,
+      pushNotificationUserData,
+    } = convertChatMessageToPushNotification(message);
+    const senderId = message.uid;
+
+    // A list of user IDs that are in the chat group, excluding the sender. (Typically this will just be a list of one other user)
+    const usersToNotify = getOtherUserIDsFromChatGroupId(groupId, senderId);
+
+    await sendPushNotificationAsync({
+      usersToNotify,
+      data: pushNotificationUserData,
+      notification: pushNotification,
+    });
+
+    // TODO: Do we return something special here?
+    // return Promise.resolve();
   });

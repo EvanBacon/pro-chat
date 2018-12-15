@@ -4,6 +4,7 @@ import { StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import IdManager from '../IdManager';
 import Carousel from './Carousel';
+import { dispatch } from '../rematch/dispatch';
 class NewMatchesCarousel extends React.Component {
   static defaultProps = {
     data: [],
@@ -15,9 +16,14 @@ class NewMatchesCarousel extends React.Component {
     isLoading: PropTypes.bool.isRequired,
   };
 
+  componentDidMount() {
+    dispatch.users.getPaged({ size: 5 });
+  }
+
   render() {
     return (
       <Carousel
+        destination="Chat"
         title={'New Matches'}
         style={styles.container}
         titleStyle={styles.title}

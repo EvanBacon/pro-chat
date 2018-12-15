@@ -8,11 +8,12 @@ import NavigationService from '../../navigation/NavigationService';
 export default class Carousel extends Component {
   static propTypes = {};
   static defaultProps = {
+    destination: 'Profile',
     // users: []
   };
 
   render() {
-    const { data, ...props } = this.props;
+    const { data, destination, ...props } = this.props;
 
     return (
       <Section {...props}>
@@ -24,7 +25,15 @@ export default class Carousel extends Component {
           keyExtractor={({ uid }, index) => `Carousel-${uid || index}`}
           renderItem={({ item, index }) => {
             const { image, name, uid } = item;
-            return <Cell image={image} name={name} uid={uid} key={index} />;
+            return (
+              <Cell
+                destination={destination}
+                image={image}
+                name={name}
+                uid={uid}
+                key={index}
+              />
+            );
           }}
         />
       </Section>

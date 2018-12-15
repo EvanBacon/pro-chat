@@ -7,8 +7,15 @@ import AvatarImage from '../Image/AvatarImage';
 const PADDING = 12;
 const IMAGE_SIZE = 64;
 class Cell extends React.PureComponent {
+  static defaultProps = {
+    destination: 'Profile',
+  };
+
   onPress = () => {
-    NavigationService.navigateToUserSpecificScreen('Profile', this.props.uid);
+    NavigationService.navigateToUserSpecificScreen(
+      this.props.destination,
+      this.props.uid,
+    );
   };
   render() {
     const { image, name } = this.props;
