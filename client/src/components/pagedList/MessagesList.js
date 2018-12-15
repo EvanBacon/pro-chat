@@ -1,11 +1,19 @@
 import React from 'react';
-import { FlatList, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Divider } from 'react-native-paper';
 
 import { MessageRow } from './MessageRow';
+import { FlatList } from 'react-native-gesture-handler';
+import AppleStyleSwipeableRow from './AppleStyleSwipeableRow';
 
 export default class MessagesList extends React.Component {
-  renderItem = ({ item }) => <MessageRow onPress={this.props.onPress} {...item} />;
+  renderItem = ({ item }) => {
+    return (
+      <AppleStyleSwipeableRow>
+        <MessageRow onPress={this.props.onPress} {...item} />
+      </AppleStyleSwipeableRow>
+    );
+  };
   render() {
     return (
       <FlatList

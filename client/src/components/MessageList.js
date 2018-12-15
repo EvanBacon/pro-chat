@@ -13,6 +13,7 @@ import MessageRow from './MessageRow';
 import UserList from './UserList';
 import tabBarImage from './Tabs/tabBarImage';
 import Assets from '../Assets';
+import AppleStyleSwipeableRow from './pagedList/AppleStyleSwipeableRow';
 
 class MessageList extends React.Component {
   state = {
@@ -46,19 +47,25 @@ class MessageList extends React.Component {
   };
 
   renderItem = ({
-    item: {
-      name, image, isSeen, isSent, message, timeAgo, groupId,
-    },
+    item: { name, image, isSeen, isSent, message, timeAgo, groupId },
   }) => (
-    <MessageRow
-      name={name}
-      image={image}
-      isSeen={isSeen}
-      isSent={isSent}
-      message={message}
-      timeAgo={timeAgo}
-      groupId={groupId}
-    />
+    <AppleStyleSwipeableRow
+      onSelect={direction => {
+        if (direction === 'left') {
+          console.log('TODO: Delete Chat');
+        }
+      }}
+    >
+      <MessageRow
+        name={name}
+        image={image}
+        isSeen={isSeen}
+        isSent={isSent}
+        message={message}
+        timeAgo={timeAgo}
+        groupId={groupId}
+      />
+    </AppleStyleSwipeableRow>
   );
 
   render() {

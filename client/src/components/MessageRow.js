@@ -23,11 +23,10 @@ export default class MessageRow extends React.PureComponent {
   };
 
   render() {
-    const {
-      name, image, isSeen, isSent, message, timeAgo,
-    } = this.props;
+    const { name, image, isSeen, isSent, message, timeAgo } = this.props;
     return (
       <TouchableHighlight
+        style={{ backgroundColor: '#EDF2F6' }}
         underlayColor="#ddd"
         onPress={this.onPress}
         onLongPress={this.onLongPress}

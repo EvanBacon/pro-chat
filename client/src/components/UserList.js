@@ -1,6 +1,7 @@
 import React from 'react';
-import { FlatList, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Divider } from 'react-native-paper';
+import { FlatList } from 'react-native-gesture-handler';
 
 import RefreshControl from './RefreshControl';
 
@@ -29,7 +30,10 @@ export default class UserList extends React.Component {
             onRefresh={onRefresh}
           />
         }
-        style={StyleSheet.flatten([style, { flex: 1 }])}
+        style={StyleSheet.flatten([
+          style,
+          { flex: 1, backgroundColor: '#EDF2F6' },
+        ])}
         contentInset={{ top }}
         contentOffset={{ y: -top }}
         data={debugTestEmpty ? [] : data}
