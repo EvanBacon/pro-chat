@@ -9,6 +9,7 @@ import getPermissionAsync from '../../utils/getPermission';
 import shrinkImageAsync from '../../utils/shrinkImageAsync';
 import uploadImageAsync from '../../utils/uploadImageAsync';
 import AvatarImage from './AvatarImage';
+import { dispatch } from '../../rematch/dispatch';
 
 export default class ProfileImage extends React.Component {
   state = {
@@ -36,18 +37,20 @@ export default class ProfileImage extends React.Component {
     }
   };
 
-  _setNewPhoto = async (uri) => {
+  _setNewPhoto = async uri => {
     if (!uri || uri === '') return;
     this.setState({ isUploadingImage: true, progress: 0, image: uri });
     const { uri: reducedImageUri } = await shrinkImageAsync(uri);
     try {
-      await uploadImageAsync(
+      const downloadURL = await uploadImageAsync(
         reducedImageUri,
         this.storagePath,
         this._onProgressUpdated,
       );
+      dispatch.user.updateUserProfile({ image: downloadURL });
     } catch ({ code, message }) {
-      console.warn('ProfileImage: Error: ', message);
+      console.log('ProfileImage: Error: ', message);
+      alert(message);
     } finally {
       this.setState({ isUploadingImage: false, progress: 0 });
     }
@@ -72,14 +75,18 @@ export default class ProfileImage extends React.Component {
   _takePictureAsync = async () => {
     const permission = await getPermissionAsync(Permissions.CAMERA);
     if (!permission) return;
-    const { uri } = await ImagePicker.launchCameraAsync();
+    const { uri } = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+    });
     return this._setNewPhoto(uri);
   };
 
   _selectPictureAsync = async () => {
     const permission = await getPermissionAsync(Permissions.CAMERA_ROLL);
     if (!permission) return;
-    const { uri } = await ImagePicker.launchImageLibraryAsync();
+    const { uri } = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+    });
     return this._setNewPhoto(uri);
   };
 

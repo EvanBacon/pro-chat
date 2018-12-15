@@ -15,7 +15,7 @@ import Fire from '../Fire';
 export default class CustomView extends React.Component {
   static defaultProps = {
     currentMessage: {},
-    containerStyle: {},
+    containerStyle: { backgroundColor: 'orange' },
     mapViewStyle: {},
     imageViewStyle: {},
   };
@@ -39,13 +39,13 @@ export default class CustomView extends React.Component {
 
   loadData() {}
 
-  renderImage = (image) => {
+  renderImage = image => {
     const renderImage = () => {
       if (image) {
         // resizeMode={FastImage.resizeMode.cover}
         return (
           <LoadingImage
-            source={{ uri: image }}
+            source={image}
             style={[
               styles.imageView,
               this.props.imageViewStyle,
@@ -54,17 +54,22 @@ export default class CustomView extends React.Component {
           />
         );
       }
-      // return (<Image source={require('../../assets/images/splash_icon.png')} style={[styles.imageView, this.props.imageViewStyle]} />);
-      return <View />;
+      return (
+        <Image
+          source={require('../assets/icons/expo.png')}
+          style={[styles.imageView, this.props.imageViewStyle]}
+        />
+      );
+      // return <View />;
     };
     return (
       <Lightbox
         borderRadius={13}
         style={{ borderRadius: 13 }}
-        onOpen={(_) => {
+        onOpen={() => {
           this.setState({ lightboxOpened: true });
         }}
-        onClose={(_) => {
+        onClose={() => {
           this.setState({ lightboxOpened: false });
         }}
         backgroundColor="black"
@@ -79,7 +84,7 @@ export default class CustomView extends React.Component {
     const isUser = this.props.currentMessage.from == Fire.shared.uid;
     if (this.props.currentMessage.location) {
       const { latitude, longitude } = this.props.currentMessage.location;
-      const delta = 0.05;
+      // const delta = 0.05;
       // const region = new MapView.AnimatedRegion({
       //   latitude,
       //   longitude,
@@ -96,7 +101,7 @@ export default class CustomView extends React.Component {
       //       }}
       return (
         <TouchableOpacity
-          style={[this.props.containerStyle]}
+          style={this.props.containerStyle}
           onPress={() => {
             const url = Platform.select({
               ios: `http://maps.apple.com/?ll=${
@@ -107,12 +112,12 @@ export default class CustomView extends React.Component {
               },${this.props.currentMessage.location.longitude}`,
             });
             Linking.canOpenURL(url)
-              .then((supported) => {
+              .then(supported => {
                 if (supported) {
                   return Linking.openURL(url);
                 }
               })
-              .catch((err) => {
+              .catch(err => {
                 console.error('An error occurred', err);
               });
           }}
@@ -149,25 +154,28 @@ export default class CustomView extends React.Component {
         mediaType,
         videos,
       } = this.props.currentMessage.link;
-      // console.warn(JSON.stringify(this.props.currentMessage.link), "");
       if (images.length > 0) {
+        let uri = images[0];
+        if (typeof images[0] !== 'string' && images[0].uri) {
+          uri = images[0].uri;
+        }
         return (
           <TouchableOpacity
             style={{ backgroundColor: 'transparent' }}
-            onPress={(_) => {
+            onPress={() => {
               Linking.canOpenURL(url)
-                .then((supported) => {
+                .then(supported => {
                   if (supported) {
                     return Linking.openURL(url);
                   }
                 })
-                .catch((err) => {
+                .catch(err => {
                   console.error('An error occurred', err);
                 });
             }}
           >
             <LoadingImage
-              source={{ uri: images[0] }}
+              source={{ uri }}
               style={[
                 styles.imageView,
                 this.props.imageViewStyle,

@@ -11,10 +11,13 @@ function setTopLevelNavigator(navigatorRef) {
 }
 
 function navigate(routeName, params) {
-  _navigator.dispatch(NavigationActions.navigate({
-    routeName,
-    params,
-  }));
+  if (!_navigator) return;
+  _navigator.dispatch(
+    NavigationActions.navigate({
+      routeName,
+      params,
+    }),
+  );
 }
 
 function navigateToUserSpecificScreen(routeName, uid, params = {}) {

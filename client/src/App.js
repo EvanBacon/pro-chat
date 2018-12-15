@@ -61,7 +61,8 @@ export default class App extends React.Component {
   componentWillUnmount() {}
 
   _setupExperienceAsync = async () => {
-    await Promise.all([...this._preloadAsync(), Asset.loadAsync(StackAssets)]);
+    await Promise.all(this._preloadAsync());
+    // await Promise.all([...this._preloadAsync(), Asset.loadAsync(StackAssets)]);
     // console.timeEnd('Startup');
     this.setState({ loading: false });
   };

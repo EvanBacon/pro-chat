@@ -89,8 +89,8 @@ const user = {
   },
   effects: {
     updateProfileImage: () => {},
-    updateUserProfile: (updates) => {
-      console.warn('TODO: user.updateUserProfile: Test');
+    updateUserProfile: updates => {
+      console.log('TODO: user.updateUserProfile: Test');
       // Set the local database
       dispatch.user.update(updates);
       // // Update the users database
@@ -102,7 +102,7 @@ const user = {
       console.warn('TODO: user.changeRating');
     },
     observeAuth: () => {
-      firebase.auth().onAuthStateChanged((auth) => {
+      firebase.auth().onAuthStateChanged(auth => {
         if (!auth) {
           // TODO: Evan: Y tho...
           dispatch.user.clear();
@@ -137,8 +137,8 @@ const user = {
       const updates = {};
       for (const key of Object.keys(combinedUserData)) {
         if (
-          combinedUserData[key] !== undefined
-          && combinedUserData[key] !== nextLocalUserData[key]
+          combinedUserData[key] !== undefined &&
+          combinedUserData[key] !== nextLocalUserData[key]
         ) {
           updates[key] = combinedUserData[key];
         }
@@ -173,11 +173,7 @@ const user = {
     },
     syncLocalToFirebase: async (
       props,
-      {
-        user: {
-          additionalUserInfo, credential, user, ...otherUserProps
-        },
-      },
+      { user: { additionalUserInfo, credential, user, ...otherUserProps } },
     ) => {
       console.log('user.syncLocalToFirebase', otherUserProps);
       const doc = getUserRef();

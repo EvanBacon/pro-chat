@@ -1,26 +1,25 @@
 import firebase from '../universal/firebase';
 import React, { Component } from 'react';
 import { View } from 'react-native';
-
+import uuid from 'uuid';
+import reduceAndUploadLocalImageAsync from '../utils/reduceAndUploadLocalImageAsync';
 import getLocation from '../utils/getLocation';
 import { fromCamera, fromLibrary } from '../utils/SelectImage';
 import Button from './Button';
 
 if (!firebase.analytics) {
-  firebase.analytics = function () {
+  firebase.analytics = function() {
     this.logEvent = () => {};
   };
 } else if (!firebase.analytics.logEvent) {
-  firebase.analytics.logEvent = function () {};
+  firebase.analytics.logEvent = function() {};
 }
 export default class AccessoryBar extends Component {
   state = {
     showGif: false,
   };
   render() {
-    const {
-      onSend, channel, onGif, text, gifActive,
-    } = this.props;
+    const { onSend, channel, onGif, text, gifActive } = this.props;
     const gifDisabled = !(text && text.length > 0);
     return (
       <View
@@ -37,12 +36,18 @@ export default class AccessoryBar extends Component {
           onPress={async () => {
             const image = await fromLibrary();
             if (image) {
-              onSend([{ image }]);
+              const storageImageUrl = await reduceAndUploadLocalImageAsync(
+                image,
+                `messages/${channel}/${uuid.v4()}.jpg`,
+                function() {},
+              );
+              onSend([{ image: storageImageUrl }]);
               if (firebase.analytics) {
-firebase
-                  .analytics()
-                  .logEvent('sent_library_picture', { url: image, channel });
-}
+                firebase.analytics().logEvent('sent_library_picture', {
+                  url: storageImageUrl,
+                  channel,
+                });
+              }
             }
           }}
         />
@@ -51,12 +56,19 @@ firebase
           onPress={async () => {
             const image = await fromCamera();
             if (image) {
-              onSend([{ image }]);
+              const storageImageUrl = await reduceAndUploadLocalImageAsync(
+                image,
+                `messages/${channel}/${uuid.v4()}.jpg`,
+                function() {},
+              );
+
+              onSend([{ image: storageImageUrl }]);
               if (firebase.analytics) {
-firebase
-                  .analytics()
-                  .logEvent('sent_camera_picture', { url: image, channel });
-}
+                firebase.analytics().logEvent('sent_camera_picture', {
+                  url: storageImageUrl,
+                  channel,
+                });
+              }
             }
           }}
         />
@@ -66,10 +78,10 @@ firebase
             if (location) {
               onSend([{ location }]);
               if (firebase.analytics) {
-firebase
+                firebase
                   .analytics()
                   .logEvent('shared_location', { location, channel });
-}
+              }
             }
           }}
         />

@@ -1,7 +1,14 @@
 import { dispatch } from '../rematch/dispatch';
 import { Keyboard } from 'expo';
 import React from 'react';
-import { Clipboard, InteractionManager, LayoutAnimation, StyleSheet, Text, View } from 'react-native';
+import {
+  Clipboard,
+  InteractionManager,
+  LayoutAnimation,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { Bubble, GiftedChat, MessageText } from 'react-native-gifted-chat';
 import { connect } from 'react-redux';
 
@@ -38,6 +45,7 @@ class Chat extends React.Component {
     return {
       _id: this.uid, // sent messages should have same user._id
       name: firebase.auth().currentUser.displayName,
+      image: firebase.auth().currentUser.photoURL,
     };
   }
   get isUserEditing() {
@@ -48,17 +56,13 @@ class Chat extends React.Component {
     if (this._isUserEditing === value) return;
 
     this._isUserEditing = value;
-    if (value) {
-      dispatch.isTyping.setAsync({
-        isTyping: true,
-        groupId: this.props.groupId,
-      });
-    } else {
-      dispatch.isTyping.setAsync({
-        isTyping: false,
-        groupId: this.props.groupId,
-      });
-    }
+
+    const isTyping = !!value;
+
+    dispatch.isTyping.setAsync({
+      isTyping,
+      groupId: this.props.groupId,
+    });
   }
 
   _isUserEditing = false;
@@ -81,14 +85,14 @@ class Chat extends React.Component {
   async componentDidMount() {
     const { otherUserId, groupId } = this.props;
     // dispatch.chats.clear({ uid: groupId });
-    console.log("mounted chat", otherUserId);
+    console.log('mounted chat', otherUserId);
     dispatch.chats.startChatting({
       groupId,
       uids: otherUserId,
-      callback: (unsubscribe) => {
+      callback: unsubscribe => {
         this.unsubscribe = unsubscribe;
       },
-    })
+    });
     dispatch.isTyping.observe({ groupId, uid: otherUserId }); // TODO: UNSUB
     // dispatch.users.getProfileImage({ uid: otherUserId });
   }
@@ -113,7 +117,7 @@ class Chat extends React.Component {
       const chat = {
         seen: null,
       };
-      ['image', 'text', 'location'].forEach((key) => {
+      ['image', 'text', 'location'].forEach(key => {
         if (message[key]) chat[key] = message[key];
       });
       Fire.shared.sendMessage(chat, this.props.groupId);
@@ -127,7 +131,9 @@ class Chat extends React.Component {
       dispatch.chats.updatedGifOpened({
         isOpened: false,
       });
-      this._GiftedMessenger.setBottomOffset(this._GiftedMessenger.getKeyboardHeight());
+      this._GiftedMessenger.setBottomOffset(
+        this._GiftedMessenger.getKeyboardHeight(),
+      );
     });
   };
 
@@ -136,7 +142,7 @@ class Chat extends React.Component {
     // this.setState({ keyboard: 0 });
   };
 
-  deleteMessage = (key) => {
+  deleteMessage = key => {
     dispatch.chats.deleteMessageFromChannel({
       groupId: this.props.groupId,
       key,
@@ -190,7 +196,7 @@ class Chat extends React.Component {
     />
   );
 
-  onGif = (active) => {
+  onGif = active => {
     this.setState({ gifActive: active });
     Keyboard.dismiss();
   };
@@ -209,14 +215,16 @@ class Chat extends React.Component {
     return null;
   };
 
-  handleGifSelect = (url) => {
-    this.onSendMessage([{ image: { uri: url, name: this.state.userInput } }]);
+  handleGifSelect = url => {
+    const gifMessage = { image: url };
+    this.onSendMessage([gifMessage]);
+    // this.onSendMessage([{ image: { uri: url, name: this.state.userInput } }]);
     firebase
       .analytics()
       .logEvent('sent_gif', { channel: this.props.channel, url });
   };
 
-  onInputTextChanged = (text) => {
+  onInputTextChanged = text => {
     let gifOpen = this.state.gifActive;
     if (gifOpen && !text) {
       gifOpen = false;
@@ -255,7 +263,7 @@ class Chat extends React.Component {
           options,
           cancelButtonIndex,
         },
-        (buttonIndex) => {
+        buttonIndex => {
           switch (options[buttonIndex].toLowerCase()) {
             case 'copy text':
               Clipboard.setString(message.text);
@@ -276,7 +284,7 @@ class Chat extends React.Component {
       <View style={[styles.container]}>
         {this.props.messages.length === 0 && this.renderBackground()}
         <GiftedChat
-          ref={(c) => {
+          ref={c => {
             this._GiftedMessenger = c;
           }}
           messages={this.props.messages}
@@ -288,7 +296,7 @@ class Chat extends React.Component {
           parseText
           isAnimated
           showUserAvatar={true}
-          renderAvatarOnTop
+          renderAvatarOnTop={false}
           renderCustomView={this.renderCustomView}
           onLongPress={this.onLongPress}
           onInputTextChanged={this.onInputTextChanged}
@@ -296,21 +304,26 @@ class Chat extends React.Component {
           renderTime={props => <Time {...props} />}
           renderMessageText={props => <MessageText {...props} />}
           renderBubble={this.renderBubble}
-          listViewProps={{
-            style: { flex: 1, backgroundColor: 'transparent' },
-            contentContainerStyle: {
-              paddingBottom: 64,
-              backgroundColor: 'transparent',
-            },
-            keyboardDismissMode: 'on-drag',
-            keyboardShouldPersistTaps: 'handled',
-          }}
+          listViewProps={listViewProps}
           user={this.user}
         />
       </View>
     );
   }
 }
+
+const listViewProps = {
+  style: {
+    flex: 1,
+    backgroundColor: 'transparent',
+  },
+  contentContainerStyle: {
+    paddingBottom: 64,
+    backgroundColor: 'transparent',
+  },
+  keyboardDismissMode: 'on-drag',
+  keyboardShouldPersistTaps: 'handled',
+};
 
 const ButeFooter = ({ name }) => (
   <View style={styles.footerContainer}>
@@ -324,7 +337,7 @@ const ButeBackground = ({ image, timestamp, name }) => (
   </View>
 );
 
-const ButeBubble = (props) => {
+const ButeBubble = props => {
   const { currentMessage } = props;
 
   let backgroundColor;
@@ -391,10 +404,13 @@ const mergeProps = (state, dispatchProps, ownProps) => {
       channelHasMore: _channelHasMore,
       isTyping: _isTyping,
       isLoadingEarlier: _isLoadingEarlier,
-      messages: Object.values(messages).sort((a, b) => a.createdAt < b.createdAt),
+      messages: Object.values(messages).sort(
+        (a, b) => a.createdAt < b.createdAt,
+      ),
     };
   }
   // TODO: Add: matchedTimestamp
+  console.log({ chatProps: chatProps.messages });
   return {
     ...ownProps,
     ...dispatchProps,
@@ -404,13 +420,7 @@ const mergeProps = (state, dispatchProps, ownProps) => {
 };
 
 export default connect(
-  ({
-    isTyping,
-    isLoadingEarlier,
-    channelHasMore,
-    chats,
-    users,
-  }) => ({
+  ({ isTyping, isLoadingEarlier, channelHasMore, chats, users }) => ({
     isTyping,
     isLoadingEarlier,
     channelHasMore,

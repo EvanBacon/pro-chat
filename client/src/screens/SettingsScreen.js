@@ -82,9 +82,8 @@ class Carousel extends React.Component {
 
     const isHapticEnabled = Platform.OS === 'ios';
     if (isHapticEnabled) {
-      this.scroll.addListener( ({ value }) => {
-
-        const perc = (value / this.state.itemWidth) - 0.5;
+      this.scroll.addListener(({ value }) => {
+        const perc = value / this.state.itemWidth - 0.5;
         let page = Math.floor(perc);
 
         if (page !== this._currentPage) {
@@ -92,7 +91,7 @@ class Carousel extends React.Component {
           Haptic.selection();
         }
       });
-     }
+    }
   }
 
   componentWillUnmount() {
@@ -214,7 +213,7 @@ class Carousel extends React.Component {
     );
   };
 
-  _onScrollEnd = (event) => {
+  _onScrollEnd = event => {
     const offset = { ...event.nativeEvent.contentOffset };
     const page = this._calculateCurrentPage(offset.x);
     // estimatedPage = page
@@ -225,7 +224,7 @@ class Carousel extends React.Component {
     //   Haptic.selection();
     // }
   };
-  _calculateCurrentPage = (offset) => {
+  _calculateCurrentPage = offset => {
     const { itemWidth } = this.state;
     return Math.floor(offset / itemWidth);
   };
@@ -335,9 +334,8 @@ class SwitchCell extends React.Component {
     const switchComponent = (
       <Switch
         onValueChange={this.props.onValueChange}
-        onTintColor={Colors.white}
-        thumbTintColor={enabled ? Colors.tintColor : Colors.white}
-        tintColor={Colors.white}
+        trackColor={Colors.white}
+        _thumbColor={enabled ? Colors.tintColor : Colors.white}
         value={enabled}
       />
     );
@@ -361,8 +359,7 @@ const urls = {
 };
 
 class SettingsScreen extends React.Component {
-
-  static navigationOptions = { title: "Settings" }
+  static navigationOptions = { title: 'Settings' };
   ranges = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
 
   setCarousel = false;
@@ -428,7 +425,7 @@ class SettingsScreen extends React.Component {
           <Carousel
             style={{ paddingBottom: 32 }}
             data={this.ranges}
-            getRef={(val) => {
+            getRef={val => {
               const milesIndex = 2; // / this.props.milesIndex;
               this.scrollView = val;
               if (val && !this.setCarousel) {
@@ -461,9 +458,8 @@ class SettingsScreen extends React.Component {
           {/* <ArrowCell title={"Privacy Settings"} onPress={onPress.privacy} /> */}
           <SwitchCell
             title={Meta.notifications}
-            onValueChange={(notificationsEnabled) => {
-
-              if (Platform.OS === "ios") {
+            onValueChange={notificationsEnabled => {
+              if (Platform.OS === 'ios') {
                 Haptic.selection();
               }
               if (notificationsEnabled) {
@@ -472,7 +468,8 @@ class SettingsScreen extends React.Component {
               }
 
               this.setState({ notificationsEnabled }, _ =>
-                dispatch.user.updateUserProfile({ notificationsEnabled }));
+                dispatch.user.updateUserProfile({ notificationsEnabled }),
+              );
             }}
             onPress={null}
             enabled={this.state.notificationsEnabled}
@@ -550,8 +547,6 @@ const styles = StyleSheet.create({
 //   };
 // };
 
-export default connect(
-  ({ user = {} }) => ({
-    user,
-  })
-)(SettingsScreen);
+export default connect(({ user = {} }) => ({
+  user,
+}))(SettingsScreen);
