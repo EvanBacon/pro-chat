@@ -106,7 +106,7 @@ const Settings = {
       So many of these...
   */
   isChatEnabled: true,
-  isMatchesEnabled: true,
+  isMatchesEnabled: false,
 
   isInAppleReview,
   name: isInAppleReview ? 'Beauty' : 'Bütē',

@@ -27,7 +27,7 @@ class Footer extends Component {
     }
   }
 
-  updateRelationship = async (uid) => {
+  updateRelationship = async uid => {
     if (uid && typeof uid === 'string') {
       dispatch.relationships.getAsync({ uid });
     }
@@ -63,18 +63,18 @@ class Footer extends Component {
               color={purple}
               activeColor={purple}
               icon="more-horiz"
-              onPress={() => reportUser({
-                uid: this.props.uid,
-                showActionSheetWithOptions: this.props
-                  .showActionSheetWithOptions,
-                reportUser: () => {
-                  console.warn('rpu', this.props.uid);
-                  NavigationService.navigateToUserSpecificScreen(
-                    'ReportUser',
-                    this.props.uid,
-                  );
-                },
-              })
+              onPress={() =>
+                reportUser({
+                  uid: this.props.uid,
+                  showActionSheetWithOptions: this.props
+                    .showActionSheetWithOptions,
+                  reportUser: () => {
+                    NavigationService.navigateToUserSpecificScreen(
+                      'ReportUser',
+                      this.props.uid,
+                    );
+                  },
+                })
               }
             />
           )}
@@ -132,7 +132,8 @@ export default connect(
   }),
   {
     // getRelationshipWithUser,
-    navigate: (routeName, params) => dispatch => dispatch(NavigationActions.navigate({ routeName, params })),
+    navigate: (routeName, params) => dispatch =>
+      dispatch(NavigationActions.navigate({ routeName, params })),
   },
   mergeProps,
 )(Footer);

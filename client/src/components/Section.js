@@ -1,8 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import {
-  StyleSheet, ViewPropTypes, Text, View,
-} from 'react-native';
+import { StyleSheet, ViewPropTypes, Text, View } from 'react-native';
 
 export default class Section extends React.Component {
   static defaultProps = {
@@ -21,10 +19,10 @@ export default class Section extends React.Component {
   };
 
   render() {
-    const { style, children, title } = this.props;
+    const { style, children, title, titleStyle } = this.props;
     return (
       <View style={StyleSheet.flatten([styles.container, style])}>
-        {title && <Text style={styles.title}>{title.toUpperCase()}</Text>}
+        {title && <Text style={[styles.title, titleStyle]}>{title}</Text>}
         {children}
       </View>
     );

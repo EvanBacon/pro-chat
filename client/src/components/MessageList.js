@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { dispatch } from '../rematch/dispatch';
-
+import { View, Text } from 'react-native';
 import Meta from '../constants/Meta';
 import Fire from '../Fire';
 import IdManager from '../IdManager';
@@ -14,7 +14,7 @@ import UserList from './UserList';
 import tabBarImage from './Tabs/tabBarImage';
 import Assets from '../Assets';
 import AppleStyleSwipeableRow from './pagedList/AppleStyleSwipeableRow';
-
+import NewMatchesCarousel from './NewMatchesCarousel';
 class MessageList extends React.Component {
   state = {
     refreshing: false,
@@ -72,6 +72,7 @@ class MessageList extends React.Component {
     const { style, data } = this.props;
     return (
       <UserList
+        ListHeaderComponent={CustomNewMatchesCarousel}
         style={style}
         data={data}
         refreshing={this.state.refreshing}
@@ -81,6 +82,27 @@ class MessageList extends React.Component {
       />
     );
   }
+}
+
+function CustomNewMatchesCarousel(props) {
+  return (
+    <View>
+      <NewMatchesCarousel />
+      <Text
+        style={{
+          marginHorizontal: 16,
+          marginTop: 4,
+          marginBottom: 12,
+          textAlign: 'left',
+          color: 'black',
+          fontWeight: 'bold',
+          fontSize: 16,
+        }}
+      >
+        Messages
+      </Text>
+    </View>
+  );
 }
 
 const MessagesEmptyListMessage = () => (

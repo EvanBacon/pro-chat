@@ -17,7 +17,6 @@ import Settings from '../constants/Settings';
 import AccountUnderReviewScreen from '../screens/AccountUnderReviewScreen';
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 import ChatScreen from '../screens/ChatScreen';
-import CommunicationsScreen from '../screens/CommunicationsScreen';
 import DevTeamScreen from '../screens/DevTeamScreen';
 import HomeScreen from '../screens/HomeScreen';
 import MatchesScreen from '../screens/MatchesScreen';
@@ -29,7 +28,7 @@ import WebsiteScreen from '../screens/WebsiteScreen';
 import NavigationService from './NavigationService';
 
 // import CameraScreen from '../screens/CameraScreen';
-// import ReportScreen from '../screens/ReportScreen';
+import ReportScreen from '../screens/ReportScreen';
 // const { tintColor } = Constants.manifest;
 const tintColor = '#52416A';
 
@@ -38,7 +37,6 @@ const MainTab = createMaterialTopTabNavigator(
     MainProfile: ProfileScreen,
     Main: HomeScreen,
     Messages: MessageScreen,
-    Matches: MatchesScreen,
   },
   {
     initialRouteName: 'Main',
@@ -95,25 +93,18 @@ MainTab.navigationOptions = {
   ),
 };
 
-let _MainTab;
-if (Settings.isInAppleReview) {
-  _MainTab = CommunicationsScreen;
-} else {
-  _MainTab = MainTab;
-}
 const AppStack = createStackNavigator(
   {
-    MainTab: _MainTab,
+    MainTab: MainTab,
     AccountUnderReview: AccountUnderReviewScreen,
     Chat: ChatScreen,
-    Communications: CommunicationsScreen,
     Profile: ProfileScreen,
     Licenses: LicensesScreen,
     ChooseInterest: ChooseInterestScreen,
     // Camera: CameraScreen,
     DevTeam: DevTeamScreen,
     // Explore: ExploreScreen,
-    // Report: ReportScreen,
+    ReportUser: ReportScreen,
     Settings: SettingsScreen,
     UnderAge: UnderAgeScreen,
     Website: WebsiteScreen,

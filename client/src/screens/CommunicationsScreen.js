@@ -1,12 +1,14 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 import { createMaterialTopTabNavigator } from 'react-navigation';
 
+import NewMatchesCarousel from '../components/NewMatchesCarousel';
 import MatchesList from '../components/MatchesList';
 import MessageList from '../components/MessageList';
 import Colors from '../constants/Colors';
 import Meta from '../constants/Meta';
 import Settings from '../constants/Settings';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const tabs = {};
 
@@ -71,4 +73,4 @@ if (Object.keys(tabs).length < 2) {
   }
 }
 
-export default screen;
+export default MessageList;

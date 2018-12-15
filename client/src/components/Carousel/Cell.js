@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import NavigationService from '../../navigation/NavigationService';
 import AvatarImage from '../Image/AvatarImage';
 
+const PADDING = 12;
 const IMAGE_SIZE = 64;
 class Cell extends React.PureComponent {
   onPress = () => {
@@ -28,10 +29,11 @@ class Cell extends React.PureComponent {
 
 const styles = StyleSheet.create({
   touchable: {
-    marginHorizontal: 12,
+    marginHorizontal: PADDING,
   },
   text: {
     textAlign: 'center',
+    maxWidth: IMAGE_SIZE + PADDING * 2,
   },
   avatarStyle: {
     flex: 1,

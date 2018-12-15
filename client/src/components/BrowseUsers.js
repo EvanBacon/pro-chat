@@ -178,7 +178,7 @@ export default class BrowseUsers extends Component {
           }}
         >
           <Footer
-            uid={this.state.selectedData}
+            uid={this.state.selectedData.uid}
             footerVisible={footerVisible}
             onLike={this._like}
             onDislike={this._dislike}
