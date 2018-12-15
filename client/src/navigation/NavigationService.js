@@ -1,5 +1,5 @@
 // NavigationService.js
-import { dispatch } from '@rematch/core';
+import { dispatch } from '../rematch/dispatch';
 import { NavigationActions } from 'react-navigation';
 
 import IdManager from '../IdManager';

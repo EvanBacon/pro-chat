@@ -1,4 +1,4 @@
-import { dispatch } from '@rematch/core';
+import { dispatch } from '../rematch/dispatch';
 import React from 'react';
 
 import BrowseUsers from '../components/BrowseUsers';

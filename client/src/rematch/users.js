@@ -1,4 +1,4 @@
-import { dispatch } from '@rematch/core';
+import { dispatch } from '../rematch/dispatch';
 import Fire from '../Fire';
 import IdManager from '../IdManager';
 import moment from 'moment';

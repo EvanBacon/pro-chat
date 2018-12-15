@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import {
+  StyleSheet, ViewPropTypes, Text, View,
+} from 'react-native';
 
 export default class Section extends React.Component {
   static defaultProps = {
@@ -8,14 +10,16 @@ export default class Section extends React.Component {
     children: null,
     style: null,
   };
+
   static propTypes = {
-    style: View.propTypes.style,
+    style: ViewPropTypes.style,
     title: PropTypes.string,
     children: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.element),
       PropTypes.element,
     ]),
   };
+
   render() {
     const { style, children, title } = this.props;
     return (

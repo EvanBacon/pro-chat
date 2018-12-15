@@ -3,7 +3,7 @@ image, name, message, timestamp, seen, sender, groupId
 */
 import { Permissions } from '../universal/Expo';
 
-import { dispatch } from '@rematch/core';
+import { dispatch } from './dispatch';
 import Fire from '../Fire';
 
 export const messages = {

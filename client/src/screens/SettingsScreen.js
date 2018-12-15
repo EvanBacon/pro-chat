@@ -1,4 +1,4 @@
-import { dispatch } from '@rematch/core';
+import { dispatch } from '../rematch/dispatch';
 import Expo, { Haptic } from 'expo';
 import React from 'react';
 import {

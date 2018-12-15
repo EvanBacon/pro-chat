@@ -1,6 +1,6 @@
-import { dispatch } from '@rematch/core';
 import React from 'react';
 import { connect } from 'react-redux';
+import { dispatch } from '../rematch/dispatch';
 
 import Meta from '../constants/Meta';
 import Fire from '../Fire';

@@ -1,7 +1,7 @@
 'use-strict';
 
 import { Ionicons } from '@expo/vector-icons';
-import { dispatch } from '@rematch/core';
+import { dispatch } from '../rematch/dispatch';
 import React from 'react';
 import { Alert } from 'react-native';
 import HeaderButtons from 'react-navigation-header-buttons';

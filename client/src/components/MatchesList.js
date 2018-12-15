@@ -1,4 +1,3 @@
-import { dispatch } from '@rematch/core';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -7,11 +6,12 @@ import Meta from '../constants/Meta';
 import Fire from '../Fire';
 import IdManager from '../IdManager';
 import NavigationService from '../navigation/NavigationService';
+import { dispatch } from '../rematch/dispatch';
 import EmptyListMessage from './EmptyListMessage';
 import MatchesRow from './MatchesRow';
+import PagedListFooter from './pagedList/PagedListFooter';
 import tabBarImage from './Tabs/tabBarImage';
 import UserList from './UserList';
-import PagedListFooter from './pagedList/PagedListFooter';
 
 const EmptyMatchesScreen = () => (
   <EmptyListMessage
@@ -48,6 +48,7 @@ class MatchesList extends React.PureComponent {
       NavigationService.navigateToUserSpecificScreen('Chat', uid);
     }
   };
+
   renderItem = ({ item }) => {
     const { name, image, uid } = item;
     return (
@@ -70,6 +71,7 @@ class MatchesList extends React.PureComponent {
   handleLoadMore = () => {
     dispatch.users.getPaged({ size: 5 });
   };
+
   render() {
     const {
       style, data, hasMore, isLoading,
@@ -96,8 +98,7 @@ const MatchesScreen = connect(({ users, hasMoreUsers, isLoadingUsers }) => {
   const { [Fire.shared.uid]: currentUser, ...otherUsers } = users;
 
   return {
-    data: Object.values(otherUsers).filter(({ uid }) =>
-      IdManager.isInteractable(uid)),
+    data: Object.values(otherUsers).filter(({ uid }) => IdManager.isInteractable(uid)),
     hasMore: hasMoreUsers,
     isLoading: isLoadingUsers,
   };

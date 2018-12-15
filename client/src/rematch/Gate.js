@@ -19,6 +19,7 @@ export const store = init({
   models,
   plugins: [persistPlugin],
 });
+
 class Gate extends React.Component {
   render() {
     return (

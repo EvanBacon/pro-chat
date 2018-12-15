@@ -1,6 +1,6 @@
 // import React from 'react';
 // import { StyleSheet, Text, View } from 'react-native';
-import { dispatch } from '@rematch/core';
+import { dispatch } from '../rematch/dispatch';
 import { Svg } from 'expo';
 import React from 'react';
 import { Dimensions, Image, StyleSheet, Text, View } from 'react-native';

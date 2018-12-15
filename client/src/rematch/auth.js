@@ -1,4 +1,4 @@
-import { dispatch } from '@rematch/core';
+import { dispatch } from './dispatch';
 // import firebase from 'firebase';
 import firebase from '../universal/firebase';
 import { Alert } from 'react-native';

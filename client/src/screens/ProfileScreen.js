@@ -1,4 +1,4 @@
-import { dispatch } from '@rematch/core';
+import { dispatch } from '../rematch/dispatch';
 import React, { Component } from 'react';
 import { Animated, Dimensions, LayoutAnimation, View } from 'react-native';
 import { connect } from 'react-redux';

@@ -1,6 +1,6 @@
 'use-strict';
 
-import { dispatch } from '@rematch/core';
+import { dispatch } from './dispatch';
 
 import Fire from '../Fire';
 
@@ -162,7 +162,8 @@ const chats = {
       // TODO: IDK
       callback(true);
     },
-    receivedMessage: async ({ groupId, snapshot }, { chats }) => {
+    receivedMessage: async (props = {}, { chats }) => {
+      const { groupId, snapshot } = props;
       if (!chats[groupId]) {
         // TODO: This seems leaky... make sure receivedMessage is only called from a subscription
         // const exists = await Fire.shared.ensureChatGroupExists(groupId);
@@ -172,7 +173,10 @@ const chats = {
         throw new Error("Error: chats.receivedMessage: chat group doesn't exist yet.");
       }
 
-      snapshot.docChanges().forEach(({ type, doc }) => {
+      if (!snapshot.docChanges) {
+        throw new Error("Error: snapshot is invalid");
+      }
+      snapshot.docChanges.forEach(({ type, doc }) => {
         console.log('Found message: parseMessagesSnapshot: ', type, doc.id);
         if (type === 'added') {
           const message = { key: doc.id, ...doc.data() };

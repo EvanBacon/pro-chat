@@ -2,7 +2,7 @@ import { connectActionSheet } from '@expo/react-native-action-sheet';
 import React from 'react';
 import { Animated, Dimensions, FlatList, Image, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
-import {dispatch} from '@rematch/core';
+import {dispatch} from '../rematch/dispatch';
 import { Permissions } from '../universal/Expo';
 import Meta from '../constants/Meta';
 import Settings from '../constants/Settings';

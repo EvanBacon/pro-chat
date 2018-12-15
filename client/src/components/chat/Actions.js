@@ -1,7 +1,7 @@
 import { ImagePicker, Location, Permissions } from 'expo';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, ViewPropTypes, TouchableOpacity, View } from 'react-native';
 
 import Fire from '../../Fire';
 
@@ -198,7 +198,7 @@ CustomActions.propTypes = {
   onSend: PropTypes.func,
   options: PropTypes.object,
   icon: PropTypes.func,
-  containerStyle: View.propTypes.style,
-  wrapperStyle: View.propTypes.style,
+  containerStyle: ViewPropTypes.style,
+  wrapperStyle: ViewPropTypes.style,
   iconTextStyle: Text.propTypes.style,
 };

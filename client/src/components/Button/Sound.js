@@ -1,7 +1,7 @@
-import { dispatch } from '@rematch/core';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { dispatch } from '../../rematch/dispatch';
 import Icon from './Icon';
 
 class Sound extends React.Component {
@@ -9,6 +9,7 @@ class Sound extends React.Component {
     dispatch.muted.toggle();
     if (this.props.onPress) this.props.onPress();
   };
+
   render() {
     const {
       onPress, name, muted, ...props

@@ -4,7 +4,7 @@
     "description": "A neat messaging app.",
     "slug": "bute",
     "privacy": "unlisted",
-    "sdkVersion": "30.0.0",
+    "sdkVersion": "31.0.0",
     "platforms": ["ios", "android"],
     "version": "0.0.0",
     "orientation": "portrait",

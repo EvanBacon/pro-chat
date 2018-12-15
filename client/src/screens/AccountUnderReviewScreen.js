@@ -1,6 +1,6 @@
-import { dispatch } from '@rematch/core';
 import React from 'react';
 import { View } from 'react-native';
+import { dispatch } from '../rematch/dispatch';
 
 import EmptyListMessage from '../components/EmptyListMessage';
 import Gradient from '../components/Gradient';

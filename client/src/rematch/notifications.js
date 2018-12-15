@@ -1,4 +1,4 @@
-import { dispatch } from '@rematch/core';
+import { dispatch } from './dispatch';
 import { Notifications, Permissions } from '../universal/Expo';
 
 const notifications = {
@@ -11,7 +11,9 @@ const notifications = {
   effects: {
     registerAsync: async () => {
       console.log('registerAsync');
-      const { status: existingStatus } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+      const { status: existingStatus } = await Permissions.askAsync(
+        Permissions.NOTIFICATIONS,
+      );
       let finalStatus = existingStatus;
       console.log('registerAsync:B', existingStatus);
       // only ask if permissions have not already been determined, because
@@ -19,7 +21,9 @@ const notifications = {
       if (existingStatus !== 'granted') {
         // Android remote notification permissions are granted during the app
         // install, so this will only ask on iOS
-        const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+        const { status } = await Permissions.askAsync(
+          Permissions.NOTIFICATIONS,
+        );
         finalStatus = status;
       }
       // Stop here if the user did not grant permissions

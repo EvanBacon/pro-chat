@@ -1,4 +1,4 @@
-import { dispatch } from '@rematch/core';
+import { dispatch } from '../rematch/dispatch';
 import { Keyboard } from 'expo';
 import React from 'react';
 import { Clipboard, InteractionManager, LayoutAnimation, StyleSheet, Text, View } from 'react-native';

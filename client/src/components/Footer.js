@@ -1,5 +1,4 @@
 import { connectActionSheet } from '@expo/react-native-action-sheet';
-import { dispatch } from '@rematch/core';
 import React, { Component } from 'react';
 import { Dimensions, View } from 'react-native';
 import { NavigationActions } from 'react-navigation';
@@ -7,6 +6,7 @@ import { connect } from 'react-redux';
 
 import Relationship from '../models/Relationship';
 import NavigationService from '../navigation/NavigationService';
+import { dispatch } from '../rematch/dispatch';
 import reportUser from '../utils/reportUser';
 import shareUser from '../utils/shareUser';
 import AButton from './AButton';
@@ -20,6 +20,7 @@ class Footer extends Component {
   componentWillMount() {
     this.updateRelationship(this.props.uid);
   }
+
   componentWillReceiveProps(nextProps) {
     if (nextProps.uid !== this.props.uid) {
       this.updateRelationship(nextProps.uid);
@@ -62,19 +63,18 @@ class Footer extends Component {
               color={purple}
               activeColor={purple}
               icon="more-horiz"
-              onPress={() =>
-                reportUser({
-                  uid: this.props.uid,
-                  showActionSheetWithOptions: this.props
-                    .showActionSheetWithOptions,
-                  reportUser: () => {
-                    console.warn('rpu', this.props.uid);
-                    NavigationService.navigateToUserSpecificScreen(
-                      'ReportUser',
-                      this.props.uid,
-                    );
-                  },
-                })
+              onPress={() => reportUser({
+                uid: this.props.uid,
+                showActionSheetWithOptions: this.props
+                  .showActionSheetWithOptions,
+                reportUser: () => {
+                  console.warn('rpu', this.props.uid);
+                  NavigationService.navigateToUserSpecificScreen(
+                    'ReportUser',
+                    this.props.uid,
+                  );
+                },
+              })
               }
             />
           )}
@@ -132,8 +132,7 @@ export default connect(
   }),
   {
     // getRelationshipWithUser,
-    navigate: (routeName, params) => dispatch =>
-      dispatch(NavigationActions.navigate({ routeName, params })),
+    navigate: (routeName, params) => dispatch => dispatch(NavigationActions.navigate({ routeName, params })),
   },
   mergeProps,
 )(Footer);

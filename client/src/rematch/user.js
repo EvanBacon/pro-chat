@@ -1,6 +1,6 @@
-import { dispatch } from '@rematch/core';
-import firebase from '../universal/firebase';
 import { Alert } from 'react-native';
+import { dispatch } from './dispatch';
+import firebase from '../universal/firebase';
 
 import Settings from '../constants/Settings';
 import Fire from '../Fire';
@@ -123,7 +123,9 @@ const user = {
       let combinedUserData = {};
       const firebaseAuthData = firebase.auth().currentUser.toJSON();
       if (firebaseAuthData == null) {
-        console.warn("models: Shouldn't call user.getAsync until the user is authed");
+        console.warn(
+          "models: Shouldn't call user.getAsync until the user is authed",
+        );
         return;
       }
       const nextFirebaseAuthData = reduceFirebaseUser(firebaseAuthData);
@@ -135,8 +137,8 @@ const user = {
       const updates = {};
       for (const key of Object.keys(combinedUserData)) {
         if (
-          combinedUserData[key] !== undefined &&
-          combinedUserData[key] !== nextLocalUserData[key]
+          combinedUserData[key] !== undefined
+          && combinedUserData[key] !== nextLocalUserData[key]
         ) {
           updates[key] = combinedUserData[key];
         }
@@ -152,7 +154,9 @@ const user = {
       console.log('Main:userdata:', combinedUserData);
       if (Settings.isCacheProfileUpdateActive) {
         const shouldUpdateKey = '@Bute/shouldUpdateProfile';
-        const something = await PantryStorage.getItemWithExpiration(shouldUpdateKey);
+        const something = await PantryStorage.getItemWithExpiration(
+          shouldUpdateKey,
+        );
         if (!something) {
           const some = await PantryStorage.setItemWithExpiration(
             shouldUpdateKey,

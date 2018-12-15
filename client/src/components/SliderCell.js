@@ -1,4 +1,4 @@
-import { dispatch } from '@rematch/core';
+import { dispatch } from '../rematch/dispatch';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import TouchableBounce from 'react-native/Libraries/Components/Touchable/TouchableBounce';

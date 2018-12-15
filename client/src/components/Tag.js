@@ -1,12 +1,15 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import {
+  StyleSheet, ViewPropTypes, Text, View,
+} from 'react-native';
 
 export default class Tag extends Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
-    style: View.propTypes.style,
+    style: ViewPropTypes.style,
   };
+
   render() {
     const { title, style } = this.props;
     return (

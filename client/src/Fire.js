@@ -1,5 +1,5 @@
 // @flow
-import { dispatch } from '@rematch/core';
+import { dispatch } from './rematch/dispatch';
 import moment from 'moment';
 import uuid from 'uuid';
 
@@ -295,29 +295,29 @@ class Fire {
       ),
     });
 
-    observeUser = ({ uid }) => {
-      const doc = this.db.collection(Settings.refs.users).doc(uid);
+    // observeUser = ({ uid }) => {
+    //   const doc = this.db.collection(Settings.refs.users).doc(uid);
 
-      const unsub = doc.onSnapshot({
-        // Listen for document metadata changes
-        // includeMetadataChanges: true
-      }, (snapshot) => {
-        snapshot.docChanges().forEach((change) => {
-          const data = change.doc.data();
-          if (change.type === 'added') {
-            console.log('New city: ', data);
-          }
-          if (change.type === 'modified') {
-            console.log('Modified city: ', data);
-          }
-          if (change.type === 'removed') {
-            console.log('Removed city: ', data);
-            // dispatch.users.update({ uid, })
-          }
-        });
-      });
-      return unsub;
-    }
+    //   const unsub = doc.onSnapshot({
+    //     // Listen for document metadata changes
+    //     // includeMetadataChanges: true
+    //   }, (snapshot) => {
+    //     snapshot.docChanges.forEach((change) => {
+    //       const data = change.doc.data();
+    //       if (change.type === 'added') {
+    //         console.log('New city: ', data);
+    //       }
+    //       if (change.type === 'modified') {
+    //         console.log('Modified city: ', data);
+    //       }
+    //       if (change.type === 'removed') {
+    //         console.log('Removed city: ', data);
+    //         // dispatch.users.update({ uid, })
+    //       }
+    //     });
+    //   });
+    //   return unsub;
+    // }
 
   sendMessage = (props, groupId) => {
     const message = {

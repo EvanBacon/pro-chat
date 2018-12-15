@@ -1,8 +1,14 @@
 import { MaterialIcons } from '@expo/vector-icons';
-import firebase from '../universal/firebase';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  StyleSheet,
+  ViewPropTypes,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import firebase from '../universal/firebase';
 
 import Meta from '../constants/Meta';
 import Settings from '../constants/Settings';
@@ -11,12 +17,13 @@ import Fire from '../Fire';
 
 export default class RatingTitle extends React.Component {
   static propTypes = {
-    style: View.propTypes.style,
+    style: ViewPropTypes.style,
     title: PropTypes.string,
     color: PropTypes.string,
     uid: PropTypes.string,
     onRatingPressed: PropTypes.func,
   };
+
   static defaultProps = {
     color: '#ffffff',
     onRatingPressed: () => {},

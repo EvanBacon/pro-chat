@@ -1,7 +1,7 @@
-import { dispatch } from '@rematch/core';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
+import { dispatch } from '../rematch/dispatch';
 
 import Meta from '../constants/Meta';
 import Images from '../Images';
@@ -13,6 +13,7 @@ export default class Blocked extends Component {
     relationship: PropTypes.string.isRequired,
     uid: PropTypes.string.isRequired,
   };
+
   render() {
     const { relationship, uid } = this.props;
     const outward = relationship === Relationship.blocking;

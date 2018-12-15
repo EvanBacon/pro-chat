@@ -4,7 +4,7 @@ import { Text, TouchableHighlight, View } from 'react-native';
 import UserImage from './UserImage';
 import IdManager from '../IdManager';
 import NavigationService from '../navigation/NavigationService';
-import { dispatch } from '@rematch/core';
+import { dispatch } from '../rematch/dispatch';
 
 export default class MessageRow extends React.PureComponent {
   onPress = () => {

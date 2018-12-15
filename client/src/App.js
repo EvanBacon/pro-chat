@@ -1,8 +1,8 @@
 import './utils/disableLogs';
 
-import { dispatch } from '@rematch/core';
 import React from 'react';
 import { StatusBar } from 'react-native';
+import { dispatch } from './rematch/dispatch';
 
 import Assets from './Assets';
 import Settings from './constants/Settings';
@@ -50,9 +50,9 @@ export default class App extends React.Component {
   componentDidMount() {
     StatusBar.setBarStyle('light-content', true);
     this._setupExperienceAsync();
-    for (const permission of Settings.permissions) {
-      dispatch.permissions.getAsync({ permission });
-    }
+    // for (const permission of Settings.permissions) {
+    //   dispatch.permissions.getAsync({ permission });
+    // }
     Fire.shared.init();
   }
 

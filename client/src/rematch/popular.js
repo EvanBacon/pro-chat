@@ -1,6 +1,6 @@
 import Fire from '../Fire';
 import { filterUser } from './users';
-import { dispatch } from '@rematch/core';
+import { dispatch } from './dispatch';
 
 const popular = {
   state: {},
