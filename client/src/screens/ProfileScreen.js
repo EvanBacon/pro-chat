@@ -55,9 +55,7 @@ class Profile extends Component {
 
   updateWithUID = async (uid, update) => {
     if (!uid) return;
-    const {
-      image, name, about, likes, rating, relationship,
-    } = this.props;
+    const { image, name, about, likes, rating, relationship } = this.props;
     if (!image || update) {
       dispatch.users.getProfileImage({ uid });
     }
@@ -78,7 +76,8 @@ class Profile extends Component {
     }
 
     const isMatched = await new Promise(res =>
-      dispatch.relationships.isMatched({ uid, callback: res }));
+      dispatch.relationships.isMatched({ uid, callback: res }),
+    );
 
     // this.props.navigation.setParams({ isMatched, name, uid });
     LayoutAnimation.easeInEaseOut();

@@ -148,7 +148,7 @@ export default class BrowseUsers extends Component {
             marginTop: 30,
             overflow: 'visible',
           }}
-          onIndexChange={(index) => {
+          onIndexChange={index => {
             this.count += 1;
             const uid = keys[index];
             this.setState({
@@ -159,14 +159,14 @@ export default class BrowseUsers extends Component {
               this.props.onIndexChange(uid);
             }
           }}
-          onPressItem={(uid) => {
-            NavigationService.navigateToUserSpecificScreen('Profile', { uid });
+          onPressItem={uid => {
+            NavigationService.navigateToUserSpecificScreen('Profile', uid);
           }}
           onLike={this.props.onLike}
           onDislike={this.props.onDislike}
           swiperRef={ref => (this.swiper = ref)}
           items={keys}
-          onSelectIndex={(index) => {}}
+          onSelectIndex={index => {}}
         />
         <Section
           style={{

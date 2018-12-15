@@ -1,5 +1,5 @@
 import Settings from '../constants/Settings';
-import { Permissions } from '../universal/Expo';
+import { Permissions, Location } from '../universal/Expo';
 import getPermission from '../utils/getPermission';
 
 // import GameStates from '../Game/GameStates';

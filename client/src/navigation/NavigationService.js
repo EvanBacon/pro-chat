@@ -21,6 +21,12 @@ function navigate(routeName, params) {
 }
 
 function navigateToUserSpecificScreen(routeName, uid, params = {}) {
+  if (!uid || typeof uid !== 'string') {
+    console.log('navigateToUserSpecificScreen: UID: ', uid);
+    throw new Error(
+      'Trying to navigate to a screen without a valid User ID: ' + uid,
+    );
+  }
   dispatch.users.ensureUserIsLoadedAsync({ uid });
 
   let groupId;

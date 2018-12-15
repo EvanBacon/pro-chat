@@ -365,7 +365,7 @@ class SettingsScreen extends React.Component {
   setCarousel = false;
   constructor(props) {
     super(props);
-    const { searchRange } = props;
+    const { searchRange } = props.user;
     const rangeIndex = this.ranges.indexOf(searchRange || 50);
     this.state = {
       searchRange: rangeIndex || this.ranges.length - 1,
@@ -375,9 +375,9 @@ class SettingsScreen extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (
-      nextProps.interest != this.props.interest &&
-      this.props.interest &&
-      nextProps.interest
+      nextProps.user.interest != this.props.user.interest &&
+      this.props.user.interest &&
+      nextProps.user.interest
     ) {
       dispatch.location.getAsync();
     }
@@ -472,7 +472,7 @@ class SettingsScreen extends React.Component {
               );
             }}
             onPress={null}
-            enabled={this.state.notificationsEnabled}
+            enabled={this.props.user.notificationsEnabled}
           />
 
           <ArrowCell title={Meta.the_team} onPress={onPress.team} />
@@ -498,7 +498,7 @@ class SettingsScreen extends React.Component {
                   textAlign: 'right',
                 }}
               >
-                {transformInterestTitle(this.props.interest || '')}
+                {transformInterestTitle(this.props.user.interest || '')}
               </Text>
             }
           />

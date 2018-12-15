@@ -14,7 +14,6 @@ export default class Carousel extends Component {
   render() {
     const { data, ...props } = this.props;
 
-    console.log('mikejudge', { data });
     return (
       <Section {...props}>
         <FlatList
@@ -23,9 +22,10 @@ export default class Carousel extends Component {
           style={{ overflow: 'visible' }}
           data={data}
           keyExtractor={({ uid }, index) => `Carousel-${uid || index}`}
-          renderItem={({ item: { image, name, uid }, index }) => (
-            <Cell image={image} name={name} uid={uid} key={index} />
-          )}
+          renderItem={({ item, index }) => {
+            const { image, name, uid } = item;
+            return <Cell image={image} name={name} uid={uid} key={index} />;
+          }}
         />
       </Section>
     );

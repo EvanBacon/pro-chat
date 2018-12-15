@@ -1,8 +1,15 @@
 import { connectActionSheet } from '@expo/react-native-action-sheet';
 import React from 'react';
-import { Animated, Dimensions, FlatList, Image, StyleSheet, View } from 'react-native';
+import {
+  Animated,
+  Dimensions,
+  FlatList,
+  Image,
+  StyleSheet,
+  View,
+} from 'react-native';
 import { connect } from 'react-redux';
-import {dispatch} from '../rematch/dispatch';
+import { dispatch } from '../rematch/dispatch';
 import { Permissions } from '../universal/Expo';
 import Meta from '../constants/Meta';
 import Settings from '../constants/Settings';
@@ -44,7 +51,7 @@ class Edit extends React.Component {
       onPress={() => {
         selectImage(
           this.props.showActionSheetWithOptions,
-          async (image) => {
+          async image => {
             if (image) {
               try {
                 this.props.setupImage(image);
@@ -66,9 +73,7 @@ class Edit extends React.Component {
   );
 }
 
-const Select = ({
-  onSelect, canSelect, children, style,
-}) => (
+const Select = ({ onSelect, canSelect, children, style }) => (
   <View style={[{ flex: 1, minHeight: 85, justifyContent: 'flex-end' }, style]}>
     <View style={{ flexDirection: 'row', minHeight: 40, marginBottom: 4 }}>
       {children}
@@ -85,7 +90,7 @@ const Select = ({
 
 class Slider extends React.Component {
   static defaultProps = {
-    onSelectIndex: (index) => {},
+    onSelectIndex: index => {},
   };
   page = 0;
   scroll = new Animated.Value(0);
@@ -118,7 +123,7 @@ class Slider extends React.Component {
     />
   );
 
-  _onScrollEnd = (event) => {
+  _onScrollEnd = event => {
     const offset = { ...event.nativeEvent.contentOffset };
     const page = this._calculateCurrentPage(offset.x);
     this.page = page;
@@ -126,7 +131,7 @@ class Slider extends React.Component {
     const item = this.props.items[page] || {};
     this.props.onSelectIndex(page, item.key || item);
   };
-  _calculateCurrentPage = (offset) => {
+  _calculateCurrentPage = offset => {
     const { itemWidth } = this.state;
     return Math.floor(offset / itemWidth);
   };
@@ -139,7 +144,7 @@ class Slider extends React.Component {
     return (
       <Gradient style={[{ flex: 1 }, style]}>
         <AnimatedFlatList
-          ref={(ref) => {
+          ref={ref => {
             this.flatlist = ref;
             this.props.listRef && this.props.listRef(ref);
           }}
@@ -256,6 +261,7 @@ class OnboardSlider extends React.Component {
     const items = include || this.gatherItems();
     return (
       <InputSlider
+        interest={this.props.interestedIn}
         include={items}
         updateProfileImage={dispatch.user.updateProfileImage}
         updateUserProfile={dispatch.user.updateUserProfile}
@@ -270,7 +276,13 @@ class OnboardSlider extends React.Component {
 }
 
 class InputSlider extends React.Component {
-  state = {};
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      interest: props.interest,
+    };
+  }
   scrollToNext = () => {
     if (isNaN(this.page)) {
       return;
@@ -490,15 +502,15 @@ class InputSlider extends React.Component {
           <Edit
             updateProfileImage={dispatch.user.updateProfileImage}
             onSelectCamera={this.props.onSelectCamera}
-            setupImage={(image) => {
+            setupImage={image => {
               // this.setState({image})
             }}
-            onComplete={(image) => {
+            onComplete={image => {
               console.log('On Complete onboard:image', image);
               this.setState({ image });
             }}
-            onError={(error) => {}}
-            onProgress={(progress) => {}}
+            onError={error => {}}
+            onProgress={progress => {}}
           />
         </Select>
       ),
@@ -524,7 +536,7 @@ class InputSlider extends React.Component {
     this.props.onSettingSelected &&
     this.props.onSettingSelected({ key, ...item });
 
-  gatherItems = (include) => {
+  gatherItems = include => {
     const items = [];
     for (const key of include) {
       const item = this.cards[key];
@@ -551,6 +563,7 @@ class InputSlider extends React.Component {
   }
 }
 
-export default connect(({ permissions: { location } }) => ({
+export default connect(({ permissions: { location }, user }) => ({
   locationPermission: location,
+  interestedIn: user.interest,
 }))(OnboardSlider);
