@@ -187,9 +187,11 @@ class Fire {
     let preview = '';
     let timeAgo;
     let isSeen;
+    const isOutgoing = (message || user || {}).uid === this.uid;
+    console.log('Try outgoing: ', uid, this.uid);
     if (message) {
       timeAgo = moment(message.timestamp).fromNow(true);
-      isSeen = message.seen != null;
+      isSeen = isOutgoing || message.seen != null;
       if (message.text) {
         preview = message.text;
       } else if (message.location) {
@@ -209,10 +211,10 @@ class Fire {
       groupId: groupId || message.groupId,
       image,
       uid,
+      isOutgoing,
       // isGroupChat,
       message: preview,
       isSeen,
-      isSent: uid === this.uid,
       timeAgo,
     };
   };

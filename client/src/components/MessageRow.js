@@ -5,6 +5,7 @@ import UserImage from './UserImage';
 import IdManager from '../IdManager';
 import NavigationService from '../navigation/NavigationService';
 import { dispatch } from '../rematch/dispatch';
+import { FontAwesome } from '@expo/vector-icons';
 
 export default class MessageRow extends React.PureComponent {
   onPress = () => {
@@ -23,7 +24,9 @@ export default class MessageRow extends React.PureComponent {
   };
 
   render() {
-    const { name, image, isSeen, isSent, message, timeAgo } = this.props;
+    const { name, image, isSeen, isOutgoing, message, timeAgo } = this.props;
+
+    console.log('YEET', { isSeen, isOutgoing });
     return (
       <TouchableHighlight
         style={{ backgroundColor: '#EDF2F6' }}
@@ -48,7 +51,8 @@ export default class MessageRow extends React.PureComponent {
               style={{ marginRight: 14 }}
               isNew={isSeen === false}
             />
-            <Message title={name} subtitle={message} />
+
+            <Message isOutgoing={isOutgoing} title={name} subtitle={message} />
           </View>
           <Timestamp>{timeAgo}</Timestamp>
         </View>
@@ -61,9 +65,19 @@ export const Timestamp = ({ children }) => (
   <Text style={{ textAlign: 'right' }}>{children}</Text>
 );
 
-export const Message = ({ title, subtitle }) => (
+export const Message = ({ title, isOutgoing, subtitle }) => (
   <View>
     <Text numberOfLines={1}>{title}</Text>
-    <Text numberOfLines={2}>{subtitle}</Text>
+    <View style={{ flexDirection: 'row' }}>
+      {isOutgoing && (
+        <FontAwesome
+          name="reply"
+          size={10}
+          color="#495057"
+          style={{ marginRight: 4, alignSelf: 'center' }}
+        />
+      )}
+      <Text numberOfLines={2}>{subtitle}</Text>
+    </View>
   </View>
 );

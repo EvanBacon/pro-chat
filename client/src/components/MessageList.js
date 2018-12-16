@@ -37,7 +37,7 @@ class MessageList extends React.Component {
   };
 
   renderItem = ({
-    item: { name, image, isSeen, isSent, message, timeAgo, groupId },
+    item: { name, image, isSeen, isOutgoing, message, timeAgo, groupId },
   }) => (
     <AppleStyleSwipeableRow
       onSelect={direction => {
@@ -50,7 +50,7 @@ class MessageList extends React.Component {
         name={name}
         image={image}
         isSeen={isSeen}
-        isSent={isSent}
+        isOutgoing={isOutgoing}
         message={message}
         timeAgo={timeAgo}
         groupId={groupId}
