@@ -6,10 +6,9 @@ import uuid from 'uuid';
 import Secret from '../Secret';
 import Settings from './constants/Settings';
 import IdManager from './IdManager';
-import { store } from './rematch/Gate';
 import { Constants } from './universal/Expo';
 
-import firebase from './universal/firebase'
+import firebase from './universal/firebase';
 // const firebase = require('firebase');
 // Required for side-effects
 require('firebase/firestore');
@@ -21,7 +20,6 @@ class Fire {
     // if (!Settings.isFirebaseEnabled) {
     //   return;
     // }
-
 
     // firebase.initializeApp(Secret.firebase);
     // firebase.firestore().settings({ timestampsInSnapshots: true });
@@ -47,9 +45,9 @@ class Fire {
       .doc(uid)
       .get();
 
-  ensureChatGroupExists = async (uids) => {
+  ensureChatGroupExists = async uids => {
     const keys = [...IdManager.ensureIdArray(uids), this.uid];
-    console.log("keys", keys);
+    console.log('keys', keys);
     const key = IdManager.getGroupId(keys);
     const chatGroupExists = await this._checkChatGroupExistence(key);
     console.log({ key, chatGroupExists });
@@ -60,11 +58,11 @@ class Fire {
     return true;
   };
 
-  _checkChatGroupExistence = async (key) => {
+  _checkChatGroupExistence = async key => {
     const doc = await this.getChatGroupDoc(key).get();
     return doc.exists;
   };
-  
+
   getChatGroupCollection = () => this.db.collection(Settings.refs.channels);
 
   getChatGroupDoc = groupId => this.getChatGroupCollection().doc(groupId);
@@ -72,64 +70,67 @@ class Fire {
   getMessagesCollection = groupId =>
     this.getChatGroupDoc(groupId).collection(Settings.refs.messages);
 
-  _createChatGroup = async (key, uids) => this.getChatGroupDoc(key).set({ members: uids });
+  _createChatGroup = async (key, uids) =>
+    this.getChatGroupDoc(key).set({ members: uids });
 
   /*
     Get paged messages for populating chat or getting last message
   */
- getMessagesForChatGroup = ({ groupId, size, start, order }) => this.getDataPaged({
+  getMessagesForChatGroup = ({ groupId, size, start, order }) =>
+    this.getDataPaged({
       start,
       ref: this.getMessagesCollection(groupId)
         .orderBy('timestamp', order || 'desc')
         .limit(size || 25),
     });
 
-  uploadImageAsync = uri => new Promise(async (res, rej) => {
-    // todo: meta data is cool
-    const metadata = {
-      contentType: 'image/jpeg',
-    };
+  uploadImageAsync = uri =>
+    new Promise(async (res, rej) => {
+      // todo: meta data is cool
+      const metadata = {
+        contentType: 'image/jpeg',
+      };
 
-    const response = await fetch(uri);
-    const blob = await response.blob();
-    const ref = firebase
-      .storage()
-      .ref(`${this.uid}/images`)
-      .child(`${uuid.v4()}.jpg`);
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const ref = firebase
+        .storage()
+        .ref(`${this.uid}/images`)
+        .child(`${uuid.v4()}.jpg`);
 
-    const uploadTask = ref.put(blob, metadata);
+      const uploadTask = ref.put(blob, metadata);
 
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        // Observe state change events such as progress, pause, and resume
-        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-        const progress =
+      uploadTask.on(
+        'state_changed',
+        snapshot => {
+          // Observe state change events such as progress, pause, and resume
+          // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+          const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log(`Upload is ${progress}% done`);
-        switch (snapshot.state) {
-          case firebase.storage.TaskState.PAUSED: // or 'paused'
-            console.log('Upload is paused');
-            break;
-          case firebase.storage.TaskState.RUNNING: // or 'running'
-            console.log('Upload is running');
-            break;
-        }
-      },
-      (error) => {
-        rej(error);
-        // Handle unsuccessful uploads
-      },
-      () => {
-        // Handle successful uploads on complete
-        // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-          console.log('File available at', downloadURL);
-          res(downloadURL);
-        });
-      },
-    );
-  });
+          console.log(`Upload is ${progress}% done`);
+          switch (snapshot.state) {
+            case firebase.storage.TaskState.PAUSED: // or 'paused'
+              console.log('Upload is paused');
+              break;
+            case firebase.storage.TaskState.RUNNING: // or 'running'
+              console.log('Upload is running');
+              break;
+          }
+        },
+        error => {
+          rej(error);
+          // Handle unsuccessful uploads
+        },
+        () => {
+          // Handle successful uploads on complete
+          // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+          uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
+            console.log('File available at', downloadURL);
+            res(downloadURL);
+          });
+        },
+      );
+    });
 
   /*
     Get paged messages for populating chat or getting last message
@@ -165,12 +166,11 @@ class Fire {
       ref = ref.startAfter(cursor);
     }
 
-    return ref.onSnapshot((snapshot) => {
+    return ref.onSnapshot(snapshot => {
       console.log('GOT MESSAGES', snapshot.docs.length);
       return dispatch.chats.receivedMessage({ groupId, snapshot });
     });
   };
-
 
   formatMessageForPreview = (
     message,
@@ -182,9 +182,7 @@ class Fire {
     if (!message) {
       return null;
     }
-    const {
-      uid, name, image,
-    } = user || message.user || {};
+    const { uid, name, image } = user || message.user || {};
 
     let preview = '';
     let timeAgo;
@@ -240,7 +238,6 @@ class Fire {
 
     const chatGroups = await this.getChatGroups({});
 
- 
     const uid = this.uid;
     if (!chatGroups) {
       return null;
@@ -261,9 +258,16 @@ class Fire {
       const message = data[0] || {};
       const group = memberUids;
       // TODO: Evan: Handle groups yolo
-      const sender =  group[0]; //message.uid ||
-      const user = await (new Promise(res => dispatch.users.ensureUserIsLoadedAsync({ uid: sender, callback: res }) ));
-      const previewMessage = this.formatMessageForPreview(message, groupId, user, group);
+      const sender = group[0]; //message.uid ||
+      const user = await new Promise(res =>
+        dispatch.users.ensureUserIsLoadedAsync({ uid: sender, callback: res }),
+      );
+      const previewMessage = this.formatMessageForPreview(
+        message,
+        groupId,
+        user,
+        // group,
+      );
       if (!previewMessage) return null;
       previewMessages[groupId] = previewMessage;
     }
@@ -271,10 +275,37 @@ class Fire {
     if (force) {
       dispatch.messages.clear();
     }
-    
+
     dispatch.messages.update(previewMessages);
     return previewMessages;
   };
+
+  updateLastMessageForGroupId = async groupId => {
+    console.log('updateLastMessageForGroupId', groupId);
+    const group = IdManager.getOtherUsersFromChatGroup(groupId);
+
+    const { data } = await this.getLastMessageForChatGroup({ groupId });
+
+    const message = data[0] || {};
+
+    const sender = group[0];
+
+    const user = await new Promise(res =>
+      dispatch.users.ensureUserIsLoadedAsync({ uid: sender, callback: res }),
+    );
+
+    const previewMessage = this.formatMessageForPreview(message, groupId, user);
+
+    if (!previewMessage) {
+      return null;
+    }
+
+    dispatch.messages.update({ [groupId]: previewMessage });
+
+    console.log('updateLastMessageForGroupId', previewMessage);
+    return previewMessage;
+  };
+
   // TODO: dont get all data for each user
   _getUserInfoAsync = ({ uid }) =>
     this.db
@@ -295,29 +326,29 @@ class Fire {
       ),
     });
 
-    // observeUser = ({ uid }) => {
-    //   const doc = this.db.collection(Settings.refs.users).doc(uid);
+  // observeUser = ({ uid }) => {
+  //   const doc = this.db.collection(Settings.refs.users).doc(uid);
 
-    //   const unsub = doc.onSnapshot({
-    //     // Listen for document metadata changes
-    //     // includeMetadataChanges: true
-    //   }, (snapshot) => {
-    //     snapshot.docChanges.forEach((change) => {
-    //       const data = change.doc.data();
-    //       if (change.type === 'added') {
-    //         console.log('New city: ', data);
-    //       }
-    //       if (change.type === 'modified') {
-    //         console.log('Modified city: ', data);
-    //       }
-    //       if (change.type === 'removed') {
-    //         console.log('Removed city: ', data);
-    //         // dispatch.users.update({ uid, })
-    //       }
-    //     });
-    //   });
-    //   return unsub;
-    // }
+  //   const unsub = doc.onSnapshot({
+  //     // Listen for document metadata changes
+  //     // includeMetadataChanges: true
+  //   }, (snapshot) => {
+  //     snapshot.docChanges.forEach((change) => {
+  //       const data = change.doc.data();
+  //       if (change.type === 'added') {
+  //         console.log('New city: ', data);
+  //       }
+  //       if (change.type === 'modified') {
+  //         console.log('Modified city: ', data);
+  //       }
+  //       if (change.type === 'removed') {
+  //         console.log('Removed city: ', data);
+  //         // dispatch.users.update({ uid, })
+  //       }
+  //     });
+  //   });
+  //   return unsub;
+  // }
 
   sendMessage = (props, groupId) => {
     const message = {
@@ -342,7 +373,6 @@ class Fire {
         .orderBy(orderBy || 'uid', 'desc')
         .limit(size),
     });
-    
 
   getDataPaged = async ({ ref, start }) => {
     // let ref = this.db.collection(key).orderBy(key, 'desc').limit(size);
@@ -353,7 +383,7 @@ class Fire {
 
       const querySnapshot = await ref.get();
       const data = [];
-      querySnapshot.forEach((doc) => {
+      querySnapshot.forEach(doc => {
         const _data = doc.data();
         data.push({ key: doc.id, ..._data });
       });

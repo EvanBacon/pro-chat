@@ -27,6 +27,16 @@ const onChatMessageSentHandler = async (snap, { params }) => {
 
   console.log('Got Message', message);
 
+  let pushNotification: admin.messaging.NotificationMessagePayload = {};
+  let pushNotificationUserData: admin.messaging.DataMessagePayload = {};
+  let pushNotificationOptions: admin.messaging.MessagingOptions = undefined;
+
+  if (message.pushNotification) {
+    pushNotification = message.pushNotification.notification;
+    pushNotificationUserData = message.pushNotification.data;
+    pushNotificationOptions = message.pushNotification.options;
+  }
+
   let messageType = 'unknown';
   let pushNotificationBody = '???';
 
@@ -41,7 +51,7 @@ const onChatMessageSentHandler = async (snap, { params }) => {
     messageType = 'image';
   }
 
-  const pushNotification: admin.messaging.NotificationMessagePayload = {
+  pushNotification = {
     /* Send the name of the sender as the title of the notification */
     title: message.senderName || 'Mystery Bütē',
 
@@ -52,10 +62,15 @@ const onChatMessageSentHandler = async (snap, { params }) => {
     // sound: 'default',
     /* TODO: I forgot what this does */
     tag: 'message:' + message.uid,
+    ...pushNotification,
   };
-  const pushNotificationUserData: admin.messaging.NotificationMessagePayload = {
+
+  pushNotificationUserData = {
+    screen: 'Chat',
     type: `message-${messageType}`,
     senderId: message.uid,
+    groupId,
+    ...pushNotificationUserData,
   };
 
   const senderId = message.uid;
@@ -67,6 +82,7 @@ const onChatMessageSentHandler = async (snap, { params }) => {
     usersToNotify,
     pushNotificationUserData,
     pushNotification,
+    pushNotificationOptions,
   );
 };
 

@@ -1,6 +1,16 @@
 import { dispatch } from './dispatch';
 import { Notifications, Permissions } from '../universal/Expo';
 
+import firebase from 'expo-firebase-app';
+
+// Optional: Flow type
+import type {
+  Notification,
+  NotificationOpen,
+} from 'expo-firebase-notifications';
+
+import NavigationService from '../navigation/NavigationService';
+
 const notifications = {
   state: {
     status: null,
@@ -35,6 +45,44 @@ const notifications = {
       const token = await Notifications.getExpoPushTokenAsync();
       console.log({ token });
       dispatch.notifications.setStatus(finalStatus);
+    },
+    getPendingNavigationFromNotification: (notification: Notification) => {
+      if (notification.data.navigation) {
+        const navigation = JSON.parse(notification.data.navigation);
+        console.log('getPendingNavigationFromNotification:', navigation);
+        global._pendingNavigation = navigation;
+        dispatch.notifications.commitPendingNavigation();
+      }
+    },
+    commitPendingNavigation: () => {
+      console.log('commitPendingNavigation:', !!global._pendingNavigation);
+      if (global._pendingNavigation) {
+        if (NavigationService.canNavigateWithinApp()) {
+          const { screen, senderId, params } = global._pendingNavigation;
+          NavigationService.navigateToUserSpecificScreen(
+            screen,
+            senderId,
+            params,
+          );
+          global._pendingNavigation = null;
+        }
+      }
+    },
+    attemptToParseInitialNotification: async () => {
+      const notificationOpen: NotificationOpen = await firebase
+        .notifications()
+        .getInitialNotification();
+      if (notificationOpen) {
+        // App was opened by a notification
+        // Get the action triggered by the notification being opened
+        const action = notificationOpen.action;
+        // Get information about the notification that was opened
+        const notification: Notification = notificationOpen.notification;
+
+        dispatch.notifications.getPendingNavigationFromNotification(
+          notification,
+        );
+      }
     },
   },
 };

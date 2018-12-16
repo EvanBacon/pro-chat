@@ -102,6 +102,8 @@ const user = {
       console.warn('TODO: user.changeRating');
     },
     observeAuth: () => {
+      dispatch.notifications.attemptToParseInitialNotification();
+
       firebase.auth().onAuthStateChanged(auth => {
         if (!auth) {
           // TODO: Evan: Y tho...
@@ -114,6 +116,8 @@ const user = {
           dispatch.iid.setAsync();
           Fire.shared.getMessageList();
           NavigationService.navigate('App');
+          dispatch.notifications.commitPendingNavigation();
+
           // dispatch.leaders.getAsync({ uid: user.uid });
         }
       });

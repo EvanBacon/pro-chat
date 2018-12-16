@@ -1,7 +1,8 @@
 // NavigationService.js
-import { dispatch } from '../rematch/dispatch';
+import firebase from 'expo-firebase-app';
 import { NavigationActions } from 'react-navigation';
 
+import { dispatch } from '../rematch/dispatch';
 import IdManager from '../IdManager';
 
 let _navigator;
@@ -20,7 +21,14 @@ function navigate(routeName, params) {
   );
 }
 
+/* Only allow App navigation when authenticated */
+function canNavigateWithinApp() {
+  return !!firebase.auth().currentUser;
+}
+
 function navigateToUserSpecificScreen(routeName, uid, params = {}) {
+  if (!canNavigateWithinApp()) return;
+
   if (!uid || typeof uid !== 'string') {
     console.log('navigateToUserSpecificScreen: UID: ', uid);
     throw new Error(
@@ -42,6 +50,7 @@ function goBack(routeName) {
 // add other navigation functions that you need and export them
 
 export default {
+  canNavigateWithinApp,
   navigate,
   goBack,
   setTopLevelNavigator,

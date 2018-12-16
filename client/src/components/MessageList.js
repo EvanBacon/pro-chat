@@ -22,16 +22,6 @@ class MessageList extends React.Component {
 
   componentDidMount() {
     dispatch.notifications.registerAsync();
-
-    this.unsubscribe = firebase.messaging().onMessage(async ({ type }) => {
-      if (type.split('-').shift() === 'message') {
-        await Fire.shared.getMessageList();
-      }
-    });
-  }
-
-  componentWillUnmount() {
-    this.unsubscribe();
   }
 
   componentWillReceiveProps({ badgeCount }) {

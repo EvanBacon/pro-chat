@@ -117,6 +117,36 @@ class Chat extends React.Component {
       const chat = {
         seen: null,
         senderName: this.user.name,
+
+        pushNotification: {
+          notification: {
+            badge: '1',
+            // tag?: string;
+            // body?: string;
+            // icon?: string;
+            // badge?: string;
+            // color?: string;
+            // sound?: string;
+            // title?: string;
+            // bodyLocKey?: string;
+            // bodyLocArgs?: string;
+            // clickAction?: string;
+            // titleLocKey?: string;
+            // titleLocArgs?: string;
+          },
+          data: {
+            navigation: JSON.stringify({ screen: 'Chat' }),
+          },
+          options: {
+            // dryRun?: boolean;
+            // priority?: string;
+            // timeToLive?: number;
+            // collapseKey?: string;
+            // mutableContent?: boolean;
+            // contentAvailable?: boolean;
+            // restrictedPackageName?: string;
+          },
+        },
       };
       ['image', 'text', 'location'].forEach(key => {
         if (message[key]) chat[key] = message[key];

@@ -12,6 +12,7 @@ const sendPushNotificationAsync = async (
   usersToNotify: string[],
   data: admin.messaging.DataMessagePayload,
   notification: admin.messaging.NotificationMessagePayload,
+  options?: admin.messaging.MessagingOptions,
   //   priority = 'normal',
 ) => {
   console.log('sendPushNotificationAsync: props: ', {
@@ -44,7 +45,9 @@ const sendPushNotificationAsync = async (
     notification,
   };
 
-  const { results } = await admin.messaging().sendToDevice(pushTokens, payload);
+  const { results } = await admin
+    .messaging()
+    .sendToDevice(pushTokens, payload, options);
   for (const result of results) {
     if (result.error) {
       console.log('sendPushNotificationAsync: Failed: ', result);

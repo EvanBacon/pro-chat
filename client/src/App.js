@@ -22,6 +22,8 @@ import type {
 } from 'expo-firebase-notifications';
 
 import firebase from 'expo-firebase-app';
+import NavigationService from './navigation/NavigationService';
+import IdManager from './IdManager';
 
 console.ignoredYellowBox = Settings.ignoredYellowBox;
 
@@ -84,9 +86,19 @@ export default class App extends React.Component {
       });
     this.notificationListener = firebase
       .notifications()
-      .onNotification((notification: Notification) => {
+      .onNotification(async (notification: Notification) => {
         // Process your notification as required
         logger('onNotification', notification);
+
+        if (notification.data.type.split('-').shift() === 'message') {
+          let groupId = notification.data.groupId;
+          if (!groupId) {
+            //TODO: Send groupId in the message
+            groupId = IdManager.getGroupId([notification.data.senderId]);
+          }
+
+          await Fire.shared.updateLastMessageForGroupId(groupId);
+        }
       });
     this.notificationOpenedListener = firebase
       .notifications()
@@ -95,20 +107,13 @@ export default class App extends React.Component {
         const action = notificationOpen.action;
         // Get information about the notification that was opened
         const notification: Notification = notificationOpen.notification;
-        logger('onNotificationOpened', notificationOpen);
-      });
 
-    const notificationOpen: NotificationOpen = await firebase
-      .notifications()
-      .getInitialNotification();
-    if (notificationOpen) {
-      logger('getInitialNotification', notificationOpen);
-      // App was opened by a notification
-      // Get the action triggered by the notification being opened
-      const action = notificationOpen.action;
-      // Get information about the notification that was opened
-      const notification: Notification = notificationOpen.notification;
-    }
+        logger('onNotificationOpened', notificationOpen);
+
+        dispatch.notifications.getPendingNavigationFromNotification(
+          notification,
+        );
+      });
   };
 
   componentWillUnmount() {
