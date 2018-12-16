@@ -379,7 +379,8 @@ class SettingsScreen extends React.Component {
     if (nextUser) {
       if (
         nextUser.interest != user.interest &&
-        user.interest && nextUser.interest
+        user.interest &&
+        nextUser.interest
       ) {
         dispatch.location.getAsync();
       }
@@ -550,6 +551,6 @@ const styles = StyleSheet.create({
 //   };
 // };
 
-export default connect(({ user = {} }) => ({
-  user,
+export default connect(({ user }) => ({
+  user: user || {},
 }))(SettingsScreen);
