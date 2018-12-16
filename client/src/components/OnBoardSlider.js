@@ -565,5 +565,11 @@ class InputSlider extends React.Component {
 
 export default connect(({ permissions: { location }, user }) => ({
   locationPermission: location,
-  interestedIn: user.interest,
+  loggedIn: !!user,
+  interestedIn: (user || {}).interest,
+  gender: (user || {}).gender,
+  knowsAboutMatching: true, //TODO: Bacon: Add
+  knowsAboutSwiping: true, //TODO: Bacon: Add
+  knowsAboutAnon: true, //TODO: Bacon: Add
+  image: (user || {}).image,
 }))(OnboardSlider);

@@ -26,7 +26,7 @@ import SignInScreen from '../screens/SignInScreen';
 import UnderAgeScreen from '../screens/UnderAgeScreen';
 import WebsiteScreen from '../screens/WebsiteScreen';
 import NavigationService from './NavigationService';
-
+import OnBoarding from '../screens/OnBoardingScreen';
 // import CameraScreen from '../screens/CameraScreen';
 import ReportScreen from '../screens/ReportScreen';
 import Fire from '../Fire';
@@ -156,6 +156,7 @@ export default createSwitchNavigator(
     AuthLoading: AuthLoadingScreen,
     App: AppStack,
     Auth: AuthStack,
+    OnBoarding: OnBoarding,
   },
   {
     initialRouteName: 'AuthLoading',

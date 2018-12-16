@@ -11,25 +11,22 @@ import Circle from '../Circle';
 import LoadingImage from '../Image/ProgressImage';
 import Meta from '../Meta';
 import styles from '../styles';
+import AvatarImage from '../Image/AvatarImage';
 
 export default class EmptyChat extends React.PureComponent {
   render() {
     const { image, timestamp, name } = this.props;
 
-    // const buttonAnimate = (delay, view) => (
-    //   <Animatable.View
-    //     delay={600 + delay}
-    //     style={{ marginBottom: 8 }}
-    //     easing="ease-out"
-    //     animation="fadeInUp"
-    //     useNativeDriver
-    //   >
-    //     {view}
-    //   </Animatable.View>
-    // );
-
     return (
-      <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+      <View
+        style={{
+          ...StyleSheet.absoluteFillObject,
+          justifyContent: 'center',
+          height: '100%',
+          alignItems: 'center',
+          flex: 1,
+        }}
+      >
         {timestamp && (
           <Text
             style={{
@@ -42,7 +39,7 @@ export default class EmptyChat extends React.PureComponent {
             You Matched {timestamp}
           </Text>
         )}
-        {image && (
+        {(image || name) && (
           <Animatable.View
             useNativeDriver
             duration={1200}
@@ -57,7 +54,19 @@ export default class EmptyChat extends React.PureComponent {
                 styles.shadow,
               ])}
             >
-              <LoadingImage style={{ flex: 1 }} source={image} />
+              <AvatarImage
+                name={name}
+                avatar={image}
+                textStyle={{ fontSize: 64 }}
+                avatarStyle={{
+                  aspectRatio: 1,
+                  resizeMode: 'cover',
+                  flex: 1,
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: 0,
+                }}
+              />
             </Circle>
           </Animatable.View>
         )}

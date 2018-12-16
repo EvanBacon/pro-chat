@@ -114,7 +114,7 @@ export const strings = {
     share_title: `${user} Alert!`,
     share_message: `I found a ${user} for you. Get on ${user} Alert and let me know what you think! 🍑`,
 
-    select_image_option_camera: 'Take Belfie',
+    select_image_option_camera: 'Take Selfie',
     select_image_option_library: 'Choose from Library',
     select_image_option_destructive: 'Cancel',
     select_image_option_facebook: 'Choose Photo from Facebook',

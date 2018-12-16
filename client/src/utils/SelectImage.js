@@ -4,9 +4,11 @@ import { NavigationActions } from 'react-navigation';
 import { store } from '../rematch/Gate';
 
 import Meta from '../constants/Meta';
-import getPermission from './getPermission';
-import reduceImageAsync from './shrinkImageAsync';
-
+import getPermissionAsync from './getPermission';
+import shrinkImageAsync from './shrinkImageAsync';
+import { dispatch } from '../rematch/dispatch';
+import uploadImageAsync from './uploadImageAsync';
+import firebase from 'expo-firebase-app';
 // More info on all the options is below in the README...just some common use cases shown here
 const _options = {
   //   title: 'Select Avatar',
@@ -27,6 +29,43 @@ const _options = {
   noData: true,
 };
 
+const _setNewPhoto = async uri => {
+  if (!uri || uri === '') return;
+  // this.setState({ isUploadingImage: true, progress: 0, image: uri });
+  const { uri: reducedImageUri } = await shrinkImageAsync(uri);
+  try {
+    const downloadURL = await uploadImageAsync(
+      reducedImageUri,
+      `images/${firebase.auth().currentUser.uid}/image.jpeg`,
+      function() {},
+    );
+    dispatch.user.updateUserProfile({ image: downloadURL });
+  } catch ({ code, message }) {
+    console.log('ProfileImage: Error: ', message);
+    alert(message);
+  } finally {
+    // this.setState({ isUploadingImage: false, progress: 0 });
+  }
+};
+
+const _takePictureAsync = async () => {
+  const permission = await getPermissionAsync(Permissions.CAMERA);
+  if (!permission) return;
+  const { uri } = await ImagePicker.launchCameraAsync({
+    allowsEditing: true,
+  });
+  return _setNewPhoto(uri);
+};
+
+const _selectPictureAsync = async () => {
+  const permission = await getPermissionAsync(Permissions.CAMERA_ROLL);
+  if (!permission) return;
+  const { uri } = await ImagePicker.launchImageLibraryAsync({
+    allowsEditing: true,
+  });
+  return _setNewPhoto(uri);
+};
+
 export default (selectImage = (show, callback, onSelectCamera) => {
   const options = [
     Meta.select_image_option_camera,
@@ -42,22 +81,24 @@ export default (selectImage = (show, callback, onSelectCamera) => {
     buttonIndex => {
       switch (buttonIndex) {
         case 0:
-          if (onSelectCamera) {
-            onSelectCamera();
-            return;
-          }
-          store.dispatch(
-            NavigationActions.navigate({
-              routeName: 'Camera',
-              params: { complete: callback },
-            }),
-          );
+          _takePictureAsync();
+          // if (onSelectCamera) {
+          //   onSelectCamera();
+          //   return;
+          // }
+          // store.dispatch(
+          //   NavigationActions.navigate({
+          //     routeName: 'Camera',
+          //     params: { complete: callback },
+          //   }),
+          // );
           break;
         case 1:
+          _selectPictureAsync();
           // Open Image Library:
-          ImagePicker.launchImageLibrary(_options, response => {
-            complete(response, callback);
-          });
+          // ImagePicker.launchImageLibrary(_options, response => {
+          //   complete(response, callback);
+          // });
           break;
         default:
           break;

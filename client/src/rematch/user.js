@@ -113,12 +113,24 @@ const user = {
           dispatch.auth.signInAnonymously();
           NavigationService.navigate('Auth');
         } else {
-          dispatch.user.getAsync();
+          dispatch.user.getAsync(async () => {
+            const user = await new Promise(res =>
+              dispatch.users.ensureUserIsLoadedAsync({
+                uid: auth.uid,
+                callback: res,
+              }),
+            );
+            const hasInfo = user && user.interest && user.gender && user.image;
+            if (!hasInfo) {
+              NavigationService.navigate('OnBoarding');
+            } else {
+              NavigationService.navigate('App');
+              dispatch.notifications.commitPendingNavigation();
+            }
+          });
           dispatch.popular.getAsync();
           dispatch.iid.setAsync();
           Fire.shared.getMessageList();
-          NavigationService.navigate('App');
-          dispatch.notifications.commitPendingNavigation();
 
           // dispatch.leaders.getAsync({ uid: user.uid });
         }
@@ -158,6 +170,9 @@ const user = {
         user: combinedUserData,
       });
       console.log('Main:userdata:', combinedUserData);
+      if (props) {
+        props(combinedUserData);
+      }
       if (Settings.isCacheProfileUpdateActive) {
         const something = await PantryStorage.getItemWithExpiration(
           shouldUpdateKey,
