@@ -48,20 +48,6 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>3</string>
-	<key>Fabric</key>
-	<dict>
-		<key>APIKey</key>
-		<string>81130e95ea13cd7ed9a4f455e96214902c721c99</string>
-		<key>Kits</key>
-		<array>
-			<dict>
-				<key>KitInfo</key>
-				<dict/>
-				<key>KitName</key>
-				<string>Crashlytics</string>
-			</dict>
-		</array>
-	</dict>
 	<key>FacebookAppID</key>
 	<string>214548308980520</string>
 	<key>FacebookDisplayName</key>
@@ -91,7 +77,7 @@
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow Bütē to access your microphone</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Allow Bütē to access your device's accelerometer</string>
+	<string>Allow Bütē to access your device&apos;s accelerometer</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Give Bütē permission to save photos</string>
 	<key>NSPhotoLibraryUsageDescription</key>

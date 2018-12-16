@@ -120,13 +120,13 @@ const user = {
                 callback: res,
               }),
             );
-            const hasInfo = user && user.interest && user.gender && user.image;
-            if (!hasInfo) {
-              NavigationService.navigate('OnBoarding');
-            } else {
-              NavigationService.navigate('App');
-              dispatch.notifications.commitPendingNavigation();
-            }
+            // const hasInfo = user && user.interest && user.gender && user.image;
+            // if (!hasInfo) {
+            //   NavigationService.navigate('OnBoarding');
+            // } else {
+            NavigationService.navigate('App');
+            dispatch.notifications.commitPendingNavigation();
+            // }
           });
           dispatch.popular.getAsync();
           dispatch.iid.setAsync();
