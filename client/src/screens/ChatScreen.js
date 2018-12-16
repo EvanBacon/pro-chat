@@ -21,6 +21,7 @@ import NavigationService from '../navigation/NavigationService';
 import { dispatch } from '../rematch/dispatch';
 import firebase from '../universal/firebase';
 import CustomView from './CustomView';
+import AvatarImage from '../components/Image/AvatarImage';
 
 class Chat extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -330,6 +331,20 @@ class Chat extends React.Component {
           parseText
           isAnimated
           showUserAvatar
+          renderAvatar={({ onPressAvatar, currentMessage }) => {
+            const user =
+              currentMessage.user._id === this.uid
+                ? this.props.currentUser
+                : this.props.otherUser;
+            return (
+              <AvatarImage
+                onPress={() => this.onPressAvatar(currentMessage.user)}
+                name={user.name}
+                avatar={user.image}
+                avatarStyle={styles.avatarStyle}
+              />
+            );
+          }}
           renderCustomView={this.renderCustomView}
           onLongPress={this.onLongPress}
           onInputTextChanged={this.onInputTextChanged}
@@ -438,5 +453,10 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: 14,
     color: '#aaa',
+  },
+  avatarStyle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
 });

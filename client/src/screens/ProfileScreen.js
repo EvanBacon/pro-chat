@@ -238,7 +238,7 @@ const mergeProps = (
     isUser,
     uid: userId,
     about: about || 'I am not interesting, but I do like to pretend.',
-    rating: rating || 'moth',
+    rating: rating || 'regular',
     // TODO: Standard - decide on one format
     image: user.photoURL || user.image,
     name: user.first_name || user.name || user.displayName || user.deviceName,
@@ -266,6 +266,7 @@ const ProfileScreen = connect(
 
 ProfileScreen.navigationOptions = {
   title: 'Profile',
+
   tabBarIcon: tabBarImage({
     active: Assets.images.profile_active,
     inactive: Assets.images.profile_inactive,
