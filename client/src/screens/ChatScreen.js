@@ -1,4 +1,3 @@
-import { dispatch } from '../rematch/dispatch';
 import { Keyboard } from 'expo';
 import React from 'react';
 import {
@@ -6,19 +5,20 @@ import {
   InteractionManager,
   LayoutAnimation,
   StyleSheet,
-  Text,
   View,
 } from 'react-native';
-import { Bubble, GiftedChat, MessageText } from 'react-native-gifted-chat';
+import { GiftedChat, MessageText } from 'react-native-gifted-chat';
 import { connect } from 'react-redux';
 
 import AccessoryBar from '../components/AccessoryBar';
-import EmptyChat from '../components/EmptyChat';
+import ChatBackground from '../components/chat/ChatBackground';
+import ChatBubble from '../components/chat/ChatBubble';
+import ChatFooter from '../components/chat/ChatFooter';
 import GifScroller from '../components/GifScroller';
 import Time from '../components/Time';
-import Meta from '../constants/Meta';
 import Fire from '../Fire';
 import NavigationService from '../navigation/NavigationService';
+import { dispatch } from '../rematch/dispatch';
 import firebase from '../universal/firebase';
 import CustomView from './CustomView';
 
@@ -192,7 +192,7 @@ class Chat extends React.Component {
   };
 
   renderBackground = () => (
-    <ButeBackground
+    <ChatBackground
       name={this.props.otherUser.name}
       image={this.props.otherUser.image}
       timestamp={this.props.matchedTimestamp}
@@ -205,12 +205,12 @@ class Chat extends React.Component {
   renderFooter = () => {
     const { isTyping, otherUser } = this.props;
     if (isTyping) {
-      return <ButeFooter name={otherUser.name} />;
+      return <ChatFooter name={otherUser.name} />;
     }
     return null;
   };
 
-  renderBubble = props => <ButeBubble {...props} />;
+  renderBubble = props => <ChatBubble {...props} />;
 
   onLoadEarlier = () => dispatch.chats.loadEarlier(this.props.channel);
 
@@ -356,53 +356,10 @@ const listViewProps = {
   keyboardShouldPersistTaps: 'handled',
 };
 
-const ButeFooter = ({ name }) => (
-  <View style={styles.footerContainer}>
-    <Text style={styles.footerText}>{`${name} ${Meta.is_typing}`}</Text>
-  </View>
-);
-
-const ButeBackground = ({ image, timestamp, name }) => (
-  <View style={StyleSheet.absoluteFill}>
-    <EmptyChat image={image} timestamp={timestamp} name={name} />
-  </View>
-);
-
-const ButeBubble = props => {
-  const { currentMessage } = props;
-
-  let backgroundColor;
-  if (currentMessage.imageUrl || currentMessage.location) {
-    backgroundColor = 'transparent';
-  }
-
-  const _wrapperStyle = {
-    right: {
-      backgroundColor: backgroundColor || wrapperStyle.right.backgroundColor,
-    },
-    left: {
-      backgroundColor: backgroundColor || wrapperStyle.left.backgroundColor,
-    },
-  };
-  // {...props} wrapperStyle={_wrapperStyle}
-  return <Bubble {...props} wrapperStyle={_wrapperStyle} />;
-};
-
 // loadEarlier={this.props.channelHasMore}
 // onLoadEarlier={this.onLoadEarlier}
 // isLoadingEarlier={this.props.isLoadingEarlier}
 // renderLoading={Loading}
-
-const wrapperStyle = {
-  right: {
-    backgroundColor: '#6C5891',
-    // color: 'white'
-  },
-  left: {
-    backgroundColor: '#E9EDF0',
-    // color: '#57585A'
-  },
-};
 
 const mergeProps = (state, dispatchProps, ownProps) => {
   const { params = {} } = ownProps.navigation.state;

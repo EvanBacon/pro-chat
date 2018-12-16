@@ -6,11 +6,11 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 
-import MetaData from '../constants/Meta';
-import Circle from './Circle';
-import LoadingImage from './Image/ProgressImage';
-import Meta from './Meta';
-import styles from './styles';
+import MetaData from '../../constants/Meta';
+import Circle from '../Circle';
+import LoadingImage from '../Image/ProgressImage';
+import Meta from '../Meta';
+import styles from '../styles';
 
 export default class EmptyChat extends React.PureComponent {
   render() {
