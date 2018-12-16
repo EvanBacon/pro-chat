@@ -134,7 +134,7 @@ const complete = (response, callback) => {
 };
 
 export const fromLibrary = async () => {
-  const hasit = await getPermission(Permissions.CAMERA_ROLL);
+  const hasit = await getPermissionAsync(Permissions.CAMERA_ROLL);
   if (!hasit) return;
 
   const { cancelled, uri } = await ImagePicker.launchImageLibraryAsync({
@@ -154,7 +154,7 @@ export const fromLibrary = async () => {
   return reducedUri;
 };
 export const fromCamera = async () => {
-  const hasit = await getPermission(Permissions.CAMERA);
+  const hasit = await getPermissionAsync(Permissions.CAMERA);
   if (!hasit) return;
 
   const { cancelled, uri } = await ImagePicker.launchCameraAsync({
