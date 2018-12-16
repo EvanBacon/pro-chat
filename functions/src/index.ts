@@ -66,10 +66,10 @@ const onChatMessageSentHandler = async (snap, { params }) => {
   };
 
   pushNotificationUserData = {
-    screen: 'Chat',
     type: `message-${messageType}`,
     senderId: message.uid,
     groupId,
+    screen: 'Chat',
     ...pushNotificationUserData,
   };
 

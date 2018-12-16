@@ -47,10 +47,8 @@ const notifications = {
       dispatch.notifications.setStatus(finalStatus);
     },
     getPendingNavigationFromNotification: (notification: Notification) => {
-      if (notification.data.navigation) {
-        const navigation = JSON.parse(notification.data.navigation);
-        console.log('getPendingNavigationFromNotification:', navigation);
-        global._pendingNavigation = navigation;
+      if (notification.data.screen) {
+        global._pendingNavigation = notification.data;
         dispatch.notifications.commitPendingNavigation();
       }
     },
@@ -58,11 +56,15 @@ const notifications = {
       console.log('commitPendingNavigation:', !!global._pendingNavigation);
       if (global._pendingNavigation) {
         if (NavigationService.canNavigateWithinApp()) {
-          const { screen, senderId, params } = global._pendingNavigation;
+          const {
+            screen,
+            senderId,
+            navigationParams,
+          } = global._pendingNavigation;
           NavigationService.navigateToUserSpecificScreen(
             screen,
             senderId,
-            params,
+            navigationParams,
           );
           global._pendingNavigation = null;
         }

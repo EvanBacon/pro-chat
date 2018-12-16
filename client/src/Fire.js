@@ -280,6 +280,9 @@ class Fire {
     return previewMessages;
   };
 
+  /*
+   * This method is used to update the message preview in the chat list when a notification is observed.
+   */
   updateLastMessageForGroupId = async groupId => {
     console.log('updateLastMessageForGroupId', groupId);
     const group = IdManager.getOtherUsersFromChatGroup(groupId);
@@ -287,6 +290,8 @@ class Fire {
     const { data } = await this.getLastMessageForChatGroup({ groupId });
 
     const message = data[0] || {};
+
+    // dispatch.messages.updateWithMessage({ groupId, message })
 
     const sender = group[0];
 
