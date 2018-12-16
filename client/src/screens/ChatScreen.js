@@ -23,15 +23,17 @@ import firebase from '../universal/firebase';
 import CustomView from './CustomView';
 
 class Chat extends React.Component {
-  static navigationOptions = ({ navigation }) => ({
-    title: `${navigation.state.params.title}`,
-    headerStyle: {
-      opacity: 1,
-    },
-  });
+  static navigationOptions = ({ navigation }) => {
+    const title = navigation.getParam('title');
+    return {
+      title: title,
+      headerStyle: {
+        opacity: 1,
+      },
+    };
+  };
 
   state = {
-    // prefs: {},
     // keyboard: 0,
     gifActive: false,
     userInput: '',
@@ -44,10 +46,11 @@ class Chat extends React.Component {
   get user() {
     return {
       _id: this.uid, // sent messages should have same user._id
-      name: firebase.auth().currentUser.displayName,
-      image: firebase.auth().currentUser.photoURL,
+      name: this.props.currentUser.name,
+      image: this.props.currentUser.image,
     };
   }
+
   get isUserEditing() {
     return this._isUserEditing;
   }
@@ -377,7 +380,10 @@ const mergeProps = (state, dispatchProps, ownProps) => {
   let chatProps = {};
   if (groupId) {
     const otherUserId = uid;
-    const { [otherUserId]: otherUser = {} } = users;
+    const {
+      [otherUserId]: otherUser = {},
+      [Fire.shared.uid]: currentUser = {},
+    } = users;
     const { [groupId]: messages = {} } = chats;
     const { [groupId]: _channelHasMore = false } = channelHasMore;
     const { [groupId]: _isTyping = false } = isTyping;
@@ -387,7 +393,7 @@ const mergeProps = (state, dispatchProps, ownProps) => {
       groupId,
       otherUserId,
       otherUser,
-
+      currentUser,
       title: otherUser.name,
       channelHasMore: _channelHasMore,
       isTyping: _isTyping,

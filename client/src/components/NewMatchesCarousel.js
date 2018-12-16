@@ -24,7 +24,7 @@ class NewMatchesCarousel extends React.Component {
     return (
       <Carousel
         destination="Chat"
-        title={'New Matches'}
+        title={'Users'}
         style={styles.container}
         titleStyle={styles.title}
         data={this.props.data}

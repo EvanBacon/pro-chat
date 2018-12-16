@@ -84,7 +84,7 @@ const Settings = {
   debug,
   ignoredYellowBox: ['Class ABI', 'Module ABI', "Audio doesn't exist"],
   slug: debug ? 'crossy-road' : 'users',
-  isCacheProfileUpdateActive: !debug || false,
+  isCacheProfileUpdateActive: true, // !debug || false,
   shouldDelayFirebaseProfileSyncInMinutes: 60,
   canEditPhoto: false,
   mainInitialRouteName: 'MainTab', // 'ChooseInterest', // 'Settings', // 'UnderAge', // 'MainTab', // 'Chat'

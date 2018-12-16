@@ -197,7 +197,8 @@ class Fire {
       } else if (message.image) {
         preview = 'Sent an image';
       } else {
-        preview = '😅 404: Message not found!';
+        console.log('MISSINGMESSAGE', message);
+        return null;
       }
     } else {
       preview = 'Start Chatting!';
@@ -268,10 +269,14 @@ class Fire {
         user,
         // group,
       );
-      if (!previewMessage) return null;
-      previewMessages[groupId] = previewMessage;
+      if (previewMessage) {
+        previewMessages[groupId] = previewMessage;
+      } else {
+        dispatch.messages.remove({ id: groupId });
+      }
     }
 
+    console.log('BIGTED', previewMessages);
     if (force) {
       dispatch.messages.clear();
     }
@@ -302,6 +307,7 @@ class Fire {
     const previewMessage = this.formatMessageForPreview(message, groupId, user);
 
     if (!previewMessage) {
+      dispatch.messages.remove({ id: groupId });
       return null;
     }
 
@@ -319,8 +325,10 @@ class Fire {
       .get();
 
   /*
-    Get all the chats to populate the message list
-  */
+   * Get all the chats to populate the message list.
+   * This returns groups even if there are no messages.
+   * TODO: Where is the best place to filter out empty threads.
+   */
   getChatGroups = ({ start }) =>
     this.getDataPaged({
       start,
