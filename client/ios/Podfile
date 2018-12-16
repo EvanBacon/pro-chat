@@ -9,88 +9,55 @@ target 'b-t-' do
   "Core"
   ],
   :inhibit_warnings => true
-  pod 'EXBarCodeScannerInterface',
-    :path => "../node_modules/expo-barcode-scanner-interface/ios"
-  pod 'EXCamera',
-    :path => "../node_modules/expo-camera/ios"
-  pod 'EXCameraInterface',
-    :path => "../node_modules/expo-camera-interface/ios"
-  pod 'EXConstants',
-    :path => "../node_modules/expo-constants/ios"
-  pod 'EXConstantsInterface',
-    :path => "../node_modules/expo-constants-interface/ios"
-  pod 'EXContacts',
-    :path => "../node_modules/expo-contacts/ios"
-  pod 'EXCore',
-    :path => "../node_modules/expo-core/ios"
-  pod 'EXFaceDetectorInterface',
-    :path => "../node_modules/expo-face-detector-interface/ios"
-  pod 'EXFileSystem',
-    :path => "../node_modules/expo-file-system/ios"
-  pod 'EXFileSystemInterface',
-    :path => "../node_modules/expo-file-system-interface/ios"
-  pod 'EXFont',
-    :path => "../node_modules/expo-font/ios"
-  pod 'EXFontInterface',
-    :path => "../node_modules/expo-font-interface/ios"
-  pod 'EXGL',
-    :path => "../node_modules/expo-gl/ios"
-  pod 'EXGL-CPP',
-    :path => "../node_modules/expo-gl-cpp/cpp"
-  pod 'EXImageLoaderInterface',
-    :path => "../node_modules/expo-image-loader-interface/ios"
-  pod 'EXLocalAuthentication',
-    :path => "../node_modules/expo-local-authentication/ios"
-  pod 'EXLocation',
-    :path => "../node_modules/expo-location/ios"
-  pod 'EXMediaLibrary',
-    :path => "../node_modules/expo-media-library/ios"
-  pod 'EXPermissions',
-    :path => "../node_modules/expo-permissions/ios"
-  pod 'EXSensorsInterface',
-    :path => "../node_modules/expo-sensors-interface/ios"
-  pod 'EXPermissionsInterface',
-    :path => "../node_modules/expo-permissions-interface/ios"
-  pod 'EXReactNativeAdapter',
-    :path => "../node_modules/expo-react-native-adapter/ios"
-  pod 'EXSMS',
-    :path => "../node_modules/expo-sms/ios"
+
+  # Optional
+  pod 'EXCamera', :path => "../node_modules/expo-camera/ios"
+  pod 'EXContacts', :path => "../node_modules/expo-contacts/ios"
+  pod 'EXFont', :path => "../node_modules/expo-font/ios"
+  pod 'EXLocalAuthentication', :path => "../node_modules/expo-local-authentication/ios"
+  pod 'EXMediaLibrary', :path => "../node_modules/expo-media-library/ios"
+  pod 'EXSMS', :path => "../node_modules/expo-sms/ios"
+  
+  # Core
+  pod 'EXCore', :path => "../node_modules/expo-core/ios"
+  pod 'EXReactNativeAdapter', :path => "../node_modules/expo-react-native-adapter/ios"
+  pod 'EXConstants', :path => "../node_modules/expo-constants/ios"
+  pod 'EXLocation', :path => "../node_modules/expo-location/ios"
+  pod 'EXFileSystem', :path => "../node_modules/expo-file-system/ios"
+  pod 'EXPermissions', :path => "../node_modules/expo-permissions/ios"
+
   # Bacon: Start Custom Modules (Firebase)
-  pod 'EXFirebaseApp', 
-    path: '../node_modules/expo-firebase-app/ios'
-  pod 'EXFirebaseAnalytics', 
-    path: '../node_modules/expo-firebase-analytics/ios'
-  pod 'EXFirebaseAuth', 
-    path: '../node_modules/expo-firebase-auth/ios'
-  pod 'EXFirebaseCrashlytics',
-    path: '../node_modules/expo-firebase-crashlytics/ios'
-  pod 'EXFirebaseDatabase',
-    path: '../node_modules/expo-firebase-database/ios'
-  pod 'EXFirebaseFirestore',
-    path: '../node_modules/expo-firebase-firestore/ios'
-  pod 'EXFirebaseFunctions',
-    path: '../node_modules/expo-firebase-functions/ios'
-  pod 'EXFirebaseInstanceID',
-    path: '../node_modules/expo-firebase-instance-id/ios'
-  pod 'EXFirebaseLinks',
-    path: '../node_modules/expo-firebase-links/ios'
-  pod 'EXFirebaseInvites',
-    path: '../node_modules/expo-firebase-invites/ios'
-  pod 'EXFirebaseMessaging',
-    path: '../node_modules/expo-firebase-messaging/ios'
-  pod 'EXFirebaseNotifications',
-    path: '../node_modules/expo-firebase-notifications/ios'
-  pod 'EXFirebasePerformance',
-    path: '../node_modules/expo-firebase-performance/ios'
-  pod 'EXFirebaseRemoteConfig',
-    path: '../node_modules/expo-firebase-remote-config/ios'
-  pod 'EXFirebaseStorage',
-    path: '../node_modules/expo-firebase-storage/ios'
+  pod 'EXFirebaseApp', path: '../node_modules/expo-firebase-app/ios'
+  pod 'EXFirebaseAnalytics', path: '../node_modules/expo-firebase-analytics/ios'
+  pod 'EXFirebaseAuth', path: '../node_modules/expo-firebase-auth/ios'
+  pod 'EXFirebaseCrashlytics', path: '../node_modules/expo-firebase-crashlytics/ios'
+  pod 'EXFirebaseDatabase', path: '../node_modules/expo-firebase-database/ios'
+  pod 'EXFirebaseFirestore', path: '../node_modules/expo-firebase-firestore/ios'
+  pod 'EXFirebaseFunctions', path: '../node_modules/expo-firebase-functions/ios'
+  pod 'EXFirebaseInstanceID', path: '../node_modules/expo-firebase-instance-id/ios'
+  pod 'EXFirebaseLinks', path: '../node_modules/expo-firebase-links/ios'
+  pod 'EXFirebaseInvites', path: '../node_modules/expo-firebase-invites/ios'
+  pod 'EXFirebaseMessaging', path: '../node_modules/expo-firebase-messaging/ios'
+  pod 'EXFirebaseNotifications', path: '../node_modules/expo-firebase-notifications/ios'
+  pod 'EXFirebasePerformance', path: '../node_modules/expo-firebase-performance/ios'
+  pod 'EXFirebaseRemoteConfig', path: '../node_modules/expo-firebase-remote-config/ios'
+  pod 'EXFirebaseStorage', path: '../node_modules/expo-firebase-storage/ios'
   # Bacon: End Custom Modules
 
+  # Interfaces
+  pod 'EXBarCodeScannerInterface', :path => "../node_modules/expo-barcode-scanner-interface/ios"
+  pod 'EXCameraInterface', :path => "../node_modules/expo-camera-interface/ios"
+  pod 'EXConstantsInterface', :path => "../node_modules/expo-constants-interface/ios"
+  pod 'EXFaceDetectorInterface', :path => "../node_modules/expo-face-detector-interface/ios"
+  pod 'EXFileSystemInterface', :path => "../node_modules/expo-file-system-interface/ios"
+  pod 'EXFontInterface', :path => "../node_modules/expo-font-interface/ios"
+  pod 'EXImageLoaderInterface', :path => "../node_modules/expo-image-loader-interface/ios"
+  pod 'EXSensorsInterface', :path => "../node_modules/expo-sensors-interface/ios"
+  pod 'EXPermissionsInterface', :path => "../node_modules/expo-permissions-interface/ios"
+  
   pod 'React',
-    :path => "../node_modules/react-native",
-    :inhibit_warnings => true,
+  :path => "../node_modules/react-native",
+  :inhibit_warnings => true,
     :subspecs => [
       "Core",
       "ART",

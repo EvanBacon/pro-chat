@@ -13,6 +13,8 @@
 	<string>2.9.0</string>
 	<key>STANDALONE_CONTEXT_TYPE</key>
 	<string>user</string>
+	<key>TEMPORARY_SDK_VERSION</key>
+	<string>31.0.0</string>
 	<key>developmentUrl</key>
 	<string>expf323ea36d115447fa3827c6dcb512227://10.0.0.211:19000</string>
 </dict>
