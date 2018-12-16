@@ -6,7 +6,7 @@ import { Platform } from 'react-native';
 import sizeInfo from '../utils/whatAmI';
 import Secret from '../../Secret';
 
-const isInAppleReview = false;
+const isInAppleReview = true;
 
 const realName = 'Bütē Alert';
 
@@ -69,7 +69,7 @@ const Settings = {
     Permissions.NOTIFICATIONS,
     Permissions.CONTACTS,
   ],
-  hideBooty: false,
+  hideBooty: isInAppleReview,
   noName: 'Sasuke Uchiha',
   isIos: Platform.OS === 'ios',
   osVersion: sizeInfo.osVersion,
@@ -109,9 +109,9 @@ const Settings = {
   isMatchesEnabled: false,
 
   isInAppleReview,
-  name: isInAppleReview ? 'Beauty' : 'Bütē',
-  user: isInAppleReview ? 'Art' : 'Bütē',
-  userPlural: isInAppleReview ? 'Artists' : 'Bütēs',
+  name: isInAppleReview ? 'Chat' : 'Bütē',
+  user: isInAppleReview ? 'User' : 'Bütē',
+  userPlural: isInAppleReview ? 'Users' : 'Bütēs',
   debugging,
   giphyAPI,
   fakeLikes: [

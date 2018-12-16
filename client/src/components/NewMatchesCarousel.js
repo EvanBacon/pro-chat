@@ -51,17 +51,20 @@ export default ConnectedNewMatchesCarousel;
 
 const styles = StyleSheet.create({
   container: {
-    minHeight: 128,
-    marginTop: 16,
+    minHeight: 96,
+    marginTop: 0,
     minWidth: '100%',
     backgroundColor: '#EDF2F6',
     borderTopWidth: 0,
+    paddingTop: 0,
+    paddingBottom: 10,
+    paddingVertical: undefined,
   },
   title: {
     textAlign: 'left',
     marginHorizontal: 16,
     color: 'black',
-    marginVertical: 4,
+    marginTop: 4,
     fontWeight: 'bold',
     fontSize: 16,
   },

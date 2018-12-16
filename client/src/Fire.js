@@ -219,7 +219,7 @@ class Fire {
     };
   };
 
-  getMessageList = async (force = true) => {
+  getMessageList = async (force = true, resetUsers = false) => {
     // / lol debug....
 
     // console.log('debugging getMessageList()');
@@ -248,6 +248,7 @@ class Fire {
 
     const previewMessages = {};
 
+    const hours = resetUsers ? 0 : undefined;
     for (const chatGroup of chatGroups.data) {
       const { key: groupId, members } = chatGroup;
       const memberUids = members;
@@ -262,8 +263,13 @@ class Fire {
       const group = memberUids;
       // TODO: Evan: Handle groups yolo
       const sender = group[0]; //message.uid ||
+
       const user = await new Promise(res =>
-        dispatch.users.ensureUserIsLoadedAsync({ uid: sender, callback: res }),
+        dispatch.users.ensureUserIsLoadedAsync({
+          uid: sender,
+          callback: res,
+          hours,
+        }),
       );
       const previewMessage = this.formatMessageForPreview(
         message,

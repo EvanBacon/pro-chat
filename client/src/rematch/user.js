@@ -14,6 +14,7 @@ function clearNativeProfile() {
     .auth()
     .currentUser.updateProfile({ displayName: null, photoURL: null });
 }
+const shouldUpdateKey = '@Bute/shouldUpdateProfile';
 
 export function reduceFirebaseUser(user) {
   const nextUser = user;
@@ -104,9 +105,10 @@ const user = {
     observeAuth: () => {
       dispatch.notifications.attemptToParseInitialNotification();
 
-      firebase.auth().onAuthStateChanged(auth => {
+      firebase.auth().onAuthStateChanged(async auth => {
         if (!auth) {
           // TODO: Evan: Y tho...
+          await PantryStorage.clearPantry(shouldUpdateKey);
           dispatch.user.clear();
           dispatch.auth.signInAnonymously();
           NavigationService.navigate('Auth');
@@ -157,7 +159,6 @@ const user = {
       });
       console.log('Main:userdata:', combinedUserData);
       if (Settings.isCacheProfileUpdateActive) {
-        const shouldUpdateKey = '@Bute/shouldUpdateProfile';
         const something = await PantryStorage.getItemWithExpiration(
           shouldUpdateKey,
         );

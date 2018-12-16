@@ -18,7 +18,7 @@ class Cell extends React.PureComponent {
     );
   };
   render() {
-    const { image, name } = this.props;
+    const { image, name, textStyle } = this.props;
 
     return (
       <View style={styles.touchable}>
@@ -28,7 +28,9 @@ class Cell extends React.PureComponent {
           avatar={image}
           avatarStyle={styles.avatarStyle}
         />
-        <Text style={styles.text}>{name}</Text>
+        <Text numberOfLines={2} style={[styles.text, textStyle]}>
+          {name}
+        </Text>
       </View>
     );
   }
@@ -37,10 +39,11 @@ class Cell extends React.PureComponent {
 const styles = StyleSheet.create({
   touchable: {
     marginHorizontal: PADDING,
+    alignItems: 'center',
   },
   text: {
     textAlign: 'center',
-    maxWidth: IMAGE_SIZE + PADDING * 2,
+    maxWidth: IMAGE_SIZE,
   },
   avatarStyle: {
     flex: 1,

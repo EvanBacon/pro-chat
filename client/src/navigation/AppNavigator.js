@@ -29,17 +29,19 @@ import NavigationService from './NavigationService';
 
 // import CameraScreen from '../screens/CameraScreen';
 import ReportScreen from '../screens/ReportScreen';
+import Fire from '../Fire';
 // const { tintColor } = Constants.manifest;
 const tintColor = '#52416A';
 
 const MainTab = createMaterialTopTabNavigator(
   {
-    MainProfile: ProfileScreen,
-    Main: HomeScreen,
+    // MainProfile: ProfileScreen,
+    // Main: HomeScreen,
     Messages: MessageScreen,
   },
   {
-    initialRouteName: 'Main',
+    tabBarComponent: null,
+    // initialRouteName: 'Main',
     cardStyle: {},
     navigationOptions: () => ({
       swipeEnabled: false,
@@ -80,13 +82,27 @@ const MainTab = createMaterialTopTabNavigator(
 );
 
 MainTab.navigationOptions = {
-  title: Settings.hideBooty ? 'Beauty' : 'Būte',
+  title: Settings.hideBooty ? 'Expo Chat' : 'Būte',
   headerRight: (
     <View style={{ marginRight: 24 }}>
       <Button.Settings
         selected
         onPress={() => {
           NavigationService.navigate('Settings');
+        }}
+      />
+    </View>
+  ),
+  headerLeft: (
+    <View style={{ marginLeft: 24 }}>
+      <Button.Profile
+        selected={false}
+        onPress={() => {
+          NavigationService.navigateToUserSpecificScreen(
+            'Profile',
+            Fire.shared.uid,
+          );
+          // NavigationService.navigate('Profile');
         }}
       />
     </View>
@@ -112,6 +128,7 @@ const AppStack = createStackNavigator(
   {
     initialRouteName: Settings.mainInitialRouteName,
     cardStyle: {
+      // marginTop: BAR_HEIGHT - 30,
       marginTop: BAR_HEIGHT - 30,
     },
     navigationOptions: {

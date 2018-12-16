@@ -18,6 +18,7 @@ import NewMatchesCarousel from './NewMatchesCarousel';
 class MessageList extends React.Component {
   state = {
     refreshing: false,
+    loadCount: 0,
   };
 
   componentDidMount() {
@@ -31,9 +32,13 @@ class MessageList extends React.Component {
   }
 
   onRefresh = async () => {
-    this.setState({ refreshing: true });
-    await Fire.shared.getMessageList();
-    this.setState({ refreshing: false });
+    this.setState(
+      { refreshing: true, loadCount: this.state.loadCount + 1 },
+      async () => {
+        await Fire.shared.getMessageList(true, this.state.loadCount % 3 === 0);
+        this.setState({ refreshing: false });
+      },
+    );
   };
 
   renderItem = ({

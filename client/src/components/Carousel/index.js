@@ -13,7 +13,7 @@ export default class Carousel extends Component {
   };
 
   render() {
-    const { data, destination, ...props } = this.props;
+    const { data, destination, itemTextStyle, ...props } = this.props;
 
     return (
       <Section {...props}>
@@ -27,6 +27,7 @@ export default class Carousel extends Component {
             const { image, name, uid } = item;
             return (
               <Cell
+                textStyle={itemTextStyle}
                 destination={destination}
                 image={image}
                 name={name}

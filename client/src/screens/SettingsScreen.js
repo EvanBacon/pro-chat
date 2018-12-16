@@ -374,12 +374,15 @@ class SettingsScreen extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (
-      nextProps.user.interest != this.props.user.interest &&
-      this.props.user.interest &&
-      nextProps.user.interest
-    ) {
-      dispatch.location.getAsync();
+    const { user: nextUser } = nextProps;
+    const { user = {} } = this.props;
+    if (nextUser) {
+      if (
+        nextUser.interest != user.interest &&
+        user.interest && nextUser.interest
+      ) {
+        dispatch.location.getAsync();
+      }
     }
   }
 

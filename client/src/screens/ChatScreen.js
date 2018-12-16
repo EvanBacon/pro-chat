@@ -329,8 +329,7 @@ class Chat extends React.Component {
           renderChatFooter={this.renderChatFooter}
           parseText
           isAnimated
-          showUserAvatar={true}
-          renderAvatarOnTop={false}
+          showUserAvatar
           renderCustomView={this.renderCustomView}
           onLongPress={this.onLongPress}
           onInputTextChanged={this.onInputTextChanged}

@@ -18,6 +18,7 @@ import Settings from '../constants/Settings';
 import IdManager from '../IdManager';
 import tabBarImage from '../components/Tabs/tabBarImage';
 import Assets from '../Assets';
+import Colors from '../constants/Colors';
 
 const { width } = Dimensions.get('window');
 
@@ -54,35 +55,43 @@ class Profile extends Component {
   }
 
   updateWithUID = async (uid, update) => {
-    if (!uid) return;
-    const { image, name, about, likes, rating, relationship } = this.props;
-    if (!image || update) {
-      dispatch.users.getProfileImage({ uid });
-    }
-    if (!name || update) {
-      dispatch.users.getPropertyForUser({ uid, property: 'first_name' });
-    }
-    if (!about || update) {
-      dispatch.users.getPropertyForUser({ uid, property: 'about' });
-    }
-    if (!likes || update) {
-      dispatch.users.getPropertyForUser({ uid, property: 'likes' });
-    }
-    if (!rating || update) {
-      dispatch.users.getPropertyForUser({ uid, property: 'rating' });
-    }
-    if (!relationship || update) {
-      dispatch.relationships.getAsync({ uid });
-    }
-
-    const isMatched = await new Promise(res =>
-      dispatch.relationships.isMatched({ uid, callback: res }),
+    const user = await new Promise(res =>
+      dispatch.users.ensureUserIsLoadedAsync({
+        uid,
+        callback: res,
+        hours: update ? 0 : undefined,
+      }),
     );
+
+    // if (!uid) return;
+    // const { image, name, about, likes, rating, relationship } = this.props;
+    // if (!image || update) {
+    //   dispatch.users.getProfileImage({ uid });
+    // }
+    // if (!name || update) {
+    //   dispatch.users.getPropertyForUser({ uid, property: 'first_name' });
+    // }
+    // if (!about || update) {
+    //   dispatch.users.getPropertyForUser({ uid, property: 'about' });
+    // }
+    // if (!likes || update) {
+    //   dispatch.users.getPropertyForUser({ uid, property: 'likes' });
+    // }
+    // if (!rating || update) {
+    //   dispatch.users.getPropertyForUser({ uid, property: 'rating' });
+    // }
+    // if (!relationship || update) {
+    //   dispatch.relationships.getAsync({ uid });
+    // }
+
+    // const isMatched = await new Promise(res =>
+    //   dispatch.relationships.isMatched({ uid, callback: res }),
+    // );
 
     // this.props.navigation.setParams({ isMatched, name, uid });
     LayoutAnimation.easeInEaseOut();
 
-    this.setState({ isMatched });
+    // this.setState({ isMatched });
   };
 
   _onRefresh = async () => {
@@ -93,6 +102,7 @@ class Profile extends Component {
 
   renderPopular = () => (
     <Carousel
+      itemTextStyle={{ color: Colors.white, marginTop: 4, fontWeight: 'bold' }}
       title={Meta.popular_title}
       style={{
         minHeight: 128,
@@ -220,7 +230,7 @@ const mergeProps = (
   }
 
   const { [userId]: user = {}, ...otherUsers } = users;
-  console.log('raw', otherUsers);
+  console.log('raw', { user }, otherUsers);
   // console.warn(user, uid);
   const { about, rating } = user;
   const userProps = {
