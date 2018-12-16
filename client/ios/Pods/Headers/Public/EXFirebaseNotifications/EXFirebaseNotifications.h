@@ -1,0 +1,1 @@
+../../../../../node_modules/expo-firebase-notifications/ios/EXFirebaseNotifications/EXFirebaseNotifications.h

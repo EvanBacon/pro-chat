@@ -1,0 +1,1 @@
+../../../../../node_modules/expo-firebase-firestore/ios/EXFirebaseFirestore/EXFirebaseFirestore.h
