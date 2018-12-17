@@ -1,11 +1,11 @@
-import { dispatch } from '../rematch/dispatch';
+import { dispatch } from '../../rematch/dispatch';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { Dimensions, StyleSheet, ViewPropTypes } from 'react-native';
 
-import Relationship from '../models/Relationship';
-import Footer from './Footer';
-import Section from './Section';
+import Relationship from '../../models/Relationship';
+import Footer from '../Footer';
+import Section from '../primitives/Section';
 
 export default class RateSection extends Component {
   static propTypes = {
@@ -26,15 +26,17 @@ export default class RateSection extends Component {
           uid={uid}
           selectedData={uid}
           footerVisible
-          onLike={() => dispatch.relationships.updateAsync({
-            uid,
-            type: Relationship.like,
-          })
+          onLike={() =>
+            dispatch.relationships.updateAsync({
+              uid,
+              type: Relationship.like,
+            })
           }
-          onDislike={() => dispatch.relationships.updateAsync({
-            uid,
-            type: Relationship.dislike,
-          })
+          onDislike={() =>
+            dispatch.relationships.updateAsync({
+              uid,
+              type: Relationship.dislike,
+            })
           }
         />
       </Section>

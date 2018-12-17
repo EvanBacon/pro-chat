@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
 
-import Circle from './Circle';
-import NotificationDot from './NotificationDot';
+import Circle from './primitives/Circle';
+import NotificationDot from './primitives/NotificationDot';
 import AvatarImage from './Image/AvatarImage';
 
 export default class UserImage extends Component {
@@ -11,9 +11,7 @@ export default class UserImage extends Component {
   };
 
   render() {
-    const {
-      style, image, name, size, containerStyle, isNew,
-    } = this.props;
+    const { style, image, name, size, containerStyle, isNew } = this.props;
     return (
       <View
         style={[

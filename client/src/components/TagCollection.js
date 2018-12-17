@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 
-import Section from './Section';
+import Section from './primitives/Section';
 import Tag from './Tag';
 import Meta from '../constants/Meta';
 
@@ -46,9 +46,7 @@ export default class TagCollection extends Component {
   };
 
   render() {
-    const {
-      title, style, tags, isUser, name,
-    } = this.props;
+    const { title, style, tags, isUser, name } = this.props;
 
     return (
       <Section title={title} style={[styles.container, style]}>

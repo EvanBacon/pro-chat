@@ -16,7 +16,7 @@ import {
 import { Divider } from 'react-native-paper';
 import { connect } from 'react-redux';
 
-import Gradient from '../components/Gradient';
+import Gradient from '../components/primitives/Gradient';
 import Colors from '../constants/Colors';
 import Meta from '../constants/Meta';
 import Images from '../Images';

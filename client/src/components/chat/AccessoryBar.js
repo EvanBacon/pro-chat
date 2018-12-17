@@ -1,19 +1,13 @@
-import firebase from '../universal/firebase';
+import firebase from 'expo-firebase-app';
 import React, { Component } from 'react';
 import { View } from 'react-native';
 import uuid from 'uuid';
-import reduceAndUploadLocalImageAsync from '../utils/reduceAndUploadLocalImageAsync';
-import getLocation from '../utils/getLocation';
-import { fromCamera, fromLibrary } from '../utils/SelectImage';
-import Button from './Button';
 
-if (!firebase.analytics) {
-  firebase.analytics = function() {
-    this.logEvent = () => {};
-  };
-} else if (!firebase.analytics.logEvent) {
-  firebase.analytics.logEvent = function() {};
-}
+import getLocation from '../../utils/getLocation';
+import reduceAndUploadLocalImageAsync from '../../utils/reduceAndUploadLocalImageAsync';
+import { fromCamera, fromLibrary } from '../../utils/SelectImage';
+import Button from '../Button';
+
 export default class AccessoryBar extends Component {
   state = {
     showGif: false,

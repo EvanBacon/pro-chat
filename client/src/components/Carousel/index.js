@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { FlatList } from 'react-native';
 
-import Section from '../Section';
+import Section from '../primitives/Section';
 import Cell from './Cell';
 import NavigationService from '../../navigation/NavigationService';
 

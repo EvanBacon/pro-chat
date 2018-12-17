@@ -17,7 +17,7 @@ import Images from '../Images';
 import Gender from '../models/Gender';
 import selectImage from '../utils/SelectImage';
 import Button from './Button';
-import Gradient from './Gradient';
+import Gradient from './primitives/Gradient';
 import OnBoardSliderCard from './OnBoardSliderCard';
 
 // import { getLocationPermission } from '../redux/permissions';

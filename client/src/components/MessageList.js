@@ -7,13 +7,13 @@ import Fire from '../Fire';
 import IdManager from '../IdManager';
 import Images from '../Images';
 import NavigationService from '../navigation/NavigationService';
-import firebase from '../universal/firebase';
+import firebase from 'expo-firebase-app';
 import EmptyListMessage from './EmptyListMessage';
 import MessageRow from './MessageRow';
 import UserList from './UserList';
 import tabBarImage from './Tabs/tabBarImage';
 import Assets from '../Assets';
-import AppleStyleSwipeableRow from './pagedList/AppleStyleSwipeableRow';
+import SwipeableListRow from './primitives/SwipeableListRow';
 import NewMatchesCarousel from './NewMatchesCarousel';
 class MessageList extends React.Component {
   state = {
@@ -44,7 +44,7 @@ class MessageList extends React.Component {
   renderItem = ({
     item: { name, image, isSeen, isOutgoing, message, timeAgo, groupId },
   }) => (
-    <AppleStyleSwipeableRow
+    <SwipeableListRow
       onSelect={direction => {
         if (direction === 'left') {
           console.log('TODO: Delete Chat');
@@ -60,7 +60,7 @@ class MessageList extends React.Component {
         timeAgo={timeAgo}
         groupId={groupId}
       />
-    </AppleStyleSwipeableRow>
+    </SwipeableListRow>
   );
 
   render() {

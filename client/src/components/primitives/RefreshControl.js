@@ -1,7 +1,7 @@
 import React from 'react';
 import { RefreshControl } from 'react-native';
 
-import Meta from '../constants/Meta';
+import Meta from '../../constants/Meta';
 
 class ButeRefreshControl extends React.Component {
   static defaultProps = {

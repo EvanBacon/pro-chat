@@ -15,7 +15,7 @@ export default class Circle extends React.Component {
     };
   }
 
-  onLayout = (event) => {
+  onLayout = event => {
     if (this.props.onLayout) this.props.onLayout(event);
     const {
       nativeEvent: { layout },

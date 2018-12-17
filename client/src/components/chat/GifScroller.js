@@ -1,8 +1,9 @@
 import qs from 'qs';
 import React, { Component } from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
-import Settings from '../constants/Settings';
-import Image from './Image/ProgressImage';
+
+import Settings from '../../constants/Settings';
+import Image from '../Image/ProgressImage';
 
 const apiKey = Settings.giphyAPI;
 export default class GifScroller extends Component {
@@ -23,7 +24,7 @@ export default class GifScroller extends Component {
     }
   };
 
-  componentWillReceiveProps = (nextProps) => {
+  componentWillReceiveProps = nextProps => {
     this.setState({ gifs: [], offset: 0 });
     if (nextProps.inputText === '') {
       this.buildUrl('trending', apiKey);
@@ -62,12 +63,14 @@ export default class GifScroller extends Component {
     }
   };
 
-  fetchAndRenderGifs = async (url) => {
+  fetchAndRenderGifs = async url => {
     try {
       const response = await fetch(url);
       const gifs = await response.json();
       console.log('gifs', { gifs });
-      const gifsUrls = gifs.data.map(gif => gif.images.fixed_height_downsampled.url);
+      const gifsUrls = gifs.data.map(
+        gif => gif.images.fixed_height_downsampled.url,
+      );
       const newGifsUrls = this.state.gifs.concat(gifsUrls);
       if (newGifsUrls && Array.isArray(newGifsUrls)) {
         this.setState({ gifs: newGifsUrls });

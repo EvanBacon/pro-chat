@@ -2,8 +2,8 @@
 import React, { Component } from 'react';
 import { FlatList, StyleSheet } from 'react-native';
 
-import Settings from '../constants/Settings';
-import Data from '../../licenses';
+import Settings from '../../constants/Settings';
+import Data from '../../../licenses';
 import LicensesListItem from './LicensesListItem';
 
 function extractNameFromGithubUrl(url) {
@@ -29,7 +29,7 @@ function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-const licenses = Object.keys(Data).map((key) => {
+const licenses = Object.keys(Data).map(key => {
   const { licenses, ...license } = Data[key];
   const [name, version] = key.split('@');
 

@@ -1,8 +1,8 @@
 import React from 'react';
 
-import OnBoardSlider from './OnBoardSlider';
+import OnBoardSlider from '../components/OnBoardSlider';
 
-export default class ChooseInterest extends React.Component {
+export default class ChooseInterestScreen extends React.Component {
   static navigationOptions = {
     title: 'Choose Your Intrest',
   };

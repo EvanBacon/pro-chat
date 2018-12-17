@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import { Divider } from 'react-native-paper';
 import { FlatList } from 'react-native-gesture-handler';
 
-import RefreshControl from './RefreshControl';
+import RefreshControl from './primitives/RefreshControl';
 
 const top = 48;
 export default class UserList extends React.Component {

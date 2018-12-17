@@ -2,7 +2,7 @@ import { Font } from 'expo';
 import React, { Component } from 'react';
 import Circle from 'react-native-progress/Circle';
 
-import Colors from '../constants/Colors';
+import Colors from '../../constants/Colors';
 
 export default class Indicator extends Component {
   static propTypes = {};
@@ -14,9 +14,7 @@ export default class Indicator extends Component {
   };
 
   render() {
-    const {
-      size, textStyle, progress, formatText, ...props
-    } = this.props;
+    const { size, textStyle, progress, formatText, ...props } = this.props;
 
     return (
       <Circle

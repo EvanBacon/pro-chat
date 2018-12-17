@@ -1,7 +1,7 @@
 import React from 'react';
 import { Animated, Image, TouchableWithoutFeedback } from 'react-native';
 
-import Circle from './Circle';
+import Circle from './primitives/Circle';
 import Meta from './Meta';
 import Colors from '../constants/Colors';
 import styles from './styles';
@@ -9,7 +9,14 @@ import styles from './styles';
 export default class Slide extends React.Component {
   render() {
     const {
-      onPress, index, scroll, itemWidth, title, subtitle, accessoryView, image,
+      onPress,
+      index,
+      scroll,
+      itemWidth,
+      title,
+      subtitle,
+      accessoryView,
+      image,
     } = this.props;
 
     const center = index * itemWidth;
@@ -48,7 +55,10 @@ export default class Slide extends React.Component {
     };
 
     const animatedTextStyle = {
-      transform: [{ translateX: textTranslateX }, { translateY: textTranslateY }],
+      transform: [
+        { translateX: textTranslateX },
+        { translateY: textTranslateY },
+      ],
     };
 
     const circleStyle = [

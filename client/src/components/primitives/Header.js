@@ -1,12 +1,10 @@
 import { Svg } from 'expo';
 import React, { Component } from 'react';
-import { Dimensions, Text, View } from 'react-native';
+import { Dimensions, View } from 'react-native';
 
-import styles, { BAR_HEIGHT } from './styles';
+import styles, { BAR_HEIGHT } from '../styles';
 
-const {
-  Stop, Defs, LinearGradient, G, Use, Ellipse,
-} = Svg;
+const { Stop, Defs, LinearGradient, G, Use, Ellipse } = Svg;
 
 const scheme = {
   dark: {
@@ -36,7 +34,12 @@ export default class Header extends Component {
       {this.renderGradient()}
       <G id="shape">
         <G>
-          <Ellipse cx={width / 2} cy="0" rx={BAR_HEIGHT + width * 0.5} ry={BAR_HEIGHT} />
+          <Ellipse
+            cx={width / 2}
+            cy="0"
+            rx={BAR_HEIGHT + width * 0.5}
+            ry={BAR_HEIGHT}
+          />
         </G>
       </G>
     </Defs>
@@ -45,7 +48,6 @@ export default class Header extends Component {
   render() {
     // const { navigation } = this.props.navigation;
     const { width } = Dimensions.get('window');
-
 
     // const right = this.props.renderRight({ navigation });
     // console.log(right);

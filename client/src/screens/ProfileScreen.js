@@ -5,12 +5,12 @@ import { connect } from 'react-redux';
 
 import Blocked from '../components/Blocked';
 import Carousel from '../components/Carousel';
-import Gradient from '../components/Gradient';
-import RateSection from '../components/RateSection';
-import RefreshControl from '../components/RefreshControl';
+import Gradient from '../components/primitives/Gradient';
+import RateSection from '../components/profile/RateSection';
+import RefreshControl from '../components/primitives/RefreshControl';
 import { BAR_HEIGHT } from '../components/styles';
 import TagCollection from '../components/TagCollection';
-import UserInfo from '../components/UserInfo';
+import UserInfo from '../components/profile/UserInfo';
 import Meta from '../constants/Meta';
 import Fire from '../Fire';
 import Relationship from '../models/Relationship';

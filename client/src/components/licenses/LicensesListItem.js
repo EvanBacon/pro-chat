@@ -1,12 +1,27 @@
 // @flow
 import { FontAwesome } from '@expo/vector-icons';
 import React from 'react';
-import { Image, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Image,
+  Linking,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 export default class LicensesListItem extends React.Component {
   render() {
     const {
-      image, userUrl, username, name, version, licenses, repository, licenseUrl, parents,
+      image,
+      userUrl,
+      username,
+      name,
+      version,
+      licenses,
+      repository,
+      licenseUrl,
+      parents,
     } = this.props;
 
     let title = name;
@@ -25,7 +40,11 @@ export default class LicensesListItem extends React.Component {
                 <Image source={{ uri: image }} style={styles.image} />
               </TouchableOpacity>
             )}
-            <TouchableOpacity underlayColor="#eeeeee" onPress={() => Linking.openURL(repository)} style={styles.item}>
+            <TouchableOpacity
+              underlayColor="#eeeeee"
+              onPress={() => Linking.openURL(repository)}
+              style={styles.item}
+            >
               <View style={{ maxWidth: '90%' }}>
                 <Text style={styles.name}>{title}</Text>
                 <Link style={styles.text} url={licenseUrl}>
@@ -33,7 +52,12 @@ export default class LicensesListItem extends React.Component {
                 </Link>
                 <Link style={styles.text}>{version}</Link>
               </View>
-              <FontAwesome style={{ alignSelf: 'center' }} color="#34495e" size={16} name="chevron-right" />
+              <FontAwesome
+                style={{ alignSelf: 'center' }}
+                color="#34495e"
+                size={16}
+                name="chevron-right"
+              />
             </TouchableOpacity>
           </View>
         </View>
@@ -43,7 +67,11 @@ export default class LicensesListItem extends React.Component {
 }
 
 const Link = ({ url, style, children }) => (
-  <Text style={style} numberOfLines={1} onPress={() => url && Linking.openURL(url)}>
+  <Text
+    style={style}
+    numberOfLines={1}
+    onPress={() => url && Linking.openURL(url)}
+  >
     {children}
   </Text>
 );

@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 
 import Assets from '../Assets';
 import BrowseUsers from '../components/BrowseUsers';
-import Gradient from '../components/Gradient';
+import Gradient from '../components/primitives/Gradient';
 import tabBarImage from '../components/Tabs/tabBarImage';
 import Meta from '../constants/Meta';
 import Settings from '../constants/Settings';
@@ -102,13 +102,13 @@ class HomeScreen extends React.Component {
       }
     }
   }
-  checkBanned = (isBlocked) => {
+  checkBanned = isBlocked => {
     if (isBlocked) {
       NavigationService.navigate('AccountUnderReview');
     }
   };
 
-  checkUnderage = (birthday) => {
+  checkUnderage = birthday => {
     if (isUnderAge(birthday)) {
       NavigationService.navigate('UnderAge', { birthday });
     }
@@ -125,7 +125,7 @@ class HomeScreen extends React.Component {
     return (
       <Gradient style={{ flex: 1 }}>
         <BrowseUsers
-          onLike={(uid) => {
+          onLike={uid => {
             if (!firstLike) {
               dispatch.onBoarding.update({ firstLike: Date.now() });
               this.alert(
@@ -140,7 +140,7 @@ class HomeScreen extends React.Component {
               type: Relationship.like,
             });
           }}
-          onDislike={(uid) => {
+          onDislike={uid => {
             if (!firstDislike) {
               dispatch.onBoarding.update({ firstDislike: Date.now() });
               this.alert(
@@ -155,7 +155,7 @@ class HomeScreen extends React.Component {
               type: Relationship.dislike,
             });
           }}
-          onIndexChange={(uid) => {
+          onIndexChange={uid => {
             if (!wantMoreInfo) {
               dispatch.onBoarding.update({ wantMoreInfo: Date.now() });
               this.alert(
@@ -179,30 +179,32 @@ class HomeScreen extends React.Component {
   }
 }
 
-const ConnectedHomeScreen = connect(({
-  user,
-  users, // geo: { nearbyUsers: users },
-  onBoarding: { firstLike, firstDislike, wantMoreInfo },
-}) => {
-  const { [Fire.shared.uid]: currentUser, ...otherUsers } = users;
-
-  console.log('otherUsers', { otherUsers });
-  return {
+const ConnectedHomeScreen = connect(
+  ({
     user,
-    firstLike,
-    firstDislike,
-    wantMoreInfo,
-    users: Object.values(otherUsers)
-  };
+    users, // geo: { nearbyUsers: users },
+    onBoarding: { firstLike, firstDislike, wantMoreInfo },
+  }) => {
+    const { [Fire.shared.uid]: currentUser, ...otherUsers } = users;
 
-  // return {
-  //   user,
-  //   users,
-  //   firstLike,
-  //   firstDislike,
-  //   wantMoreInfo,
-  // }
-})(HomeScreen);
+    console.log('otherUsers', { otherUsers });
+    return {
+      user,
+      firstLike,
+      firstDislike,
+      wantMoreInfo,
+      users: Object.values(otherUsers),
+    };
+
+    // return {
+    //   user,
+    //   users,
+    //   firstLike,
+    //   firstDislike,
+    //   wantMoreInfo,
+    // }
+  },
+)(HomeScreen);
 
 ConnectedHomeScreen.navigationOptions = {
   title: 'Matches',

@@ -9,7 +9,7 @@ import NavigationService from '../navigation/NavigationService';
 import { dispatch } from '../rematch/dispatch';
 import EmptyListMessage from './EmptyListMessage';
 import MatchesRow from './MatchesRow';
-import PagedListFooter from './pagedList/PagedListFooter';
+import PagedListFooter from './PagedListFooter';
 import tabBarImage from './Tabs/tabBarImage';
 import UserList from './UserList';
 
@@ -73,9 +73,7 @@ class MatchesList extends React.PureComponent {
   };
 
   render() {
-    const {
-      style, data, hasMore, isLoading,
-    } = this.props;
+    const { style, data, hasMore, isLoading } = this.props;
     return (
       <UserList
         style={style}
@@ -98,7 +96,9 @@ const MatchesScreen = connect(({ users, hasMoreUsers, isLoadingUsers }) => {
   const { [Fire.shared.uid]: currentUser, ...otherUsers } = users;
 
   return {
-    data: Object.values(otherUsers).filter(({ uid }) => IdManager.isInteractable(uid)),
+    data: Object.values(otherUsers).filter(({ uid }) =>
+      IdManager.isInteractable(uid),
+    ),
     hasMore: hasMoreUsers,
     isLoading: isLoadingUsers,
   };

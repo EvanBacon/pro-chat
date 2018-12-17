@@ -10,11 +10,11 @@ import {
 import { GiftedChat, MessageText } from 'react-native-gifted-chat';
 import { connect } from 'react-redux';
 
-import AccessoryBar from '../components/AccessoryBar';
+import AccessoryBar from '../components/chat/AccessoryBar';
 import ChatBackground from '../components/chat/ChatBackground';
 import ChatBubble from '../components/chat/ChatBubble';
 import ChatFooter from '../components/chat/ChatFooter';
-import GifScroller from '../components/GifScroller';
+import GifScroller from '../components/chat/GifScroller';
 import Time from '../components/Time';
 import Fire from '../Fire';
 import NavigationService from '../navigation/NavigationService';

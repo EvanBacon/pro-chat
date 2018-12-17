@@ -7,9 +7,9 @@ import {
 } from 'react-navigation';
 
 import Button from '../components/Button';
-import ChooseInterestScreen from '../components/ChooseInterest';
-import Header from '../components/Header';
-import LicensesScreen from '../components/Licenses';
+import ChooseInterest from '../screens/ChooseInterestScreen';
+import Header from '../components/primitives/Header';
+import LicensesScreen from '../components/licenses/Licenses';
 import MessageScreen from '../components/MessageList';
 import { BAR_HEIGHT } from '../components/styles';
 import Colors from '../constants/Colors';
@@ -119,7 +119,7 @@ const AppStack = createStackNavigator(
     Chat: ChatScreen,
     Profile: ProfileScreen,
     Licenses: LicensesScreen,
-    ChooseInterest: ChooseInterestScreen,
+    ChooseInterest,
     // Camera: CameraScreen,
     DevTeam: DevTeamScreen,
     // Explore: ExploreScreen,

@@ -19,6 +19,12 @@ const scheme = {
 export default class Gradient extends React.PureComponent {
   render() {
     const { style, ...props } = this.props;
-    return <LinearGradient {...scheme.dark} {...props} style={[{ flex: 1 }, style]} />;
+    return (
+      <LinearGradient
+        {...scheme.dark}
+        {...props}
+        style={[{ flex: 1 }, style]}
+      />
+    );
   }
 }

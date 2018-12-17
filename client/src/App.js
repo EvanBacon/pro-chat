@@ -11,10 +11,9 @@ import Navigation from './navigation';
 import Gate from './rematch/Gate';
 import { ActionSheetProvider } from './universal/ActionSheet';
 import AssetUtils from './universal/AssetUtils';
-import { AppLoading } from './universal/Expo';
 import { Assets as StackAssets } from 'react-navigation-stack';
 import { Asset } from 'expo';
-
+import Loading from './components/primitives/Loading';
 // Optional: Flow type
 import type {
   Notification,
@@ -36,7 +35,7 @@ export default class App extends React.Component {
   state = { loading: true };
 
   get loadingScreen() {
-    return <AppLoading />;
+    return <Loading />;
   }
 
   get screen() {

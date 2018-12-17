@@ -3,7 +3,7 @@ import React from 'react';
 import { View } from 'react-native';
 
 import EmptyListMessage from '../components/EmptyListMessage';
-import Gradient from '../components/Gradient';
+import Gradient from '../components/primitives/Gradient';
 import Meta from '../constants/Meta';
 import Images from '../Images';
 

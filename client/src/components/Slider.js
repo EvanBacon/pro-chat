@@ -5,7 +5,7 @@ import Swiper from 'react-native-deck-swiper';
 import Assets from '../Assets';
 import Meta from '../constants/Meta';
 import EmptyListMessage from './EmptyListMessage';
-import Gradient from './Gradient';
+import Gradient from './primitives/Gradient';
 import SliderCell from './SliderCell';
 
 const Images = Assets.images;

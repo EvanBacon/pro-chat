@@ -7,7 +7,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 
 import MetaData from '../../constants/Meta';
-import Circle from '../Circle';
+import Circle from '../primitives/Circle';
 import LoadingImage from '../Image/ProgressImage';
 import Meta from '../Meta';
 import styles from '../styles';

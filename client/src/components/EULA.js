@@ -1,10 +1,8 @@
 import React from 'react';
-import {
-  Alert, Linking, StyleSheet, Text,
-} from 'react-native';
+import { Alert, Linking, StyleSheet, Text } from 'react-native';
 
 import Meta from '../constants/Meta';
-import firebase from '../universal/firebase';
+import firebase from 'expo-firebase-app';
 import Links from '../constants/Links';
 
 export default class EULA extends React.PureComponent {
@@ -28,10 +26,10 @@ export default class EULA extends React.PureComponent {
 }
 
 async function openPrivacyAsync() {
-  const url = Links.privacy
+  const url = Links.privacy;
   firebase.analytics().logEvent('opened_privacy');
   try {
-    openUrlAsync(Links.privacy)
+    openUrlAsync(Links.privacy);
   } catch (error) {
     Alert.alert(Meta.privacy_policy_error);
   }
@@ -40,7 +38,7 @@ async function openPrivacyAsync() {
 async function openTermsOfServiceAsync() {
   firebase.analytics().logEvent('opened_terms');
   try {
-    openUrlAsync(Links.terms)
+    openUrlAsync(Links.terms);
   } catch (error) {
     Alert.alert(Meta.terms_of_service_error);
   }
