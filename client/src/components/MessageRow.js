@@ -6,6 +6,7 @@ import IdManager from '../IdManager';
 import NavigationService from '../navigation/NavigationService';
 import { dispatch } from '../rematch/dispatch';
 import { FontAwesome } from '@expo/vector-icons';
+import Colors from '../constants/Colors';
 
 export default class MessageRow extends React.PureComponent {
   onPress = () => {
@@ -26,8 +27,8 @@ export default class MessageRow extends React.PureComponent {
     const { name, image, isSeen, isOutgoing, message, timeAgo } = this.props;
     return (
       <TouchableHighlight
-        style={{ backgroundColor: '#EDF2F6' }}
-        underlayColor="#ddd"
+        style={{ backgroundColor: Colors.lightGrayishBlue }}
+        underlayColor={Colors.lightishGrayBlue}
         onPress={this.onPress}
         onLongPress={this.onLongPress}
       >
@@ -59,22 +60,29 @@ export default class MessageRow extends React.PureComponent {
 }
 
 export const Timestamp = ({ children }) => (
-  <Text style={{ textAlign: 'right' }}>{children}</Text>
+  <Text style={{ textAlign: 'right', opacity: 0.8 }}>{children}</Text>
 );
 
 export const Message = ({ title, isOutgoing, subtitle }) => (
   <View>
-    <Text numberOfLines={1}>{title}</Text>
+    <Text
+      numberOfLines={1}
+      style={{ fontWeight: 'bold', color: Colors.veryDarkGrayishBlue }}
+    >
+      {title}
+    </Text>
     <View style={{ flexDirection: 'row' }}>
       {isOutgoing && (
         <FontAwesome
           name="reply"
           size={10}
-          color="#495057"
+          color={Colors.veryDarkGrayishBlue}
           style={{ marginRight: 4, alignSelf: 'center' }}
         />
       )}
-      <Text numberOfLines={2}>{subtitle}</Text>
+      <Text style={{ color: Colors.veryDarkGrayishBlue }} numberOfLines={2}>
+        {subtitle}
+      </Text>
     </View>
   </View>
 );

@@ -91,18 +91,21 @@ export default class ProfileImage extends React.Component {
   };
 
   onPress = () => {
-    if (!this.currentUser) return;
-
-    Alert.alert('Profile Picture', 'Select a new image', [
-      {
-        text: 'Camera',
-        onPress: this._takePictureAsync,
-      },
-      {
-        text: 'Library',
-        onPress: this._selectPictureAsync,
-      },
-    ]);
+    if (this.props.isUser) {
+      /* TODO: Bacon: A better UX for changing User Profile Image */
+      Alert.alert('Profile Picture', 'Select a new image', [
+        {
+          text: 'Camera',
+          onPress: this._takePictureAsync,
+        },
+        {
+          text: 'Library',
+          onPress: this._selectPictureAsync,
+        },
+      ]);
+    } else {
+      /* TODO: Bacon: Add light box for other users */
+    }
   };
 
   render() {

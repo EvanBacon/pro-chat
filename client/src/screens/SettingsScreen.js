@@ -41,27 +41,27 @@ const ModelInfo = () => (
   >
     <Text
       style={{
-        backgroundColor: 'transparent',
+        backgroundColor: Colors.transparent,
         fontSize: 16,
-        color: 'white',
+        color: Colors.white,
       }}
     >
       {Meta.app_name}
     </Text>
     <Text
       style={{
-        backgroundColor: 'transparent',
+        backgroundColor: Colors.transparent,
         fontSize: 16,
-        color: 'white',
+        color: Colors.white,
       }}
     >
       {Meta.version}
     </Text>
     <Text
       style={{
-        backgroundColor: 'transparent',
+        backgroundColor: Colors.transparent,
         fontSize: 16,
-        color: 'white',
+        color: Colors.white,
       }}
     >
       {Meta.settings_build}
@@ -175,7 +175,7 @@ class Carousel extends React.Component {
 
     const animatedDot = {
       opacity: invertedOpacity,
-      backgroundColor: 'white',
+      backgroundColor: Colors.white,
       width: 16,
       height: 16,
       borderRadius: 8,
@@ -184,7 +184,9 @@ class Carousel extends React.Component {
 
     return (
       <Animated.View style={StyleSheet.flatten([animated, style])}>
-        <Text style={{ fontSize: 100, color: 'white', textAlign: 'center' }}>
+        <Text
+          style={{ fontSize: 100, color: Colors.white, textAlign: 'center' }}
+        >
           {item}
         </Text>
         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
@@ -194,7 +196,7 @@ class Carousel extends React.Component {
                 marginTop: -16,
                 fontSize: 16,
                 textAlign: 'center',
-                color: 'white',
+                color: Colors.white,
               },
               animatedText,
             ])}
@@ -310,7 +312,7 @@ class TableRowCell extends React.Component {
           <Text
             style={{
               fontSize: 16,
-              color: 'white',
+              color: Colors.white,
             }}
           >
             {title}
@@ -335,7 +337,7 @@ class SwitchCell extends React.Component {
     const switchComponent = (
       <Switch
         onValueChange={this.props.onValueChange}
-        trackColor={{ true: Colors.tintColor }}
+        trackColor={{ true: Colors.darkViolet }}
         thumbColor={Colors.white}
         value={enabled}
       />

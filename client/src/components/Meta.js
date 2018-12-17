@@ -2,13 +2,14 @@ import React from 'react';
 import { Text, View } from 'react-native';
 
 import RatingTitle from './RatingTitle';
+import Colors from '../constants/Colors';
 
 export default ({
   style,
   title,
   subtitle,
   rating,
-  color = '#ffffff',
+  color = Colors.white,
   uid,
   onRatingPressed,
 }) => (
@@ -36,13 +37,13 @@ const styles = {
   title: {
     fontSize: 22,
     minHeight: 25,
-    backgroundColor: 'transparent',
+    backgroundColor: Colors.transparent,
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 14,
     minHeight: 60,
-    backgroundColor: 'transparent',
+    backgroundColor: Colors.transparent,
     textAlign: 'center',
   },
 };

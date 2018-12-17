@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { StyleSheet, ViewPropTypes, Text, View } from 'react-native';
+import Colors from '../../constants/Colors';
 
 export default class Section extends React.Component {
   static defaultProps = {
@@ -34,8 +35,8 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: '100%',
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: '#B996FC',
-    backgroundColor: 'rgba(44,49,84, 0.1)',
+    borderTopColor: Colors.gray,
+    backgroundColor: 'rgba(44, 49, 84, 0.1)',
     paddingVertical: 10,
   },
   title: {

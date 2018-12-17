@@ -10,10 +10,17 @@ export default class Carousel extends Component {
   static defaultProps = {
     destination: 'Profile',
     // users: []
+    listProps: {},
   };
 
   render() {
-    const { data, destination, itemTextStyle, ...props } = this.props;
+    const {
+      data,
+      destination,
+      itemTextStyle,
+      listProps,
+      ...props
+    } = this.props;
 
     return (
       <Section {...props}>
@@ -36,6 +43,7 @@ export default class Carousel extends Component {
               />
             );
           }}
+          {...listProps}
         />
       </Section>
     );

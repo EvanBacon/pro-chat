@@ -4,6 +4,7 @@ import { View } from 'react-native';
 import Circle from './primitives/Circle';
 import NotificationDot from './primitives/NotificationDot';
 import AvatarImage from './Image/AvatarImage';
+import Colors from '../constants/Colors';
 
 export default class UserImage extends Component {
   static defaultProps = {
@@ -29,9 +30,10 @@ export default class UserImage extends Component {
               shadowOpacity: 0.3,
               shadowRadius: 2,
               overflow: 'visible',
-              backgroundColor: '#eee',
+              backgroundColor: Colors.lightGrayishBlue,
+
               width: size,
-              borderColor: 'white',
+              borderColor: Colors.white,
             },
             style,
           ]}

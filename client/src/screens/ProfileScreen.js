@@ -199,6 +199,7 @@ class Profile extends Component {
             <RefreshControl
               refreshing={this.state.refreshing}
               onRefresh={this._onRefresh}
+              color={Colors.white}
             />
           }
           contentContainerStyle={{

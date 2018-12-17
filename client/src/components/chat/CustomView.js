@@ -2,6 +2,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { MapView } from 'expo';
+import Colors from '../../constants/Colors';
 
 const styles = StyleSheet.create({
   mapView: {
@@ -28,7 +29,7 @@ export default function CustomView(props) {
           zoomEnabled={false}
         >
           <MapView.Marker
-            pinColor={'#fff'}
+            pinColor={Colors.darkViolet}
             coordinate={{
               latitude: props.currentMessage.location.latitude,
               longitude: props.currentMessage.location.longitude,

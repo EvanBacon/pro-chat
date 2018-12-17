@@ -2,6 +2,7 @@ import React from 'react';
 import { Text, StyleSheet, View } from 'react-native';
 
 import Meta from '../../constants/Meta';
+import Colors from '../../constants/Colors';
 
 const ChatFooter = ({ name }) => (
   <View style={styles.footerContainer}>
@@ -14,7 +15,7 @@ export default ChatFooter;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white', // f7f7f7
+    backgroundColor: Colors.white,
   },
   footerContainer: {
     marginTop: 5,
@@ -24,7 +25,7 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: 14,
-    color: '#aaa',
+    color: Colors.gray,
   },
   avatarStyle: {
     width: 40,

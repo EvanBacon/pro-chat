@@ -14,6 +14,7 @@ import Meta from '../constants/Meta';
 import Settings from '../constants/Settings';
 import styles from './styles';
 import Fire from '../Fire';
+import Colors from '../constants/Colors';
 
 export default class RatingTitle extends React.Component {
   static propTypes = {
@@ -25,14 +26,12 @@ export default class RatingTitle extends React.Component {
   };
 
   static defaultProps = {
-    color: '#ffffff',
+    color: Colors.white,
     onRatingPressed: () => {},
   };
 
   render() {
-    const {
-      style, title, color, uid, onRatingPressed,
-    } = this.props;
+    const { style, title, color, uid, onRatingPressed } = this.props;
     const str = (title
       ? `${Meta.rated_as} ${title.toUpperCase()} ${Settings.user}`
       : Meta.tap_to_get_rating

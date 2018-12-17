@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import IdManager from '../IdManager';
 import Carousel from './Carousel';
 import { dispatch } from '../rematch/dispatch';
+import Colors from '../constants/Colors';
 class NewMatchesCarousel extends React.Component {
   static defaultProps = {
     data: [],
@@ -16,14 +17,41 @@ class NewMatchesCarousel extends React.Component {
     isLoading: PropTypes.bool.isRequired,
   };
 
-  componentDidMount() {
-    dispatch.users.getPaged({ size: 5 });
-  }
+  state = {
+    refreshing: false,
+  };
+
+  componentDidMount() {}
+
+  handleLoadMore = () => {
+    console.log('LOADMOREUSERS');
+    // dispatch.users.getPaged({ size: 5 });
+  };
+
+  _onRefresh = () => {
+    if (this.state.refreshing) {
+      return;
+    }
+    this.setState({ refreshing: true });
+
+    dispatch.hasMoreUsers.clear();
+    dispatch.isLoadingUsers.end();
+
+    dispatch.users.refreshAsync({
+      callback: () => this.setState({ refreshing: false }),
+    });
+  };
 
   render() {
     // TODO: Fix screen
     return (
       <Carousel
+        listProps={{
+          refreshing: this.state.refreshing,
+          onRefresh: this._onRefresh,
+          onEndReached: this.handleLoadMore,
+          onEndReachedThreshold: 0.1,
+        }}
         screen="Messages"
         destination="Chat"
         title={'Users'}
@@ -56,7 +84,7 @@ const styles = StyleSheet.create({
     minHeight: 96,
     marginTop: 0,
     minWidth: '100%',
-    backgroundColor: '#EDF2F6',
+    backgroundColor: Colors.lightGrayishBlue,
     borderTopWidth: 0,
     paddingTop: 0,
     paddingBottom: 10,

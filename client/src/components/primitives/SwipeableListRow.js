@@ -5,6 +5,7 @@ import { RectButton } from 'react-native-gesture-handler';
 
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import Colors from '../../constants/Colors';
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 
@@ -73,7 +74,7 @@ export default class GmailStyleSwipeableRow extends Component {
 const styles = StyleSheet.create({
   leftAction: {
     flex: 1,
-    backgroundColor: '#388e3c',
+    backgroundColor: Colors.darkViolet,
     justifyContent: 'center',
   },
   actionIcon: {

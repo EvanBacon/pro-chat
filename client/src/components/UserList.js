@@ -4,6 +4,7 @@ import { Divider } from 'react-native-paper';
 import { FlatList } from 'react-native-gesture-handler';
 
 import RefreshControl from './primitives/RefreshControl';
+import Colors from '../constants/Colors';
 
 const top = 48;
 export default class UserList extends React.Component {
@@ -25,14 +26,14 @@ export default class UserList extends React.Component {
         ListEmptyComponent={ListEmptyComponent}
         refreshControl={
           <RefreshControl
-            color="#B996FC"
+            color={Colors.tintColor}
             refreshing={refreshing}
             onRefresh={onRefresh}
           />
         }
         style={StyleSheet.flatten([
           style,
-          { flex: 1, backgroundColor: '#EDF2F6' },
+          { flex: 1, backgroundColor: Colors.lightGrayishBlue },
         ])}
         contentInset={{ top }}
         contentOffset={{ y: -top }}

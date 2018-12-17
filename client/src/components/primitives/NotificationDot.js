@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     width: Settings.notificationDotRadius * 2,
     height: Settings.notificationDotRadius * 2,
     aspectRatio: 1,
-    backgroundColor: Colors.tintColor,
+    backgroundColor: Colors.darkViolet,
     borderColor: Colors.white,
     borderWidth: 3,
     borderRadius: Settings.notificationDotRadius,

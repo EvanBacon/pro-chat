@@ -3,18 +3,13 @@ import React, { Component } from 'react';
 import { Dimensions, View } from 'react-native';
 
 import styles, { BAR_HEIGHT } from '../styles';
+import Colors from '../../constants/Colors';
 
 const { Stop, Defs, LinearGradient, G, Use, Ellipse } = Svg;
 
 const scheme = {
-  dark: {
-    a: '#513E76',
-    b: '#513E76',
-  },
-  light: {
-    a: '#712cfb',
-    b: '#702cfb',
-  },
+  a: Colors.veryDarkDesaturatedViolet,
+  b: '#513a71',
 };
 
 export default class Header extends Component {
@@ -24,9 +19,9 @@ export default class Header extends Component {
     title: 'Profile',
   };
   renderGradient = () => (
-    <LinearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <Stop offset="0" stopColor={scheme.dark.a} stopOpacity="1" />
-      <Stop offset="1" stopColor={scheme.dark.b} stopOpacity="1" />
+    <LinearGradient id="grad" x1="0%" y1="50%" x2="100%" y2="50%">
+      <Stop offset="0" stopColor={scheme.a} stopOpacity="1" />
+      <Stop offset="1" stopColor={scheme.b} stopOpacity="1" />
     </LinearGradient>
   );
   renderBackground = width => (
