@@ -102,6 +102,7 @@ class Profile extends Component {
 
   renderPopular = () => (
     <Carousel
+      screen="Profile"
       itemTextStyle={{ color: Colors.white, marginTop: 4, fontWeight: 'bold' }}
       title={Meta.popular_title}
       style={{

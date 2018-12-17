@@ -4,6 +4,7 @@ import { NavigationActions } from 'react-navigation';
 
 import { dispatch } from '../rematch/dispatch';
 import IdManager from '../IdManager';
+import logEvent from '../utils/logEvent';
 
 let _navigator;
 
@@ -26,7 +27,12 @@ function canNavigateWithinApp() {
   return !!firebase.auth().currentUser;
 }
 
-function navigateToUserSpecificScreen(routeName, uid, params = {}) {
+function navigateToUserSpecificScreen(
+  routeName,
+  uid,
+  params = {},
+  analytics = {},
+) {
   if (!canNavigateWithinApp()) return;
 
   if (!uid || typeof uid !== 'string') {
@@ -41,6 +47,18 @@ function navigateToUserSpecificScreen(routeName, uid, params = {}) {
   if (IdManager.isInteractable(uid)) groupId = IdManager.getGroupId(uid);
 
   navigate(routeName, { groupId, ...params, uid });
+
+  logEvent(`navigate_to_user_screen_${routeName}`, {
+    user: uid,
+    /*
+     * We can use this information later to compare against other events.
+     */
+    screen: routeName,
+    group_id: groupId,
+    // initial_screen:
+    purpose: 'Viewing more info on a user',
+    ...analytics,
+  });
 }
 
 function goBack(routeName) {

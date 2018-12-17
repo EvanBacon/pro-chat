@@ -21,8 +21,10 @@ class NewMatchesCarousel extends React.Component {
   }
 
   render() {
+    // TODO: Fix screen
     return (
       <Carousel
+        screen="Messages"
         destination="Chat"
         title={'Users'}
         style={styles.container}
