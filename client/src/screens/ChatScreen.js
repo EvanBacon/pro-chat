@@ -177,10 +177,10 @@ class Chat extends React.Component {
     // this.setState({ keyboard: 0 });
   };
 
-  deleteMessage = key => {
+  deleteMessage = messageId => {
     dispatch.chats.deleteMessageFromChannel({
       groupId: this.props.groupId,
-      key,
+      messageId,
     });
     // this.ref(`messages/${this.state.channel}/users/${this.uid}/${key}`).remove();
 
@@ -280,17 +280,18 @@ class Chat extends React.Component {
     const {
       // from: _from,
       _id,
+      user = {},
     } = message;
 
-    // const canDelete = _from === this.uid;
+    const canDelete = user._id === this.uid;
     if (message.text) {
       const options = [];
       if (message.text) {
         options.push('Copy Text');
       }
-      // if (canDelete) {
-      options.push('Delete Message');
-      // }
+      if (canDelete) {
+        options.push('Delete Message');
+      }
       options.push('Cancel');
       const cancelButtonIndex = options.length - 1;
       context.actionSheet().showActionSheetWithOptions(

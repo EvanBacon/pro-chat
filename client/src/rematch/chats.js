@@ -9,9 +9,7 @@ const firstCursorCollection = {};
 const cursorCollection = {};
 
 function transformMessageForGiftedChat({ message, user }) {
-  const {
-    key: _id, uid, timestamp: createdAt, ...existingMessage
-  } = message;
+  const { key: _id, uid, timestamp: createdAt, ...existingMessage } = message;
   console.log('TRANSFORMERESS', user);
 
   const _userObject = { name: user.name, _id: uid };
@@ -66,8 +64,29 @@ const chats = {
     subscribeToChannel: () => {
       console.warn('TODO: subscribeToChannel');
     },
-    deleteMessageFromChannel: ({ groupId, key }) => {
-      console.warn('TODO: deleteMessageFromChannel');
+    deleteMessageFromChannel: async ({
+      groupId,
+      messageId,
+      resolve,
+      reject,
+    }) => {
+      try {
+        dispatch.chats.removeMessage({ groupId, messageId });
+        await Fire.shared
+          .getMessagesCollection(groupId)
+          .doc(messageId)
+          .delete();
+
+        if (resolve) {
+          resolve();
+        }
+      } catch (error) {
+        if (reject) {
+          reject(error);
+        } else {
+          throw error;
+        }
+      }
     },
     loadEarlier: () => {
       console.warn('TODO: loadEarlier');
@@ -105,7 +124,8 @@ const chats = {
 
       // TODO: Nope...
       const user = await new Promise(res =>
-        dispatch.users.ensureUserIsLoadedAsync({ uid, callback: res }));
+        dispatch.users.ensureUserIsLoadedAsync({ uid, callback: res }),
+      );
       console.log('_parseMessage: has user', !!user, uid);
       //   const user = await Fire.shared.getUserAsync({ uid });
       if (user == null) {
@@ -125,7 +145,9 @@ const chats = {
 
       // / UGH
 
-      const sortedMessages = Object.values(messages).sort((a, b) => a.timestamp < b.timestamp);
+      const sortedMessages = Object.values(messages).sort(
+        (a, b) => a.timestamp < b.timestamp,
+      );
       dispatch.messages.updateWithMessage({
         groupId,
         message: sortedMessages[0],
@@ -170,11 +192,13 @@ const chats = {
         // if (exists) {
         dispatch.chats.update({ [groupId]: {} });
         // }
-        throw new Error("Error: chats.receivedMessage: chat group doesn't exist yet.");
+        throw new Error(
+          "Error: chats.receivedMessage: chat group doesn't exist yet.",
+        );
       }
 
       if (!snapshot.docChanges) {
-        throw new Error("Error: snapshot is invalid");
+        throw new Error('Error: snapshot is invalid');
       }
       snapshot.docChanges.forEach(({ type, doc }) => {
         console.log('Found message: parseMessagesSnapshot: ', type, doc.id);
