@@ -35,12 +35,12 @@ export const strings = {
     blocking_inward: `You cannot view this ${user}`,
 
     try_again: 'Try Again',
-    no_more_booty_title: `No ${userPlural} Around`,
-    no_more_booty_subtitle: `We cannot find any ${userPlural} in your area that you'd be interested in... Try again later, and invite your friends!`,
+    no_more_users_title: `No ${userPlural} Around`,
+    no_more_users_subtitle: `We cannot find any ${userPlural} in your area that you'd be interested in... Try again later, and invite your friends!`,
 
-    out_of_booty_title: `No More ${userPlural} Left`,
-    out_of_booty_subtitle: `You can swipe through them again, while we find more ${user}!`,
-    out_of_booty_action: 'Start Swiping',
+    out_of_users_title: `No More ${userPlural} Left`,
+    out_of_users_subtitle: `You can swipe through them again, while we find more ${user}!`,
+    out_of_users_action: 'Start Swiping',
 
     rated_as: 'Rated As',
     tap_to_get_rating: 'Tap to get a Rating!',
@@ -78,8 +78,8 @@ export const strings = {
 
     report_user_question: 'What Are You Reporting?',
 
-    report_photo_is_not_a_booty_title: `Photo is Not A ${user}`,
-    report_photo_is_not_a_booty_subtitle:
+    report_photo_is_not_a_users_title: `Photo is Not A ${user}`,
+    report_photo_is_not_a_users_subtitle:
       'What is the photo of? Our algorithm can better prevent this kind of image if you can be descriptive!',
 
     report_harassment_title: 'Harassment',

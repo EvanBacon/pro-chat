@@ -19,14 +19,11 @@ export default class MessageRow extends React.PureComponent {
   };
 
   onLongPress = () => {
-    console.warn('TODO: MessageRow.onLongPress');
     dispatch.chats.deleteChannel(this.props.groupId);
   };
 
   render() {
     const { name, image, isSeen, isOutgoing, message, timeAgo } = this.props;
-
-    console.log('YEET', { isSeen, isOutgoing });
     return (
       <TouchableHighlight
         style={{ backgroundColor: '#EDF2F6' }}

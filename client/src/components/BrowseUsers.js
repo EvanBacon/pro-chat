@@ -128,8 +128,8 @@ export default class BrowseUsers extends Component {
             buttonTitle={Meta.try_again}
             color="white"
             image={Images.empty.users}
-            title={Meta.no_more_booty_title}
-            subtitle={Meta.no_more_booty_subtitle}
+            title={Meta.no_more_users_title}
+            subtitle={Meta.no_more_users_subtitle}
           />
         </Gradient>
       );

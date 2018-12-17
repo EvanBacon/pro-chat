@@ -5,6 +5,7 @@ import {
 
 import Meta from '../constants/Meta';
 import firebase from '../universal/firebase';
+import Links from '../constants/Links';
 
 export default class EULA extends React.PureComponent {
   render() {
@@ -27,28 +28,28 @@ export default class EULA extends React.PureComponent {
 }
 
 async function openPrivacyAsync() {
-  const url = 'http://bootyalert.net/privacy'; // / <- Refactor this if its not EULA dont link it to there
+  const url = Links.privacy
   firebase.analytics().logEvent('opened_privacy');
   try {
-    const supported = await Linking.canOpenURL(url);
-    if (supported) {
-      await Linking.openURL(url);
-    }
+    openUrlAsync(Links.privacy)
   } catch (error) {
     Alert.alert(Meta.privacy_policy_error);
   }
 }
 
 async function openTermsOfServiceAsync() {
-  const url = 'http://bootyalert.net/terms'; // / <- Refactor this if its not EULA dont link it to there
   firebase.analytics().logEvent('opened_terms');
   try {
-    const supported = await Linking.canOpenURL(url);
-    if (supported) {
-      await Linking.openURL(url);
-    }
-  } catch ({ message }) {
-    Alert.alert(message);
+    openUrlAsync(Links.terms)
+  } catch (error) {
+    Alert.alert(Meta.terms_of_service_error);
+  }
+}
+
+async function openUrlAsync(url) {
+  const supported = await Linking.canOpenURL(url);
+  if (supported) {
+    await Linking.openURL(url);
   }
 }
 

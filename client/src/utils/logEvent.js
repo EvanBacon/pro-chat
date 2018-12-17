@@ -8,8 +8,8 @@ function ensureFormat(input) {
   }
 }
 
-export default function logEvent(eventName, ...props) {
-  const eventName = ensureFormat(someWackyValue);
+export default function logEvent(inputEventName, ...props) {
+  const eventName = ensureFormat(inputEventName);
 
-  firebase.analytics().logEvent(eventName);
+  return firebase.analytics().logEvent(eventName);
 }

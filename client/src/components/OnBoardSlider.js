@@ -295,7 +295,7 @@ class InputSlider extends React.Component {
   cards = {
     signIn: {
       key: 'signIn',
-      image: Images.onboard.booty,
+      image: Images.onboard.signin,
       title: Meta.on_boarding_signin_title,
       subtitle: Meta.on_boarding_signin_subtitle,
       accessoryView: <Button.Facebook />,

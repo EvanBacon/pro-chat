@@ -23,7 +23,8 @@ import Images from '../Images';
 import NavigationService from '../navigation/NavigationService';
 import firebase from '../universal/firebase';
 import emailSupport, { Subjects } from '../utils/sendEmailToSupport';
-import transformInterestTitle from '../utils/transformInterestTitle';
+import * as transformTitle from '../utils/transformTitle';
+import Links from '../constants/Links';
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 const AnimatedText = Animated.createAnimatedComponent(Text);
@@ -334,8 +335,8 @@ class SwitchCell extends React.Component {
     const switchComponent = (
       <Switch
         onValueChange={this.props.onValueChange}
-        trackColor={Colors.white}
-        _thumbColor={enabled ? Colors.tintColor : Colors.white}
+        trackColor={{ true: Colors.tintColor }}
+        thumbColor={Colors.white}
         value={enabled}
       />
     );
@@ -349,14 +350,9 @@ class SwitchCell extends React.Component {
   }
 }
 
-const urls = {
-  support: 'issues',
-  privacy: 'blob/master/pages/PRIVACY.md',
-  terms: 'blob/master/pages/TERMS.md',
-  contact: 'blob/master/pages/CONTACT.md',
-  // licenses: "licenses",
-  eula: 'blob/master/pages/EULA.md',
-};
+function sleep(t) {
+  return new Promise(res => setTimeout(res, t));
+}
 
 class SettingsScreen extends React.Component {
   static navigationOptions = { title: 'Settings' };
@@ -365,12 +361,22 @@ class SettingsScreen extends React.Component {
   setCarousel = false;
   constructor(props) {
     super(props);
-    const { searchRange } = props.user;
-    const rangeIndex = this.ranges.indexOf(searchRange || 50);
-    this.state = {
-      searchRange: rangeIndex || this.ranges.length - 1,
-      notificationsEnabled: props.notificationsEnabled,
-    };
+    const { user } = props;
+    if (user) {
+      const rangeIndex = this.ranges.indexOf(user.searchRange || 50);
+      this.state = {
+        searchRange: rangeIndex || this.ranges.length - 1,
+        notificationsEnabled: props.notificationsEnabled,
+      };
+    } else {
+      /*
+       * Lets try and avoid hitting this page without a user.
+       * I would rather we fix navigation than make each prop here handle a missing user.
+       */
+      throw new Error(
+        'Attempting to access the settings page without a user loaded.',
+      );
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -395,27 +401,69 @@ class SettingsScreen extends React.Component {
 
   openWeb = (url, title) =>
     NavigationService.navigate('Website', {
-      url: `https://github.com/evanbacon/bute/${url}`,
+      url,
       title,
     });
 
+  get carouselScrollNode() {
+    if (this.scrollView && this.scrollView.getNode) {
+      const node = this.scrollView.getNode();
+      if (node.scrollToOffset) {
+        return node;
+      }
+    }
+    return null;
+  }
+
+  scrollCarouselToOffset = (offset, animated = true) => {
+    const node = this.carouselScrollNode;
+    if (node) {
+      node.scrollToOffset({
+        animated,
+        offset,
+      });
+    }
+  };
+
+  setCarouselRef = async val => {
+    this.scrollView = val;
+    if (val && !this.setCarousel) {
+      this.setCarousel = true;
+
+      await sleep(5);
+
+      const carouselOffset = this.state.searchRange * 130;
+
+      this.scrollCarouselToOffset(carouselOffset);
+    }
+  };
+
   render() {
+    const { user } = this.props;
+
+    if (!user) {
+      return null;
+    }
+
     const onPress = {
       privacy: () => {},
-      eula: () => this.openWeb(urls.eula, Meta.eula),
+      eula: () => this.openWeb(Links.eula, Meta.eula),
       team: () => {
         NavigationService.navigate('DevTeam');
       },
       interest: () => {
         NavigationService.navigate('ChooseInterest');
       },
+      gender: () => {
+        NavigationService.navigate('ChooseGender');
+      },
       logout: () => dispatch.auth.logoutAsync(),
       delete: () => {},
       update: Util.reload,
-      privacypolicy: () => this.openWeb(urls.privacy, Meta.privacy_policy),
-      tos: () => this.openWeb(urls.terms, Meta.terms_of_service),
+      privacypolicy: () => this.openWeb(Links.privacy, Meta.privacy_policy),
+      tos: () => this.openWeb(Links.terms, Meta.terms_of_service),
       licenses: () => NavigationService.navigate('Licenses'),
-      help: () => this.openWeb(urls.contact, Meta.contact),
+      help: () => this.openWeb(Links.contact, Meta.contact),
       contact: () => emailSupport({ subject: Subjects.general }),
     };
 
@@ -429,37 +477,12 @@ class SettingsScreen extends React.Component {
           <Carousel
             style={{ paddingBottom: 32 }}
             data={this.ranges}
-            getRef={val => {
-              const milesIndex = 2; // / this.props.milesIndex;
-              this.scrollView = val;
-              if (val && !this.setCarousel) {
-                this.setCarousel = true;
-
-                setTimeout(() => {
-                  const node = ((val || {}).getNode && val.getNode()) || {};
-                  node.scrollToOffset &&
-                    node.scrollToOffset({
-                      animated: true,
-                      offset: this.state.searchRange * 130,
-                    });
-                }, 5);
-              }
-            }}
+            getRef={this.setCarouselRef}
             onSelectIndex={(index, searchRange) =>
               dispatch.user.updateUserProfile({ searchRange })
             }
           />
-          {/* {<View style={{justifyContent: 'center', alignItems: 'center'}}>
-
-            <Button.Outline
-              style={{}}
-              onPress={_ => {
-
-              }}>Select Range<Button.Outline>
-
-          </View>} */}
           <Divider />
-          {/* <ArrowCell title={"Privacy Settings"} onPress={onPress.privacy} /> */}
           <SwitchCell
             title={Meta.notifications}
             onValueChange={notificationsEnabled => {
@@ -476,7 +499,7 @@ class SettingsScreen extends React.Component {
               );
             }}
             onPress={null}
-            enabled={this.props.user.notificationsEnabled}
+            enabled={user.notificationsEnabled}
           />
 
           <ArrowCell title={Meta.the_team} onPress={onPress.team} />
@@ -491,6 +514,23 @@ class SettingsScreen extends React.Component {
           <ArrowCell title={Meta.help_support} onPress={onPress.help} />
 
           <TableRowCell
+            title={'Select Gender'}
+            onPress={onPress.gender}
+            accessoryView={
+              <Text
+                style={{
+                  fontFamily: 'DINPro-Light',
+                  color: 'white',
+                  fontSize: 16,
+                  textAlign: 'right',
+                }}
+              >
+                {transformTitle.gender(user.gender || '')}
+              </Text>
+            }
+          />
+
+          <TableRowCell
             title={Meta.interested_in}
             onPress={onPress.interest}
             accessoryView={
@@ -502,7 +542,7 @@ class SettingsScreen extends React.Component {
                   textAlign: 'right',
                 }}
               >
-                {transformInterestTitle(this.props.user.interest || '')}
+                {transformTitle.interest(user.interest || '')}
               </Text>
             }
           />
@@ -523,34 +563,10 @@ class SettingsScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: '#fff',
     paddingTop: 64,
   },
 });
 
-// const mergeProps = (state, actions, localProps) => {
-//   // const { uid } = Fire.shared;
-
-//   // const { user = {}, ...props } = state;
-
-//   // const user = users[uid] || {};
-//   // const image = images[uid];
-
-//   const userProps = {
-//     // ...user,
-//     // interest: user.interest,
-//     // searchRange: user.searchRange,
-//     // notificationsEnabled: user.notificationsEnabled,
-//   };
-
-//   return {
-//     ...localProps,
-//     ...state,
-//     ...actions,
-//     ...userProps,
-//   };
-// };
-
 export default connect(({ user }) => ({
-  user: user || {},
+  user,
 }))(SettingsScreen);

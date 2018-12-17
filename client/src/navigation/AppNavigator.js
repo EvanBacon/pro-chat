@@ -27,6 +27,8 @@ import UnderAgeScreen from '../screens/UnderAgeScreen';
 import WebsiteScreen from '../screens/WebsiteScreen';
 import NavigationService from './NavigationService';
 import OnBoarding from '../screens/OnBoardingScreen';
+
+import ChooseGender from '../screens/ChooseGenderScreen';
 // import CameraScreen from '../screens/CameraScreen';
 import ReportScreen from '../screens/ReportScreen';
 import Fire from '../Fire';
@@ -112,6 +114,7 @@ MainTab.navigationOptions = {
 const AppStack = createStackNavigator(
   {
     MainTab: MainTab,
+    ChooseGender,
     AccountUnderReview: AccountUnderReviewScreen,
     Chat: ChatScreen,
     Profile: ProfileScreen,

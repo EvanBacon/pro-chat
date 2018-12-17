@@ -32,11 +32,9 @@ export default class Slider extends React.Component {
     // const { navigator } = this.props;
   };
 
-  renderItem = (item) => {
+  renderItem = item => {
     if (item) {
-      const {
-        uid, name, image, about, rating, index,
-      } = item;
+      const { uid, name, image, about, rating, index } = item;
       return (
         <SliderCell
           key={uid}
@@ -54,14 +52,14 @@ export default class Slider extends React.Component {
     }
     return null;
   };
-  _onScrollEnd = (event) => {
+  _onScrollEnd = event => {
     const offset = { ...event.nativeEvent.contentOffset };
     const page = this._calculateCurrentPage(offset.x);
     // estimatedPage = page
     this.props.onSelectIndex(page);
     // this._setCurrentPage(page);
   };
-  _calculateCurrentPage = (offset) => {
+  _calculateCurrentPage = offset => {
     const { itemWidth } = this.state;
     return Math.floor(offset / itemWidth);
   };
@@ -78,7 +76,7 @@ export default class Slider extends React.Component {
     });
   };
 
-  onSwiped = (cardIndex) => {
+  onSwiped = cardIndex => {
     this.updatedIndex(cardIndex + 1);
   };
   jumpTo = () => {
@@ -88,7 +86,7 @@ export default class Slider extends React.Component {
   swipeBack = () => {
     if (!this.state.isSwipingBack) {
       this.setIsSwipingBack(true, () => {
-        this.swiper.swipeBack((index) => {
+        this.swiper.swipeBack(index => {
           this.setIsSwipingBack(false);
           this.updatedIndex(index);
         });
@@ -104,7 +102,7 @@ export default class Slider extends React.Component {
     );
   };
 
-  updatedIndex = (index) => {
+  updatedIndex = index => {
     const dataLength = (this.props.items || []).length;
     let _index = index;
     if (index >= dataLength) {
@@ -141,15 +139,15 @@ export default class Slider extends React.Component {
             alignItems: 'center',
             backgroundColor: debug ? 'yellow' : 'transparent',
           }}
-          ref={(swiper) => {
+          ref={swiper => {
             this.swiper = swiper;
             if (this.props.swiperRef) this.props.swiperRef(swiper);
           }}
-          onSwipedLeft={(index) => {
+          onSwipedLeft={index => {
             this.props.onDislike(data[index].uid);
             this.onSwiped(index);
           }}
-          onSwipedRight={(index) => {
+          onSwipedRight={index => {
             this.props.onLike(data[index].uid);
             this.onSwiped(index);
           }}
@@ -183,8 +181,7 @@ export default class Slider extends React.Component {
               backgroundOpacity: '0.75',
               fontColor: '#FFF',
               style: {
-                wrapper: {
-                },
+                wrapper: {},
                 label: {
                   position: 'absolute',
                   right: 0,
@@ -215,29 +212,28 @@ export default class Slider extends React.Component {
                     <Button onPress={this.jumpTo} title="Jump to last index" /> */}
         </Swiper>
         {data.length === 0 ||
-          (!this.props.isInfinite &&
-            this.state.swipedAllCards && (
-              <Gradient
-                style={{
-                  flex: 1,
-                  justifyContent: 'center',
-                  alignItems: 'center',
+          (!this.props.isInfinite && this.state.swipedAllCards && (
+            <Gradient
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <EmptyListMessage
+                inverted
+                onPress={() => {
+                  this.setState({ swipedAllCards: false });
+                  this.updatedIndex(0);
                 }}
-              >
-                <EmptyListMessage
-                  inverted
-                  onPress={() => {
-                    this.setState({ swipedAllCards: false });
-                    this.updatedIndex(0);
-                  }}
-                  color="white"
-                  image={Images.empty.users}
-                  title={Meta.out_of_booty_title}
-                  subtitle={Meta.out_of_booty_subtitle}
-                  buttonTitle={Meta.out_of_booty_action}
-                />
-              </Gradient>
-            ))}
+                color="white"
+                image={Images.empty.users}
+                title={Meta.out_of_users_title}
+                subtitle={Meta.out_of_users_subtitle}
+                buttonTitle={Meta.out_of_users_action}
+              />
+            </Gradient>
+          ))}
       </View>
     );
     // return (
