@@ -1,4 +1,4 @@
-Bütē is a mobile messaging application which provides the capability to conversation with those you talk to frequently, while allowing the use of posting imagery, messages, and gifs.
+Butē is a mobile messaging application which provides the capability to conversation with those you talk to frequently, while allowing the use of posting imagery, messages, and gifs.
 
 Butē organizes those who you talk to in a list format and shows contextual information such as timing of last message, and a preview of the message on the list before selecting the message. 
 
