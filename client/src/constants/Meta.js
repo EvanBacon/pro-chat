@@ -11,8 +11,9 @@ export const strings = {
     no_location_action: 'Turn Location On',
 
     no_messages_title: 'No Messages Yet',
-    no_messages_subtitle: `Go back to the home screen and start looking for hot ${userPlural}`,
-    no_messages_action: 'Start Swiping',
+    // no_messages_subtitle: `Select a user above to back to the home screen and start looking for hot ${userPlural}`,
+    no_messages_subtitle: `Select a user above to start chatting.`,
+    no_messages_action: 'Start Messaging',
 
     no_matches_title: 'No Matches Yet',
     no_matches_subtitle: `Go back to the home screen and start looking for hot ${userPlural}`,

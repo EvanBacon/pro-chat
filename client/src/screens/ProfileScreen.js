@@ -114,15 +114,20 @@ class Profile extends Component {
     />
   );
 
-  renderTags = (tags, isUser, name) => (
-    <TagCollection
-      style={{}}
-      title={Meta.user_interests_title}
-      tags={tags}
-      isUser={isUser}
-      name={name}
-    />
-  );
+  renderTags = (tags, isUser, name) => {
+    if (!tags || !tags.length) {
+      return null;
+    }
+    return (
+      <TagCollection
+        style={{}}
+        title={Meta.user_interests_title}
+        tags={tags}
+        isUser={isUser}
+        name={name}
+      />
+    );
+  };
 
   get isBlocked() {
     const { relationship } = this.props;

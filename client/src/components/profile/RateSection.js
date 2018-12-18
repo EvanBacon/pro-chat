@@ -6,6 +6,7 @@ import { Dimensions, StyleSheet, ViewPropTypes } from 'react-native';
 import Relationship from '../../models/Relationship';
 import Footer from '../Footer';
 import Section from '../primitives/Section';
+import Settings from '../../constants/Settings';
 
 export default class RateSection extends Component {
   static propTypes = {
@@ -20,6 +21,10 @@ export default class RateSection extends Component {
 
   render() {
     const { title, style, uid } = this.props;
+
+    if (!Settings.isADatingApp) {
+      return null;
+    }
     return (
       <Section title={title} style={[style, styles.container]}>
         <Footer

@@ -6,7 +6,7 @@ import { Platform } from 'react-native';
 import sizeInfo from '../utils/whatAmI';
 import Secret from '../../Secret';
 
-const isInAppleReview = true;
+const isInAppleReview = Platform.OS === 'ios' && true;
 
 const realName = 'Bütē Alert';
 
@@ -69,6 +69,7 @@ const Settings = {
     Permissions.NOTIFICATIONS,
     Permissions.CONTACTS,
   ],
+  isADatingApp: false,
   hideBooty: isInAppleReview,
   noName: 'Sasuke Uchiha',
   isIos: Platform.OS === 'ios',
@@ -83,7 +84,6 @@ const Settings = {
   isSimulator: !Constants.isDevice,
   debug,
   ignoredYellowBox: ['Class ABI', 'Module ABI', "Audio doesn't exist"],
-  slug: debug ? 'crossy-road' : 'users',
   isCacheProfileUpdateActive: true, // !debug || false,
   shouldDelayFirebaseProfileSyncInMinutes: 60,
   canEditPhoto: false,
@@ -115,34 +115,34 @@ const Settings = {
   debugging,
   giphyAPI,
   fakeLikes: [
-    {
-      name: 'Young Thug',
-      created_time: Date.now(),
-    },
-    {
-      name: 'XXXTENTACION',
-      created_time: Date.now(),
-    },
-    {
-      name: 'Lil Tay',
-      created_time: Date.now(),
-    },
-    {
-      name: 'Batman',
-      created_time: Date.now(),
-    },
-    {
-      name: 'Legos',
-      created_time: Date.now(),
-    },
-    {
-      name: 'Thiccness',
-      created_time: Date.now(),
-    },
-    {
-      name: 'Dexter',
-      created_time: Date.now(),
-    },
+    // {
+    //   name: 'Young Thug',
+    //   created_time: Date.now(),
+    // },
+    // {
+    //   name: 'XXXTENTACION',
+    //   created_time: Date.now(),
+    // },
+    // {
+    //   name: 'Lil Tay',
+    //   created_time: Date.now(),
+    // },
+    // {
+    //   name: 'Batman',
+    //   created_time: Date.now(),
+    // },
+    // {
+    //   name: 'Legos',
+    //   created_time: Date.now(),
+    // },
+    // {
+    //   name: 'Thiccness',
+    //   created_time: Date.now(),
+    // },
+    // {
+    //   name: 'Dexter',
+    //   created_time: Date.now(),
+    // },
   ],
 };
 

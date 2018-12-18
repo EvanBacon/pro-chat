@@ -26,6 +26,7 @@ import emailSupport, { Subjects } from '../utils/sendEmailToSupport';
 import * as transformTitle from '../utils/transformTitle';
 import Links from '../constants/Links';
 import { SocialTypes } from '../rematch/auth';
+import Settings from '../constants/Settings';
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 const AnimatedText = Animated.createAnimatedComponent(Text);
@@ -486,35 +487,41 @@ class SettingsScreen extends React.Component {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 128 - 81 }}
         >
-          <Carousel
-            style={{ paddingBottom: 32 }}
-            data={this.ranges}
-            getRef={this.setCarouselRef}
-            onSelectIndex={(index, searchRange) =>
-              dispatch.user.updateUserProfile({ searchRange })
-            }
-          />
+          {!Settings.isInAppleReview && (
+            <Carousel
+              style={{ paddingBottom: 32 }}
+              data={this.ranges}
+              getRef={this.setCarouselRef}
+              onSelectIndex={(index, searchRange) =>
+                dispatch.user.updateUserProfile({ searchRange })
+              }
+            />
+          )}
           <Divider />
-          <SwitchCell
-            title={Meta.notifications}
-            onValueChange={notificationsEnabled => {
-              if (Platform.OS === 'ios') {
-                Haptic.selection();
-              }
-              if (notificationsEnabled) {
-                dispatch.notifications.registerAsync();
-                dispatch.iid.setAsync();
-              }
+          {!Settings.isInAppleReview && (
+            <SwitchCell
+              title={Meta.notifications}
+              onValueChange={notificationsEnabled => {
+                if (Platform.OS === 'ios') {
+                  Haptic.selection();
+                }
+                if (notificationsEnabled) {
+                  dispatch.notifications.registerAsync();
+                  dispatch.iid.setAsync();
+                }
 
-              this.setState({ notificationsEnabled }, _ =>
-                dispatch.user.updateUserProfile({ notificationsEnabled }),
-              );
-            }}
-            onPress={null}
-            enabled={user.notificationsEnabled}
-          />
+                this.setState({ notificationsEnabled }, _ =>
+                  dispatch.user.updateUserProfile({ notificationsEnabled }),
+                );
+              }}
+              onPress={null}
+              enabled={user.notificationsEnabled}
+            />
+          )}
 
-          <ArrowCell title={Meta.the_team} onPress={onPress.team} />
+          {!Settings.isInAppleReview && (
+            <ArrowCell title={Meta.the_team} onPress={onPress.team} />
+          )}
           <ArrowCell title={Meta.eula} onPress={onPress.eula} />
           <ArrowCell
             title={Meta.privacy_policy}
@@ -525,11 +532,32 @@ class SettingsScreen extends React.Component {
 
           <ArrowCell title={Meta.help_support} onPress={onPress.help} />
 
-          <TableRowCell
-            title={'Link to Facebook'}
-            onPress={onPress.upgradeToFacebook}
-            accessoryView={
-              isConnectedToFacebook ? (
+          {!Settings.isInAppleReview && (
+            <TableRowCell
+              title={'Link to Facebook'}
+              onPress={onPress.upgradeToFacebook}
+              accessoryView={
+                isConnectedToFacebook ? (
+                  <Text
+                    style={{
+                      fontFamily: 'DINPro-Light',
+                      color: 'white',
+                      fontSize: 16,
+                      textAlign: 'right',
+                    }}
+                  >
+                    Linked
+                  </Text>
+                ) : null
+              }
+            />
+          )}
+
+          {!Settings.isInAppleReview && (
+            <TableRowCell
+              title={'Select Gender'}
+              onPress={onPress.gender}
+              accessoryView={
                 <Text
                   style={{
                     fontFamily: 'DINPro-Light',
@@ -538,45 +566,30 @@ class SettingsScreen extends React.Component {
                     textAlign: 'right',
                   }}
                 >
-                  Linked
+                  {transformTitle.gender(user.gender || '')}
                 </Text>
-              ) : null
-            }
-          />
+              }
+            />
+          )}
 
-          <TableRowCell
-            title={'Select Gender'}
-            onPress={onPress.gender}
-            accessoryView={
-              <Text
-                style={{
-                  fontFamily: 'DINPro-Light',
-                  color: 'white',
-                  fontSize: 16,
-                  textAlign: 'right',
-                }}
-              >
-                {transformTitle.gender(user.gender || '')}
-              </Text>
-            }
-          />
-
-          <TableRowCell
-            title={Meta.interested_in}
-            onPress={onPress.interest}
-            accessoryView={
-              <Text
-                style={{
-                  fontFamily: 'DINPro-Light',
-                  color: 'white',
-                  fontSize: 16,
-                  textAlign: 'right',
-                }}
-              >
-                {transformTitle.interest(user.interest || '')}
-              </Text>
-            }
-          />
+          {!Settings.isInAppleReview && (
+            <TableRowCell
+              title={Meta.interested_in}
+              onPress={onPress.interest}
+              accessoryView={
+                <Text
+                  style={{
+                    fontFamily: 'DINPro-Light',
+                    color: 'white',
+                    fontSize: 16,
+                    textAlign: 'right',
+                  }}
+                >
+                  {transformTitle.interest(user.interest || '')}
+                </Text>
+              }
+            />
+          )}
 
           <Divider />
           {/* <ArrowCell title={"Check Updates"} onPress={onPress.update} /> */}

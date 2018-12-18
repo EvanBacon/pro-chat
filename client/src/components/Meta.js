@@ -3,6 +3,7 @@ import { Text, View } from 'react-native';
 
 import RatingTitle from './RatingTitle';
 import Colors from '../constants/Colors';
+import Settings from '../constants/Settings';
 
 export default ({
   style,
@@ -20,12 +21,14 @@ export default ({
     <Text numberOfLines={3} style={[styles.subtitle, { color }]}>
       {subtitle}
     </Text>
-    <RatingTitle
-      title={rating}
-      uid={uid}
-      style={{}}
-      onRatingPressed={onRatingPressed}
-    />
+    {!Settings.isInAppleReview && (
+      <RatingTitle
+        title={rating}
+        uid={uid}
+        style={{}}
+        onRatingPressed={onRatingPressed}
+      />
+    )}
   </View>
 );
 
