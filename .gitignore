@@ -9,3 +9,4 @@ archive
 *.pem
 *.pkey
 client/ios/b-t-.xcworkspace/xcuserdata/evanbacon.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist
+firestore.rules

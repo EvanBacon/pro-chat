@@ -112,9 +112,6 @@ const chats = {
     updatedInputText: () => {
       console.warn('TODO: updatedInputText');
     },
-    getLastMessage: () => {
-      console.warn('TODO: getLastMessage');
-    },
     deleteChannel: async groupId => {
       console.log('deleteMessageThread: ', groupId);
 
@@ -162,13 +159,6 @@ const chats = {
     },
     updatedGifOpened: () => {
       console.warn('TODO: updatedGifOpened');
-    },
-    didRecieveMessageKey: () => {
-      console.warn('TODO: didRecieveMessageKey');
-      // / Set the `seen` value
-    },
-    getChannelForUser: () => {
-      console.warn('TODO: getChannelForUser');
     },
     _parseMessage: async ({ message, groupId }, { chats }) => {
       if (chats[groupId] && chats[groupId][message.key]) {
