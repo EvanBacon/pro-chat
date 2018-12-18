@@ -149,7 +149,7 @@ export const fromLibrary = async () => {
     return;
   }
 
-  const { uri: reducedUri } = await reduceImageAsync(uri);
+  const { uri: reducedUri } = await shrinkImageAsync(uri);
 
   return reducedUri;
 };
@@ -169,7 +169,7 @@ export const fromCamera = async () => {
     return;
   }
 
-  const { uri: reducedUri } = await reduceImageAsync(uri);
+  const { uri: reducedUri } = await shrinkImageAsync(uri);
 
   return reducedUri;
 

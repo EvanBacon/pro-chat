@@ -13,7 +13,7 @@ export default class AccessoryBar extends Component {
     showGif: false,
   };
   render() {
-    const { onSend, channel, onGif, text, gifActive } = this.props;
+    const { onSend, groupId, onGif, text, gifActive } = this.props;
     const gifDisabled = !(text && text.length > 0);
     return (
       <View
@@ -30,16 +30,17 @@ export default class AccessoryBar extends Component {
           onPress={async () => {
             const image = await fromLibrary();
             if (image) {
+              const storagePath = `messages/${groupId}/${uuid.v4()}.jpg`;
               const storageImageUrl = await reduceAndUploadLocalImageAsync(
                 image,
-                `messages/${channel}/${uuid.v4()}.jpg`,
+                storagePath,
                 function() {},
               );
-              onSend([{ image: storageImageUrl }]);
+              onSend([{ image: storageImageUrl, storagePath }]);
               if (firebase.analytics) {
                 firebase.analytics().logEvent('sent_library_picture', {
                   url: storageImageUrl,
-                  channel,
+                  groupId,
                 });
               }
             }
@@ -50,17 +51,18 @@ export default class AccessoryBar extends Component {
           onPress={async () => {
             const image = await fromCamera();
             if (image) {
+              const storagePath = `messages/${groupId}/${uuid.v4()}.jpg`;
               const storageImageUrl = await reduceAndUploadLocalImageAsync(
                 image,
-                `messages/${channel}/${uuid.v4()}.jpg`,
+                storagePath,
                 function() {},
               );
 
-              onSend([{ image: storageImageUrl }]);
+              onSend([{ image: storageImageUrl, storagePath }]);
               if (firebase.analytics) {
                 firebase.analytics().logEvent('sent_camera_picture', {
                   url: storageImageUrl,
-                  channel,
+                  groupId,
                 });
               }
             }
@@ -74,7 +76,7 @@ export default class AccessoryBar extends Component {
               if (firebase.analytics) {
                 firebase
                   .analytics()
-                  .logEvent('shared_location', { location, channel });
+                  .logEvent('shared_location', { location, groupId });
               }
             }
           }}

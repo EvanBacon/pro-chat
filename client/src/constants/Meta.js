@@ -137,7 +137,7 @@ export const strings = {
     app_name: expoApp.name,
     settings_version: `Version ${expoApp.version}`,
     settigns_build: `Build 5 ${expoApp.build}`,
-    popular_title: `Popular ${user}`,
+    popular_title: `Popular ${userPlural}`,
     user_interests_title: 'Interests',
     matches: 'Matches',
     messages: 'Messages',

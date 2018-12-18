@@ -152,8 +152,8 @@ class Chat extends React.Component {
         //   },
         // },
       };
-      ['image', 'text', 'location'].forEach(key => {
-        if (message[key]) chat[key] = message[key];
+      ['image', 'storagePath', 'text', 'location'].forEach(key => {
+        if (key in message) chat[key] = message[key];
       });
       Fire.shared.sendMessage(chat, this.props.groupId);
     }
@@ -177,12 +177,13 @@ class Chat extends React.Component {
     // this.setState({ keyboard: 0 });
   };
 
-  deleteMessage = messageId => {
+  deleteMessage = message => {
     dispatch.chats.deleteMessageFromChannel({
       groupId: this.props.groupId,
-      messageId,
+      messageId: message._id,
+      storagePath: message.storagePath,
     });
-    // this.ref(`messages/${this.state.channel}/users/${this.uid}/${key}`).remove();
+    // this.ref(`messages/${this.state.groupId}/users/${this.uid}/${key}`).remove();
 
     // /// Optimistic UI - Remove Message Right Away ... This Could Be Faster Tho...
     // let _messages = [];
@@ -216,14 +217,14 @@ class Chat extends React.Component {
 
   renderBubble = props => <ChatBubble {...props} />;
 
-  onLoadEarlier = () => dispatch.chats.loadEarlier(this.props.channel);
+  onLoadEarlier = () => dispatch.chats.loadEarlier(this.props.groupId);
 
   onPressAvatar = ({ _id: uid }) =>
     NavigationService.navigateToUserSpecificScreen('Profile', uid);
 
   renderAccessory = () => (
     <AccessoryBar
-      channel={this.props.channel}
+      groupId={this.props.groupId}
       text={this.state.userInput}
       gifActive={this.state.gifActive}
       onSend={this.onSendMessage}
@@ -256,7 +257,7 @@ class Chat extends React.Component {
     // this.onSendMessage([{ image: { uri: url, name: this.state.userInput } }]);
     firebase
       .analytics()
-      .logEvent('sent_gif', { channel: this.props.channel, url });
+      .logEvent('sent_gif', { groupId: this.props.groupId, url });
   };
 
   onInputTextChanged = text => {
@@ -265,12 +266,12 @@ class Chat extends React.Component {
       gifOpen = false;
     }
     // dispatch.chats.updatedInputText({
-    //   channel: this.props.channel,
+    //   groupId: this.props.groupId,
     //   input: text,
     // });
     this.setState({ userInput: text });
     // dispatch.chats.updatedGifOpened({
-    //   channel: this.props.channel,
+    //   groupId: this.props.groupId,
     //   isOpened: gifOpen,
     // });
     this.isUserEditing = text !== '';
@@ -284,14 +285,17 @@ class Chat extends React.Component {
     } = message;
 
     const canDelete = user._id === this.uid;
+
+    const options = [];
+
     if (message.text) {
-      const options = [];
-      if (message.text) {
-        options.push('Copy Text');
-      }
-      if (canDelete) {
-        options.push('Delete Message');
-      }
+      options.push('Copy Text');
+    }
+    if (canDelete) {
+      options.push('Delete Message');
+    }
+
+    if (options.length) {
       options.push('Cancel');
       const cancelButtonIndex = options.length - 1;
       context.actionSheet().showActionSheetWithOptions(
@@ -305,7 +309,7 @@ class Chat extends React.Component {
               Clipboard.setString(message.text);
               break;
             case 'delete message':
-              this.deleteMessage(_id);
+              this.deleteMessage(message);
               break;
             default:
               break;

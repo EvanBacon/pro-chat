@@ -1,7 +1,7 @@
 import { ImageManipulator } from 'expo';
 import Settings from '../constants/Settings';
 
-function reduceImageAsync(uri) {
+function shrinkImageAsync(uri) {
   return ImageManipulator.manipulateAsync(
     uri,
     [{ resize: { width: Settings.avatarSize } }],
@@ -10,4 +10,4 @@ function reduceImageAsync(uri) {
     },
   );
 }
-export default reduceImageAsync;
+export default shrinkImageAsync;

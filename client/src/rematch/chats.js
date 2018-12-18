@@ -1,7 +1,7 @@
 'use-strict';
 
 import { dispatch } from './dispatch';
-
+import firebase from 'expo-firebase-app';
 import Fire from '../Fire';
 
 const firstCursorCollection = {};
@@ -67,6 +67,7 @@ const chats = {
     deleteMessageFromChannel: async ({
       groupId,
       messageId,
+      storagePath,
       resolve,
       reject,
     }) => {
@@ -76,6 +77,13 @@ const chats = {
           .getMessagesCollection(groupId)
           .doc(messageId)
           .delete();
+
+        if (storagePath) {
+          await firebase
+            .storage()
+            .ref(storagePath)
+            .delete();
+        }
 
         if (resolve) {
           resolve();
