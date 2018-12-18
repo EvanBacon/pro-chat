@@ -1,1 +1,1 @@
-https://github.com/EvanBacon/Bute/issues
+https://github.com/EvanBacon/expo-chat/issues

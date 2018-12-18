@@ -1,1 +1,1 @@
-https://github.com/EvanBacon/Bute/
+https://github.com/EvanBacon/expo-chat/
