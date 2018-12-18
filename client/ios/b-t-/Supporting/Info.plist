@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Bütē</string>
+	<string>Būtē</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -47,7 +47,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>3</string>
+	<string>4</string>
 	<key>FacebookAppID</key>
 	<string>214548308980520</string>
 	<key>FacebookDisplayName</key>
@@ -67,7 +67,7 @@
 		<true/>
 	</dict>
 	<key>NSCalendarsUsageDescription</key>
-	<string>Allow Bütē to access your calendar</string>
+	<string>Link your calendar to share and make events with your friends</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Take pictures to send to your friends</string>
 	<key>NSContactsUsageDescription</key>
@@ -75,15 +75,11 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Send your location to your friends</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Allow Bütē to access your microphone</string>
-	<key>NSMotionUsageDescription</key>
-	<string>Allow Bütē to access your device&apos;s accelerometer</string>
+	<string>Share video in chat</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Give Bütē permission to save photos</string>
+	<string>Save photos you&apos;ve edited</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Send your photos to people you chat with</string>
-	<key>NSRemindersUsageDescription</key>
-	<string>Allow Bütē to access your reminders</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
