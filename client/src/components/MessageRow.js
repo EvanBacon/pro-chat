@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TouchableHighlight, View } from 'react-native';
+import { Text, Alert, TouchableHighlight, View } from 'react-native';
 
 import UserImage from './UserImage';
 import IdManager from '../IdManager';
@@ -20,7 +20,18 @@ export default class MessageRow extends React.PureComponent {
   };
 
   onLongPress = () => {
-    dispatch.chats.deleteChannel(this.props.groupId);
+    Alert.alert(
+      `Are you sure you want to delete this chat group?`,
+      `This cannot be undone.`,
+      [
+        {
+          text: 'Delete',
+          onPress: () => dispatch.chats.deleteChannel(this.props.groupId),
+        },
+        { text: 'Nevermind', onPress: () => {}, style: 'cancel' },
+      ],
+      { cancelable: true },
+    );
   };
 
   render() {

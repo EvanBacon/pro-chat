@@ -60,7 +60,7 @@ export default class GmailStyleSwipeableRow extends Component {
       <Swipeable
         ref={this.updateRef}
         friction={2}
-        leftThreshold={80}
+        leftThreshold={3000}
         rightThreshold={40}
         renderLeftActions={this.renderLeftActions}
         renderRightActions={this.renderRightActions}

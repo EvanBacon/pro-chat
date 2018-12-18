@@ -3,6 +3,7 @@
 import { dispatch } from './dispatch';
 import firebase from 'expo-firebase-app';
 import Fire from '../Fire';
+import { FieldValue } from 'expo-firebase-firestore';
 
 const firstCursorCollection = {};
 
@@ -41,6 +42,15 @@ const chats = {
       return {
         ...nextState,
         [groupId]: messages,
+      };
+    },
+    removeGroup: (state, { groupId }) => {
+      if (!groupId || !(groupId in state)) {
+        return state;
+      }
+      const { [groupId]: groupToRemove, ...nextState } = state;
+      return {
+        ...nextState,
       };
     },
     addMessages: (state, { groupId, messages }) => {
@@ -105,8 +115,50 @@ const chats = {
     getLastMessage: () => {
       console.warn('TODO: getLastMessage');
     },
-    deleteChannel: () => {
-      console.warn('TODO: deleteChannel');
+    deleteChannel: async groupId => {
+      console.log('deleteMessageThread: ', groupId);
+
+      /* Remove a user's access to a message thread without giving them the ability to delete the other user's access */
+
+      // TODO: Bacon: This is broken natively...
+
+      // Fire.shared.getChatGroupDoc(groupId).update({
+      //   members: FieldValue.arrayRemove(Fire.shared.uid),
+      // });
+
+      const groupChatDocRef = Fire.shared.getChatGroupDoc(groupId);
+
+      try {
+        await Fire.shared.db.runTransaction(transaction => {
+          // This code may get re-run multiple times if there are conflicts.
+          return transaction.get(groupChatDocRef).then(doc => {
+            if (!doc.exists) {
+              throw new Error('Document does not exist!');
+            }
+            const { members = [] } = doc.data();
+            const userId = Fire.shared.uid;
+            const membersWithoutCurrentUser = members.filter(
+              uid => uid !== userId,
+            );
+            console.log('Deleting user:', {
+              userId,
+              members,
+              membersWithoutCurrentUser,
+            });
+            transaction.update(groupChatDocRef, {
+              members: membersWithoutCurrentUser,
+            });
+          });
+        });
+
+        dispatch.messages.remove({ id: groupId });
+        dispatch.chats.removeGroup({ groupId });
+      } catch (error) {
+        console.log('deleteChannel', { error });
+        alert(
+          "Error: Couldn't delete the group at this time, please try again later.",
+        );
+      }
     },
     updatedGifOpened: () => {
       console.warn('TODO: updatedGifOpened');

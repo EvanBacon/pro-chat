@@ -1,7 +1,7 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { FlatList, StyleSheet } from 'react-native';
 import { Divider } from 'react-native-paper';
-import { FlatList } from 'react-native-gesture-handler';
+// import { FlatList } from 'react-native-gesture-handler';
 
 import RefreshControl from './primitives/RefreshControl';
 import Colors from '../constants/Colors';

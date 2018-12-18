@@ -13,7 +13,7 @@ import MessageRow from './MessageRow';
 import UserList from './UserList';
 import tabBarImage from './Tabs/tabBarImage';
 import Assets from '../Assets';
-import SwipeableListRow from './primitives/SwipeableListRow';
+// import SwipeableListRow from './primitives/SwipeableListRow';
 import NewMatchesCarousel from './NewMatchesCarousel';
 class MessageList extends React.Component {
   state = {
@@ -44,24 +44,25 @@ class MessageList extends React.Component {
   renderItem = ({
     item: { name, image, isSeen, isOutgoing, message, timeAgo, groupId },
   }) => (
-    <SwipeableListRow
-      onSelect={direction => {
-        if (direction === 'left') {
-          console.log('TODO: Delete Chat');
-        }
-      }}
-    >
-      <MessageRow
-        name={name}
-        image={image}
-        isSeen={isSeen}
-        isOutgoing={isOutgoing}
-        message={message}
-        timeAgo={timeAgo}
-        groupId={groupId}
-      />
-    </SwipeableListRow>
+    <MessageRow
+      name={name}
+      image={image}
+      isSeen={isSeen}
+      isOutgoing={isOutgoing}
+      message={message}
+      timeAgo={timeAgo}
+      groupId={groupId}
+    />
   );
+  // <SwipeableListRow
+  //     onSelect={direction => {
+  //       if (direction === 'right') {
+  //         setTimeout(() => {
+  //           Fire.shared.deleteMessageThread(groupId);
+  //         }, 1000);
+  //       }
+  //     }}
+  //   ></SwipeableListRow>
 
   render() {
     const { style, data } = this.props;
