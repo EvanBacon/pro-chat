@@ -25,6 +25,7 @@ import firebase from '../universal/firebase';
 import emailSupport, { Subjects } from '../utils/sendEmailToSupport';
 import * as transformTitle from '../utils/transformTitle';
 import Links from '../constants/Links';
+import { SocialTypes } from '../rematch/auth';
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 const AnimatedText = Animated.createAnimatedComponent(Text);
@@ -447,6 +448,8 @@ class SettingsScreen extends React.Component {
       return null;
     }
 
+    const isConnectedToFacebook = !!user.fbuid;
+
     const onPress = {
       privacy: () => {},
       eula: () => this.openWeb(Links.eula, Meta.eula),
@@ -458,6 +461,13 @@ class SettingsScreen extends React.Component {
       },
       gender: () => {
         NavigationService.navigate('ChooseGender');
+      },
+      upgradeToFacebook: () => {
+        if (isConnectedToFacebook) {
+          //TODO: Bacon: Unlink Facebook
+        } else {
+          dispatch.auth.upgrade(SocialTypes.Facebook);
+        }
       },
       logout: () => dispatch.auth.logoutAsync(),
       delete: () => {},
@@ -514,6 +524,25 @@ class SettingsScreen extends React.Component {
           <ArrowCell title={Meta.licenses} onPress={onPress.licenses} />
 
           <ArrowCell title={Meta.help_support} onPress={onPress.help} />
+
+          <TableRowCell
+            title={'Link to Facebook'}
+            onPress={onPress.upgradeToFacebook}
+            accessoryView={
+              isConnectedToFacebook ? (
+                <Text
+                  style={{
+                    fontFamily: 'DINPro-Light',
+                    color: 'white',
+                    fontSize: 16,
+                    textAlign: 'right',
+                  }}
+                >
+                  Linked
+                </Text>
+              ) : null
+            }
+          />
 
           <TableRowCell
             title={'Select Gender'}
