@@ -19,6 +19,7 @@
 		B5DB04801F3A684600E91581 /* shell-app-manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = B5DB047E1F3A684600E91581 /* shell-app-manifest.json */; };
 		B5DB04811F3A684600E91581 /* shell-app.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B5DB047F1F3A684600E91581 /* shell-app.bundle */; };
 		CD88B78A21686A5700677617 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CD88B78921686A5700677617 /* GoogleService-Info.plist */; };
+		CD90DA7721C70740006FA837 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD90DA7621C70740006FA837 /* AdSupport.framework */; };
 		EBB8117C1BFA0514F79CAF74 /* libPods-b-t-.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C4A88D15726AD99E8A257BC7 /* libPods-b-t-.a */; };
 /* End PBXBuildFile section */
 
@@ -42,6 +43,7 @@
 		C4A88D15726AD99E8A257BC7 /* libPods-b-t-.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-b-t-.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD88B788216864AC00677617 /* b-t-.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "b-t-.entitlements"; sourceTree = "<group>"; };
 		CD88B78921686A5700677617 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../GoogleService-Info.plist"; sourceTree = "<group>"; };
+		CD90DA7621C70740006FA837 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,6 +51,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD90DA7721C70740006FA837 /* AdSupport.framework in Frameworks */,
 				EBB8117C1BFA0514F79CAF74 /* libPods-b-t-.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -59,6 +62,7 @@
 		1A42804E64B7E9E0AB8B6799 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CD90DA7621C70740006FA837 /* AdSupport.framework */,
 				C4A88D15726AD99E8A257BC7 /* libPods-b-t-.a */,
 			);
 			name = Frameworks;
@@ -311,7 +315,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Fabric/run\"\n";
+			shellScript = "
+";
 		};
 /* End PBXShellScriptBuildPhase section */
 
