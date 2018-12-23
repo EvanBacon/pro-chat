@@ -21,11 +21,15 @@ class NewMatchesCarousel extends React.Component {
     refreshing: false,
   };
 
-  componentDidMount() {}
+  componentDidMount() {
+    if (!this.props.data.length) {
+      this.handleLoadMore();
+    }
+  }
 
   handleLoadMore = () => {
     console.log('LOADMOREUSERS');
-    // dispatch.users.getPaged({ size: 5 });
+    dispatch.users.getPaged({ size: 5 });
   };
 
   _onRefresh = () => {
@@ -67,10 +71,12 @@ const ConnectedNewMatchesCarousel = connect(
   ({ users, hasMoreUsers, isLoadingUsers }) => {
     const { [IdManager.uid]: currentUser, ...otherUsers } = users;
 
+    const data = Object.values(otherUsers).filter(({ uid }) =>
+      IdManager.isInteractable(uid),
+    );
+    console.log('Users: ', data);
     return {
-      data: Object.values(otherUsers).filter(({ uid }) =>
-        IdManager.isInteractable(uid),
-      ),
+      data,
       hasMore: hasMoreUsers,
       isLoading: isLoadingUsers,
     };

@@ -1,7 +1,10 @@
 // @flow
 
 import { Constants, Permissions } from 'expo';
-import { Platform } from 'react-native';
+import { Platform, Dimensions } from 'react-native';
+
+const { height, width } = Dimensions.get('window');
+const aspectRatio = height / width;
 
 import sizeInfo from '../utils/whatAmI';
 import Secret from '../../Secret';
@@ -69,8 +72,8 @@ const Settings = {
     Permissions.NOTIFICATIONS,
     Permissions.CONTACTS,
   ],
+  isTablet: aspectRatio < 1.6,
   isADatingApp: false,
-  hideBooty: isInAppleReview,
   noName: 'Sasuke Uchiha',
   isIos: Platform.OS === 'ios',
   osVersion: sizeInfo.osVersion,

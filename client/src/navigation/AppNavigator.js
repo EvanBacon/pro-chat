@@ -84,7 +84,7 @@ const MainTab = createMaterialTopTabNavigator(
 );
 
 MainTab.navigationOptions = {
-  title: Settings.hideBooty ? 'Expo Chat' : 'Būte',
+  title: Settings.isInAppleReview ? 'Expo Chat' : 'Būte',
   headerRight: (
     <View style={{ marginRight: 24 }}>
       <Button.Settings
@@ -131,14 +131,16 @@ const AppStack = createStackNavigator(
   {
     initialRouteName: Settings.mainInitialRouteName,
     cardStyle: {
-      // marginTop: BAR_HEIGHT - 30,
-      marginTop: BAR_HEIGHT - 30,
+      marginTop: BAR_HEIGHT - (Settings.isTablet ? 45 : 30),
     },
     navigationOptions: {
+      // headerStyle: {
+      //   backgroundColor: Colors.veryDarkDesaturatedViolet,
+      // },
       headerTransparent: true,
+      headerBackground: <Header />,
       tintColor: 'white',
       headerTintColor: 'white',
-      headerBackground: <Header />,
       headerTitleStyle: {
         // fontFamily: 'DINPro-Regular',
         fontSize: 20,

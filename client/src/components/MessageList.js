@@ -103,7 +103,7 @@ function CustomNewMatchesCarousel(props) {
 
 const MessagesEmptyListMessage = () => (
   <EmptyListMessage
-    onPress={() => NavigationService.goBack()}
+    onPress={() => dispatch.users.messageRandom()}
     image={Images.empty.messages}
     buttonTitle={Meta.no_messages_action}
     title={Meta.no_messages_title}

@@ -104,10 +104,6 @@ export default class BrowseUsers extends Component {
     const keys = users; // Object.keys(users || {});
 
     if (!users || !keys.length) {
-      if (Settings.hideBooty) {
-        return null;
-      }
-
       return (
         <Gradient
           style={{

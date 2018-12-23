@@ -2,6 +2,7 @@ import { dispatch } from '../rematch/dispatch';
 import Fire from '../Fire';
 import IdManager from '../IdManager';
 import moment from 'moment';
+import NavigationService from '../navigation/NavigationService';
 
 export function filterUser(user) {
   function isV(s) {
@@ -162,6 +163,13 @@ const users = {
       const payload = await ensureUserIsLoadedAsync(uid, users, hours);
       const { user, isRemoved } = payload || {};
       cb(user);
+    },
+    messageRandom: async (props, { users }) => {
+      const userIds = Object.keys(users);
+      if (userIds.length) {
+        const uid = userIds[Math.floor(Math.random() * userIds.length)];
+        NavigationService.navigateToUserSpecificScreen('Chat', uid);
+      }
     },
     getPaged: async ({ size, start }, { hasMoreUsers, isLoadingUsers }) => {
       // console.log('wait.getPaged', { hasMoreUsers, isLoadingUsers });
