@@ -1,7 +1,7 @@
-Butē is a mobile messaging application which provides the capability to conversation with those you talk to frequently, while allowing the use of posting imagery, messages, and gifs.
+This app is a mobile messaging application which provides the capability to conversation with those you talk to frequently, while allowing the use of posting imagery, messages, and gifs.
 
-Butē organizes those who you talk to in a list format and shows contextual information such as timing of last message, and a preview of the message on the list before selecting the message. 
+This app organizes those who you talk to in a list format and shows contextual information such as timing of last message, and a preview of the message on the list before selecting the message. 
 
-Butē displays you with people within your area, which can be set automatically. The user is presented those in their area, and will connect and have the ability to message once both have selected each other as users they like.
+This app displays you with people within your area, which can be set automatically. The user is presented those in their area, and will connect and have the ability to message once both have selected each other as users they like.
 
 As a user, you are allowed to create a profile in which allows those who you conversations with to have information about you, such as a photo of yourself, description, and placement of liked tags you have via Facebook. This allows others to see your interests to further enhance the ability to talk to new people who have similar interests.

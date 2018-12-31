@@ -46,7 +46,11 @@ platform :ios do
   desc "Push a new release build to the App Store"
   lane :release do
     build_app(workspace: "b-t-.xcworkspace", scheme: "b-t-")
-    upload_to_app_store
+    upload_to_app_store(
+      force: true, # Set to true to skip PDF verification
+      skip_screenshots: true
+      # skip_metadata: true
+    )
 
     
   end
