@@ -1,11 +1,11 @@
 const baseUrl = 'https://github.com/evanbacon/expo-chat/';
 export default {
-  privacy: `http://rialastudio.com/bute/privacy/`,
+  privacy: `http://rialastudio.com/AMA/privacy/`,
   // jobs: `${baseUrl}blob/master/JOBS.md`,
   support: `${baseUrl}issues`,
-  terms: `http://rialastudio.com/bute/terms/`,
-  licenses: `http://rialastudio.com/bute/copyright/`,
-  eula: `http://rialastudio.com/bute/eula/`,
+  terms: `http://rialastudio.com/AMA/terms/`,
+  licenses: `http://rialastudio.com/AMA/copyright/`,
+  eula: `http://rialastudio.com/AMA/eula/`,
   contact: `${baseUrl}issues`,
   standardShare: baseUrl,
   nic: 'http://www.twelvezerothree.com/',
