@@ -1,7 +1,3 @@
-# Another Chat App
+# Real Chat
 
-TL;DR: Read the title
-
-...
-
-couldn't think of a long form description.
+A full-featured chat app made with Expo & Firebase
