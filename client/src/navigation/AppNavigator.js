@@ -124,6 +124,7 @@ const AppStack = createStackNavigator(
     DevTeam: DevTeamScreen,
     // Explore: ExploreScreen,
     ReportUser: ReportScreen,
+    BlockUser: ReportScreen,
     Settings: SettingsScreen,
     UnderAge: UnderAgeScreen,
     Website: WebsiteScreen,

@@ -15,6 +15,7 @@ import tabBarImage from './Tabs/tabBarImage';
 import Assets from '../Assets';
 // import SwipeableListRow from './primitives/SwipeableListRow';
 import NewMatchesCarousel from './NewMatchesCarousel';
+import Settings from '../constants/Settings';
 class MessageList extends React.Component {
   state = {
     refreshing: false,
@@ -23,6 +24,13 @@ class MessageList extends React.Component {
 
   componentDidMount() {
     dispatch.notifications.registerAsync();
+
+    if (Settings.debugGoToChat) {
+      NavigationService.navigateToUserSpecificScreen(
+        'ReportUser',
+        'fHgE92IvgLbUmbG2nU7DOyLsk5e2',
+      );
+    }
   }
 
   componentWillReceiveProps({ badgeCount }) {

@@ -67,19 +67,27 @@ class HomeScreen extends React.Component {
     // const { data } = await Fire.shared.getUsersPaged({ size: 50 });
     // console.log({ BillyGoat: data });
     // dispatch.chats.set({});
-    // if (Settings.debugGoToChat) {
-    //   if (Fire.shared.uid === 'fHgE92IvgLbUmbG2nU7DOyLsk5e2') {
-    //     NavigationService.navigateToUserSpecificScreen(
-    //       'Chat',
-    //       'pfrNeWLaXxMUnB2LBsG84OeSi732',
-    //     );
-    //   } else {
-    //     NavigationService.navigateToUserSpecificScreen(
-    //       'Chat',
-    //       'fHgE92IvgLbUmbG2nU7DOyLsk5e2',
-    //     );
+
+    NavigationService.navigateToUserSpecificScreen(
+      'ReportUser',
+      'fHgE92IvgLbUmbG2nU7DOyLsk5e2',
+    );
+
+    // setTimeout(() => {
+    //   if (Settings.debugGoToChat) {
+    //     if (Fire.shared.uid === 'fHgE92IvgLbUmbG2nU7DOyLsk5e2') {
+    //       NavigationService.navigateToUserSpecificScreen(
+    //         'Chat',
+    //         'pfrNeWLaXxMUnB2LBsG84OeSi732',
+    //       );
+    //     } else {
+    //       NavigationService.navigateToUserSpecificScreen(
+    //         'Chat',
+    //         'fHgE92IvgLbUmbG2nU7DOyLsk5e2',
+    //       );
+    //     }
     //   }
-    // }
+    // }, 200);
 
     // firebase.messaging().requestPermissions();
 

@@ -98,7 +98,7 @@ const Settings = {
     maximumAge: 2000,
     timeout: 20000,
   },
-  debugGoToChat: false,
+  debugGoToChat: true,
   avatarSize: 96,
   minimumAge: 17,
   email: 'bootyalertapp@gmail.com',

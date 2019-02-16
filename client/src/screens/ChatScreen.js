@@ -22,15 +22,22 @@ import { dispatch } from '../rematch/dispatch';
 import firebase from '../universal/firebase';
 import CustomView from './CustomView';
 import AvatarImage from '../components/Image/AvatarImage';
+import ChatOptions from '../components/Button/ChatOptions';
 
 class Chat extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const title = navigation.getParam('title');
+    const uid = navigation.getParam('uid');
     return {
       title: title,
       headerStyle: {
         opacity: 1,
       },
+      headerRight: (
+        <View style={{ marginRight: 24 }}>
+          <ChatOptions selected uid={uid} />
+        </View>
+      ),
     };
   };
 
