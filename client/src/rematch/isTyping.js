@@ -1,4 +1,4 @@
-import { dispatch } from '@rematch/core';
+import { dispatch } from './dispatch';
 
 import Settings from '../constants/Settings';
 import Fire from '../Fire';

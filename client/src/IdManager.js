@@ -25,7 +25,7 @@ class IdManager {
         return input.split('_');
       }
     }
-    throw new Error('ensureIdArray: requires valid input');
+    throw new Error('ensureIdArray: requires valid input: ' + input);
   }
 
   sortIDs(...ids) {
@@ -52,7 +52,7 @@ class IdManager {
   getOtherUserFromChatGroup = groupId =>
     this.getOtherUsersFromChatGroup(groupId)[0];
 
-  getOtherUsersFromChatGroup = (groupId) => {
+  getOtherUsersFromChatGroup = groupId => {
     if (!this.isValid(groupId)) {
       console.warn('getOtherUsersFromChatGroup: Invalid group id', { groupId });
       return [];
@@ -68,12 +68,12 @@ class IdManager {
     return uids;
   };
 
-  generateGroupId = (input) => {
+  generateGroupId = input => {
     const ids = this.ensureChatGroupIDs(input);
     return this.sortIDsIntoKey(...ids);
   };
 
-  getGroupId = (uids) => {
+  getGroupId = uids => {
     // This is the dumbest code I've ever written
     const shouldCache = typeof uids === 'string';
     if (shouldCache && this._groupIdCache[uids]) {

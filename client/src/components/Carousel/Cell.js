@@ -4,13 +4,21 @@ import { StyleSheet, Text, View } from 'react-native';
 import NavigationService from '../../navigation/NavigationService';
 import AvatarImage from '../Image/AvatarImage';
 
+const PADDING = 12;
 const IMAGE_SIZE = 64;
 class Cell extends React.PureComponent {
+  static defaultProps = {
+    destination: 'Profile',
+  };
+
   onPress = () => {
-    NavigationService.navigateToUserSpecificScreen('Profile', this.props.uid);
+    NavigationService.navigateToUserSpecificScreen(
+      this.props.destination,
+      this.props.uid,
+    );
   };
   render() {
-    const { image, name } = this.props;
+    const { image, name, textStyle } = this.props;
 
     return (
       <View style={styles.touchable}>
@@ -20,7 +28,9 @@ class Cell extends React.PureComponent {
           avatar={image}
           avatarStyle={styles.avatarStyle}
         />
-        <Text style={styles.text}>{name}</Text>
+        <Text numberOfLines={2} style={[styles.text, textStyle]}>
+          {name}
+        </Text>
       </View>
     );
   }
@@ -28,10 +38,12 @@ class Cell extends React.PureComponent {
 
 const styles = StyleSheet.create({
   touchable: {
-    marginHorizontal: 12,
+    marginHorizontal: PADDING,
+    alignItems: 'center',
   },
   text: {
     textAlign: 'center',
+    maxWidth: IMAGE_SIZE,
   },
   avatarStyle: {
     flex: 1,

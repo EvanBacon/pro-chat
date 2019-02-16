@@ -22,6 +22,7 @@ import Cancel from './Cancel';
 import Licenses from './LicensesButton';
 import Facebook from './Facebook';
 import EditPhoto from './EditPhoto';
+import Profile from './Profile';
 import Logout from './Logout';
 import Store from './Store';
 import Outline from './Outline';
@@ -48,6 +49,7 @@ export default {
   Cancel,
   Licenses,
   Facebook,
+  Profile,
   EditPhoto,
   Logout,
   Store,

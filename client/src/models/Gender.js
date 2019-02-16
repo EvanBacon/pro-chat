@@ -4,5 +4,4 @@ const Gender = {
   both: 'both',
 };
 
-export default Gender
-;
+export default Gender;

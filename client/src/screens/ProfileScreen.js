@@ -1,16 +1,16 @@
-import { dispatch } from '@rematch/core';
+import { dispatch } from '../rematch/dispatch';
 import React, { Component } from 'react';
 import { Animated, Dimensions, LayoutAnimation, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import Blocked from '../components/Blocked';
 import Carousel from '../components/Carousel';
-import Gradient from '../components/Gradient';
-import RateSection from '../components/RateSection';
-import RefreshControl from '../components/RefreshControl';
+import Gradient from '../components/primitives/Gradient';
+import RateSection from '../components/profile/RateSection';
+import RefreshControl from '../components/primitives/RefreshControl';
 import { BAR_HEIGHT } from '../components/styles';
 import TagCollection from '../components/TagCollection';
-import UserInfo from '../components/UserInfo';
+import UserInfo from '../components/profile/UserInfo';
 import Meta from '../constants/Meta';
 import Fire from '../Fire';
 import Relationship from '../models/Relationship';
@@ -18,6 +18,7 @@ import Settings from '../constants/Settings';
 import IdManager from '../IdManager';
 import tabBarImage from '../components/Tabs/tabBarImage';
 import Assets from '../Assets';
+import Colors from '../constants/Colors';
 
 const { width } = Dimensions.get('window');
 
@@ -54,36 +55,43 @@ class Profile extends Component {
   }
 
   updateWithUID = async (uid, update) => {
-    if (!uid) return;
-    const {
-      image, name, about, likes, rating, relationship,
-    } = this.props;
-    if (!image || update) {
-      dispatch.users.getProfileImage({ uid });
-    }
-    if (!name || update) {
-      dispatch.users.getPropertyForUser({ uid, property: 'first_name' });
-    }
-    if (!about || update) {
-      dispatch.users.getPropertyForUser({ uid, property: 'about' });
-    }
-    if (!likes || update) {
-      dispatch.users.getPropertyForUser({ uid, property: 'likes' });
-    }
-    if (!rating || update) {
-      dispatch.users.getPropertyForUser({ uid, property: 'rating' });
-    }
-    if (!relationship || update) {
-      dispatch.relationships.getAsync({ uid });
-    }
+    const user = await new Promise(res =>
+      dispatch.users.ensureUserIsLoadedAsync({
+        uid,
+        callback: res,
+        hours: update ? 0 : undefined,
+      }),
+    );
 
-    const isMatched = await new Promise(res =>
-      dispatch.relationships.isMatched({ uid, callback: res }));
+    // if (!uid) return;
+    // const { image, name, about, likes, rating, relationship } = this.props;
+    // if (!image || update) {
+    //   dispatch.users.getProfileImage({ uid });
+    // }
+    // if (!name || update) {
+    //   dispatch.users.getPropertyForUser({ uid, property: 'first_name' });
+    // }
+    // if (!about || update) {
+    //   dispatch.users.getPropertyForUser({ uid, property: 'about' });
+    // }
+    // if (!likes || update) {
+    //   dispatch.users.getPropertyForUser({ uid, property: 'likes' });
+    // }
+    // if (!rating || update) {
+    //   dispatch.users.getPropertyForUser({ uid, property: 'rating' });
+    // }
+    // if (!relationship || update) {
+    //   dispatch.relationships.getAsync({ uid });
+    // }
+
+    // const isMatched = await new Promise(res =>
+    //   dispatch.relationships.isMatched({ uid, callback: res }),
+    // );
 
     // this.props.navigation.setParams({ isMatched, name, uid });
     LayoutAnimation.easeInEaseOut();
 
-    this.setState({ isMatched });
+    // this.setState({ isMatched });
   };
 
   _onRefresh = async () => {
@@ -94,6 +102,8 @@ class Profile extends Component {
 
   renderPopular = () => (
     <Carousel
+      screen="Profile"
+      itemTextStyle={{ color: Colors.white, marginTop: 4, fontWeight: 'bold' }}
       title={Meta.popular_title}
       style={{
         minHeight: 128,
@@ -104,15 +114,20 @@ class Profile extends Component {
     />
   );
 
-  renderTags = (tags, isUser, name) => (
-    <TagCollection
-      style={{}}
-      title={Meta.user_interests_title}
-      tags={tags}
-      isUser={isUser}
-      name={name}
-    />
-  );
+  renderTags = (tags, isUser, name) => {
+    if (!tags || !tags.length) {
+      return null;
+    }
+    return (
+      <TagCollection
+        style={{}}
+        title={Meta.user_interests_title}
+        tags={tags}
+        isUser={isUser}
+        name={name}
+      />
+    );
+  };
 
   get isBlocked() {
     const { relationship } = this.props;
@@ -189,6 +204,7 @@ class Profile extends Component {
             <RefreshControl
               refreshing={this.state.refreshing}
               onRefresh={this._onRefresh}
+              color={Colors.white}
             />
           }
           contentContainerStyle={{
@@ -204,7 +220,7 @@ class Profile extends Component {
 }
 
 const mergeProps = (
-  { users, relationships, ...state },
+  { users = {}, relationships = {}, ...state },
   actions,
   { uid, ...localProps },
 ) => {
@@ -221,7 +237,7 @@ const mergeProps = (
   }
 
   const { [userId]: user = {}, ...otherUsers } = users;
-  console.log('raw', otherUsers);
+  console.log('raw', { user }, otherUsers);
   // console.warn(user, uid);
   const { about, rating } = user;
   const userProps = {
@@ -229,7 +245,7 @@ const mergeProps = (
     isUser,
     uid: userId,
     about: about || 'I am not interesting, but I do like to pretend.',
-    rating: rating || 'moth',
+    rating: rating || 'regular',
     // TODO: Standard - decide on one format
     image: user.photoURL || user.image,
     name: user.first_name || user.name || user.displayName || user.deviceName,
@@ -257,6 +273,7 @@ const ProfileScreen = connect(
 
 ProfileScreen.navigationOptions = {
   title: 'Profile',
+
   tabBarIcon: tabBarImage({
     active: Assets.images.profile_active,
     inactive: Assets.images.profile_inactive,

@@ -1,6 +1,6 @@
-import { dispatch } from '@rematch/core';
-import firebase from 'firebase';
 import { Alert } from 'react-native';
+import { dispatch } from './dispatch';
+import firebase from '../universal/firebase';
 
 import Settings from '../constants/Settings';
 import Fire from '../Fire';
@@ -14,6 +14,7 @@ function clearNativeProfile() {
     .auth()
     .currentUser.updateProfile({ displayName: null, photoURL: null });
 }
+const shouldUpdateKey = '@Bute/shouldUpdateProfile';
 
 export function reduceFirebaseUser(user) {
   const nextUser = user;
@@ -89,8 +90,8 @@ const user = {
   },
   effects: {
     updateProfileImage: () => {},
-    updateUserProfile: (updates) => {
-      console.warn('TODO: user.updateUserProfile: Test');
+    updateUserProfile: updates => {
+      console.log('TODO: user.updateUserProfile: Test');
       // Set the local database
       dispatch.user.update(updates);
       // // Update the users database
@@ -102,17 +103,35 @@ const user = {
       console.warn('TODO: user.changeRating');
     },
     observeAuth: () => {
-      firebase.auth().onAuthStateChanged((auth) => {
+      dispatch.notifications.attemptToParseInitialNotification();
+
+      firebase.auth().onAuthStateChanged(async auth => {
         if (!auth) {
           // TODO: Evan: Y tho...
+          await PantryStorage.clearPantry(shouldUpdateKey);
           dispatch.user.clear();
-          // dispatch.user.signInAnonymously();
+          dispatch.auth.signInAnonymously();
           NavigationService.navigate('Auth');
         } else {
-          dispatch.user.getAsync();
+          dispatch.user.getAsync(async () => {
+            const user = await new Promise(res =>
+              dispatch.users.ensureUserIsLoadedAsync({
+                uid: auth.uid,
+                callback: res,
+              }),
+            );
+            // const hasInfo = user && user.interest && user.gender && user.image;
+            // if (!hasInfo) {
+            //   NavigationService.navigate('OnBoarding');
+            // } else {
+            NavigationService.navigate('App');
+            dispatch.notifications.commitPendingNavigation();
+            // }
+          });
           dispatch.popular.getAsync();
+          dispatch.iid.setAsync();
           Fire.shared.getMessageList();
-          NavigationService.navigate('App');
+
           // dispatch.leaders.getAsync({ uid: user.uid });
         }
       });
@@ -122,7 +141,9 @@ const user = {
       let combinedUserData = {};
       const firebaseAuthData = firebase.auth().currentUser.toJSON();
       if (firebaseAuthData == null) {
-        console.warn("models: Shouldn't call user.getAsync until the user is authed");
+        console.warn(
+          "models: Shouldn't call user.getAsync until the user is authed",
+        );
         return;
       }
       const nextFirebaseAuthData = reduceFirebaseUser(firebaseAuthData);
@@ -149,9 +170,13 @@ const user = {
         user: combinedUserData,
       });
       console.log('Main:userdata:', combinedUserData);
+      if (props) {
+        props(combinedUserData);
+      }
       if (Settings.isCacheProfileUpdateActive) {
-        const shouldUpdateKey = '@Bute/shouldUpdateProfile';
-        const something = await PantryStorage.getItemWithExpiration(shouldUpdateKey);
+        const something = await PantryStorage.getItemWithExpiration(
+          shouldUpdateKey,
+        );
         if (!something) {
           const some = await PantryStorage.setItemWithExpiration(
             shouldUpdateKey,
@@ -168,11 +193,7 @@ const user = {
     },
     syncLocalToFirebase: async (
       props,
-      {
-        user: {
-          additionalUserInfo, credential, user, ...otherUserProps
-        },
-      },
+      { user: { additionalUserInfo, credential, user, ...otherUserProps } },
     ) => {
       console.log('user.syncLocalToFirebase', otherUserProps);
       const doc = getUserRef();

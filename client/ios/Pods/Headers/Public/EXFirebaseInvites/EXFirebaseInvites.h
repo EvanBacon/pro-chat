@@ -1,0 +1,1 @@
+../../../../../node_modules/expo-firebase-invites/ios/EXFirebaseInvites/EXFirebaseInvites.h

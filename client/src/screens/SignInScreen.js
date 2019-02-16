@@ -1,6 +1,6 @@
 // import React from 'react';
 // import { StyleSheet, Text, View } from 'react-native';
-import { dispatch } from '@rematch/core';
+import { dispatch } from '../rematch/dispatch';
 import { Svg } from 'expo';
 import React from 'react';
 import { Dimensions, Image, StyleSheet, Text, View } from 'react-native';
@@ -8,16 +8,19 @@ import TouchableBounce from 'react-native/Libraries/Components/Touchable/Touchab
 
 import Meta from '../constants/Meta';
 import Images from '../Images';
+import Settings from '../constants/Settings';
+import Loading from '../components/primitives/Loading';
 
-const {
-  Defs, RadialGradient, Stop, G, Rect,
-} = Svg;
+const { Defs, RadialGradient, Stop, G, Rect } = Svg;
 
 const { width, height } = Dimensions.get('window');
 
 export default class Screen extends React.Component {
   static navigationOptions = { header: null };
   render() {
+    if (Settings.isInAppleReview) {
+      return <Loading />;
+    }
     return (
       <View style={styles.container}>
         <Background />

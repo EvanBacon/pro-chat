@@ -1,9 +1,0 @@
-node_modules/**/*
-.expo/**/*
-release/builds
-.vscode
-
-*.ipa
-*.apk
-*.sketch
-Secret.js

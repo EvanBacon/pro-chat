@@ -1,36 +1,36 @@
-import { dispatch } from '@rematch/core';
 import React from 'react';
 import { connect } from 'react-redux';
-
+import { dispatch } from '../rematch/dispatch';
+import { View, Text } from 'react-native';
 import Meta from '../constants/Meta';
 import Fire from '../Fire';
 import IdManager from '../IdManager';
 import Images from '../Images';
 import NavigationService from '../navigation/NavigationService';
-import firebase from '../universal/firebase';
+import firebase from 'expo-firebase-app';
 import EmptyListMessage from './EmptyListMessage';
 import MessageRow from './MessageRow';
 import UserList from './UserList';
 import tabBarImage from './Tabs/tabBarImage';
 import Assets from '../Assets';
-
+// import SwipeableListRow from './primitives/SwipeableListRow';
+import NewMatchesCarousel from './NewMatchesCarousel';
+import Settings from '../constants/Settings';
 class MessageList extends React.Component {
   state = {
     refreshing: false,
+    loadCount: 0,
   };
 
   componentDidMount() {
     dispatch.notifications.registerAsync();
 
-    this.unsubscribe = firebase.messaging().onMessage(async ({ type }) => {
-      if (type.split('-').shift() === 'message') {
-        await Fire.shared.getMessageList();
-      }
-    });
-  }
-
-  componentWillUnmount() {
-    this.unsubscribe();
+    if (Settings.debugGoToChat) {
+      NavigationService.navigateToUserSpecificScreen(
+        'ReportUser',
+        'fHgE92IvgLbUmbG2nU7DOyLsk5e2',
+      );
+    }
   }
 
   componentWillReceiveProps({ badgeCount }) {
@@ -40,31 +40,43 @@ class MessageList extends React.Component {
   }
 
   onRefresh = async () => {
-    this.setState({ refreshing: true });
-    await Fire.shared.getMessageList();
-    this.setState({ refreshing: false });
+    this.setState(
+      { refreshing: true, loadCount: this.state.loadCount + 1 },
+      async () => {
+        await Fire.shared.getMessageList(true, this.state.loadCount % 3 === 0);
+        this.setState({ refreshing: false });
+      },
+    );
   };
 
   renderItem = ({
-    item: {
-      name, image, isSeen, isSent, message, timeAgo, groupId,
-    },
+    item: { name, image, isSeen, isOutgoing, message, timeAgo, groupId },
   }) => (
     <MessageRow
       name={name}
       image={image}
       isSeen={isSeen}
-      isSent={isSent}
+      isOutgoing={isOutgoing}
       message={message}
       timeAgo={timeAgo}
       groupId={groupId}
     />
   );
+  // <SwipeableListRow
+  //     onSelect={direction => {
+  //       if (direction === 'right') {
+  //         setTimeout(() => {
+  //           Fire.shared.deleteMessageThread(groupId);
+  //         }, 1000);
+  //       }
+  //     }}
+  //   ></SwipeableListRow>
 
   render() {
     const { style, data } = this.props;
     return (
       <UserList
+        ListHeaderComponent={CustomNewMatchesCarousel}
         style={style}
         data={data}
         refreshing={this.state.refreshing}
@@ -76,9 +88,30 @@ class MessageList extends React.Component {
   }
 }
 
+function CustomNewMatchesCarousel(props) {
+  return (
+    <View>
+      <NewMatchesCarousel />
+      <Text
+        style={{
+          marginHorizontal: 16,
+          marginTop: 4,
+          marginBottom: 12,
+          textAlign: 'left',
+          color: 'black',
+          fontWeight: 'bold',
+          fontSize: 16,
+        }}
+      >
+        Messages
+      </Text>
+    </View>
+  );
+}
+
 const MessagesEmptyListMessage = () => (
   <EmptyListMessage
-    onPress={() => NavigationService.goBack()}
+    onPress={() => dispatch.users.messageRandom()}
     image={Images.empty.messages}
     buttonTitle={Meta.no_messages_action}
     title={Meta.no_messages_title}

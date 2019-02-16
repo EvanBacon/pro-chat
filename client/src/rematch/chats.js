@@ -1,17 +1,16 @@
 'use-strict';
 
-import { dispatch } from '@rematch/core';
-
+import { dispatch } from './dispatch';
+import firebase from 'expo-firebase-app';
 import Fire from '../Fire';
+import { FieldValue } from 'expo-firebase-firestore';
 
 const firstCursorCollection = {};
 
 const cursorCollection = {};
 
 function transformMessageForGiftedChat({ message, user }) {
-  const {
-    key: _id, uid, timestamp: createdAt, ...existingMessage
-  } = message;
+  const { key: _id, uid, timestamp: createdAt, ...existingMessage } = message;
   console.log('TRANSFORMERESS', user);
 
   const _userObject = { name: user.name, _id: uid };
@@ -45,6 +44,15 @@ const chats = {
         [groupId]: messages,
       };
     },
+    removeGroup: (state, { groupId }) => {
+      if (!groupId || !(groupId in state)) {
+        return state;
+      }
+      const { [groupId]: groupToRemove, ...nextState } = state;
+      return {
+        ...nextState,
+      };
+    },
     addMessages: (state, { groupId, messages }) => {
       if (!groupId || !messages) {
         return state;
@@ -66,8 +74,37 @@ const chats = {
     subscribeToChannel: () => {
       console.warn('TODO: subscribeToChannel');
     },
-    deleteMessageFromChannel: ({ groupId, key }) => {
-      console.warn('TODO: deleteMessageFromChannel');
+    deleteMessageFromChannel: async ({
+      groupId,
+      messageId,
+      storagePath,
+      resolve,
+      reject,
+    }) => {
+      try {
+        dispatch.chats.removeMessage({ groupId, messageId });
+        await Fire.shared
+          .getMessagesCollection(groupId)
+          .doc(messageId)
+          .delete();
+
+        if (storagePath) {
+          await firebase
+            .storage()
+            .ref(storagePath)
+            .delete();
+        }
+
+        if (resolve) {
+          resolve();
+        }
+      } catch (error) {
+        if (reject) {
+          reject(error);
+        } else {
+          throw error;
+        }
+      }
     },
     loadEarlier: () => {
       console.warn('TODO: loadEarlier');
@@ -75,21 +112,53 @@ const chats = {
     updatedInputText: () => {
       console.warn('TODO: updatedInputText');
     },
-    getLastMessage: () => {
-      console.warn('TODO: getLastMessage');
-    },
-    deleteChannel: () => {
-      console.warn('TODO: deleteChannel');
+    deleteChannel: async groupId => {
+      console.log('deleteMessageThread: ', groupId);
+
+      /* Remove a user's access to a message thread without giving them the ability to delete the other user's access */
+
+      // TODO: Bacon: This is broken natively...
+
+      // Fire.shared.getChatGroupDoc(groupId).update({
+      //   members: FieldValue.arrayRemove(Fire.shared.uid),
+      // });
+
+      const groupChatDocRef = Fire.shared.getChatGroupDoc(groupId);
+
+      try {
+        await Fire.shared.db.runTransaction(transaction => {
+          // This code may get re-run multiple times if there are conflicts.
+          return transaction.get(groupChatDocRef).then(doc => {
+            if (!doc.exists) {
+              throw new Error('Document does not exist!');
+            }
+            const { members = [] } = doc.data();
+            const userId = Fire.shared.uid;
+            const membersWithoutCurrentUser = members.filter(
+              uid => uid !== userId,
+            );
+            console.log('Deleting user:', {
+              userId,
+              members,
+              membersWithoutCurrentUser,
+            });
+            transaction.update(groupChatDocRef, {
+              members: membersWithoutCurrentUser,
+            });
+          });
+        });
+
+        dispatch.messages.remove({ id: groupId });
+        dispatch.chats.removeGroup({ groupId });
+      } catch (error) {
+        console.log('deleteChannel', { error });
+        alert(
+          "Error: Couldn't delete the group at this time, please try again later.",
+        );
+      }
     },
     updatedGifOpened: () => {
       console.warn('TODO: updatedGifOpened');
-    },
-    didRecieveMessageKey: () => {
-      console.warn('TODO: didRecieveMessageKey');
-      // / Set the `seen` value
-    },
-    getChannelForUser: () => {
-      console.warn('TODO: getChannelForUser');
     },
     _parseMessage: async ({ message, groupId }, { chats }) => {
       if (chats[groupId] && chats[groupId][message.key]) {
@@ -105,7 +174,8 @@ const chats = {
 
       // TODO: Nope...
       const user = await new Promise(res =>
-        dispatch.users.ensureUserIsLoadedAsync({ uid, callback: res }));
+        dispatch.users.ensureUserIsLoadedAsync({ uid, callback: res }),
+      );
       console.log('_parseMessage: has user', !!user, uid);
       //   const user = await Fire.shared.getUserAsync({ uid });
       if (user == null) {
@@ -125,7 +195,9 @@ const chats = {
 
       // / UGH
 
-      const sortedMessages = Object.values(messages).sort((a, b) => a.timestamp < b.timestamp);
+      const sortedMessages = Object.values(messages).sort(
+        (a, b) => a.timestamp < b.timestamp,
+      );
       dispatch.messages.updateWithMessage({
         groupId,
         message: sortedMessages[0],
@@ -162,17 +234,23 @@ const chats = {
       // TODO: IDK
       callback(true);
     },
-    receivedMessage: async ({ groupId, snapshot }, { chats }) => {
+    receivedMessage: async (props = {}, { chats }) => {
+      const { groupId, snapshot } = props;
       if (!chats[groupId]) {
         // TODO: This seems leaky... make sure receivedMessage is only called from a subscription
         // const exists = await Fire.shared.ensureChatGroupExists(groupId);
         // if (exists) {
         dispatch.chats.update({ [groupId]: {} });
         // }
-        throw new Error("Error: chats.receivedMessage: chat group doesn't exist yet.");
+        throw new Error(
+          "Error: chats.receivedMessage: chat group doesn't exist yet.",
+        );
       }
 
-      snapshot.docChanges().forEach(({ type, doc }) => {
+      if (!snapshot.docChanges) {
+        throw new Error('Error: snapshot is invalid');
+      }
+      snapshot.docChanges.forEach(({ type, doc }) => {
         console.log('Found message: parseMessagesSnapshot: ', type, doc.id);
         if (type === 'added') {
           const message = { key: doc.id, ...doc.data() };

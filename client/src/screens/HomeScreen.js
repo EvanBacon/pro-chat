@@ -1,22 +1,23 @@
+'use-strict';
+
 import { Ionicons } from '@expo/vector-icons';
-import { dispatch } from '@rematch/core';
-import firebase from 'firebase';
+import { dispatch } from '../rematch/dispatch';
 import React from 'react';
 import { Alert } from 'react-native';
 import HeaderButtons from 'react-navigation-header-buttons';
 import { connect } from 'react-redux';
 
+import Assets from '../Assets';
 import BrowseUsers from '../components/BrowseUsers';
-import Gradient from '../components/Gradient';
+import Gradient from '../components/primitives/Gradient';
+import tabBarImage from '../components/Tabs/tabBarImage';
 import Meta from '../constants/Meta';
 import Settings from '../constants/Settings';
 import Fire from '../Fire';
+import IdManager from '../IdManager';
 import Relationship from '../models/Relationship';
 import NavigationService from '../navigation/NavigationService';
 import isUnderAge from '../utils/isUnderAge';
-import IdManager from '../IdManager';
-import tabBarImage from '../components/Tabs/tabBarImage';
-import Assets from '../Assets';
 
 // [
 //             "0a944021-1ba5-c51a-0e98-fc2dd3834eeb",
@@ -66,21 +67,30 @@ class HomeScreen extends React.Component {
     // const { data } = await Fire.shared.getUsersPaged({ size: 50 });
     // console.log({ BillyGoat: data });
     // dispatch.chats.set({});
-    if (Settings.debugGoToChat) {
-      if (Fire.shared.uid === 'fHgE92IvgLbUmbG2nU7DOyLsk5e2') {
-        NavigationService.navigateToUserSpecificScreen(
-          'Chat',
-          'pfrNeWLaXxMUnB2LBsG84OeSi732',
-        );
-      } else {
-        NavigationService.navigateToUserSpecificScreen(
-          'Chat',
-          'fHgE92IvgLbUmbG2nU7DOyLsk5e2',
-        );
-      }
-    }
+
+    NavigationService.navigateToUserSpecificScreen(
+      'ReportUser',
+      'fHgE92IvgLbUmbG2nU7DOyLsk5e2',
+    );
+
+    // setTimeout(() => {
+    //   if (Settings.debugGoToChat) {
+    //     if (Fire.shared.uid === 'fHgE92IvgLbUmbG2nU7DOyLsk5e2') {
+    //       NavigationService.navigateToUserSpecificScreen(
+    //         'Chat',
+    //         'pfrNeWLaXxMUnB2LBsG84OeSi732',
+    //       );
+    //     } else {
+    //       NavigationService.navigateToUserSpecificScreen(
+    //         'Chat',
+    //         'fHgE92IvgLbUmbG2nU7DOyLsk5e2',
+    //       );
+    //     }
+    //   }
+    // }, 200);
 
     // firebase.messaging().requestPermissions();
+
     this.checkBanned((this.props.user || {}).isBlocked);
     this.checkUnderage((this.props.user || {}).birthday);
   }
@@ -100,13 +110,13 @@ class HomeScreen extends React.Component {
       }
     }
   }
-  checkBanned = (isBlocked) => {
+  checkBanned = isBlocked => {
     if (isBlocked) {
       NavigationService.navigate('AccountUnderReview');
     }
   };
 
-  checkUnderage = (birthday) => {
+  checkUnderage = birthday => {
     if (isUnderAge(birthday)) {
       NavigationService.navigate('UnderAge', { birthday });
     }
@@ -123,7 +133,7 @@ class HomeScreen extends React.Component {
     return (
       <Gradient style={{ flex: 1 }}>
         <BrowseUsers
-          onLike={(uid) => {
+          onLike={uid => {
             if (!firstLike) {
               dispatch.onBoarding.update({ firstLike: Date.now() });
               this.alert(
@@ -138,7 +148,7 @@ class HomeScreen extends React.Component {
               type: Relationship.like,
             });
           }}
-          onDislike={(uid) => {
+          onDislike={uid => {
             if (!firstDislike) {
               dispatch.onBoarding.update({ firstDislike: Date.now() });
               this.alert(
@@ -153,7 +163,7 @@ class HomeScreen extends React.Component {
               type: Relationship.dislike,
             });
           }}
-          onIndexChange={(uid) => {
+          onIndexChange={uid => {
             if (!wantMoreInfo) {
               dispatch.onBoarding.update({ wantMoreInfo: Date.now() });
               this.alert(
@@ -177,31 +187,32 @@ class HomeScreen extends React.Component {
   }
 }
 
-const ConnectedHomeScreen = connect(({
-  user,
-  users, // geo: { nearbyUsers: users },
-  onBoarding: { firstLike, firstDislike, wantMoreInfo },
-}) => {
-  const { [Fire.shared.uid]: currentUser, ...otherUsers } = users;
-
-  // console.log('otherUsers', { otherUsers });
-  return {
+const ConnectedHomeScreen = connect(
+  ({
     user,
-    firstLike,
-    firstDislike,
-    wantMoreInfo,
-    users: Object.values(otherUsers).filter(({ uid }) =>
-      IdManager.isInteractable(uid)),
-  };
+    users, // geo: { nearbyUsers: users },
+    onBoarding: { firstLike, firstDislike, wantMoreInfo },
+  }) => {
+    const { [Fire.shared.uid]: currentUser, ...otherUsers } = users;
 
-  // return {
-  //   user,
-  //   users,
-  //   firstLike,
-  //   firstDislike,
-  //   wantMoreInfo,
-  // }
-})(HomeScreen);
+    console.log('otherUsers', { otherUsers });
+    return {
+      user,
+      firstLike,
+      firstDislike,
+      wantMoreInfo,
+      users: Object.values(otherUsers),
+    };
+
+    // return {
+    //   user,
+    //   users,
+    //   firstLike,
+    //   firstDislike,
+    //   wantMoreInfo,
+    // }
+  },
+)(HomeScreen);
 
 ConnectedHomeScreen.navigationOptions = {
   title: 'Matches',

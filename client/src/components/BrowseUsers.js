@@ -1,4 +1,6 @@
-import { dispatch } from '@rematch/core';
+'use-strict';
+
+import { dispatch } from '../rematch/dispatch';
 import React, { Component } from 'react';
 import { LayoutAnimation, View } from 'react-native';
 
@@ -6,8 +8,8 @@ import Assets from '../Assets';
 import Meta from '../constants/Meta';
 import EmptyListMessage from './EmptyListMessage';
 import Footer from './Footer';
-import Gradient from './Gradient';
-import Section from './Section';
+import Gradient from './primitives/Gradient';
+import Section from './primitives/Section';
 import Slider from './Slider';
 import NavigationService from '../navigation/NavigationService';
 import Settings from '../constants/Settings';
@@ -102,10 +104,6 @@ export default class BrowseUsers extends Component {
     const keys = users; // Object.keys(users || {});
 
     if (!users || !keys.length) {
-      if (Settings.hideBooty) {
-        return null;
-      }
-
       return (
         <Gradient
           style={{
@@ -126,8 +124,8 @@ export default class BrowseUsers extends Component {
             buttonTitle={Meta.try_again}
             color="white"
             image={Images.empty.users}
-            title={Meta.no_more_booty_title}
-            subtitle={Meta.no_more_booty_subtitle}
+            title={Meta.no_more_users_title}
+            subtitle={Meta.no_more_users_subtitle}
           />
         </Gradient>
       );
@@ -146,7 +144,7 @@ export default class BrowseUsers extends Component {
             marginTop: 30,
             overflow: 'visible',
           }}
-          onIndexChange={(index) => {
+          onIndexChange={index => {
             this.count += 1;
             const uid = keys[index];
             this.setState({
@@ -157,14 +155,14 @@ export default class BrowseUsers extends Component {
               this.props.onIndexChange(uid);
             }
           }}
-          onPressItem={(uid) => {
-            NavigationService.navigateToUserSpecificScreen('Profile', { uid });
+          onPressItem={uid => {
+            NavigationService.navigateToUserSpecificScreen('Profile', uid);
           }}
           onLike={this.props.onLike}
           onDislike={this.props.onDislike}
           swiperRef={ref => (this.swiper = ref)}
           items={keys}
-          onSelectIndex={(index) => {}}
+          onSelectIndex={index => {}}
         />
         <Section
           style={{
@@ -176,7 +174,7 @@ export default class BrowseUsers extends Component {
           }}
         >
           <Footer
-            uid={this.state.selectedData}
+            uid={this.state.selectedData.uid}
             footerVisible={footerVisible}
             onLike={this._like}
             onDislike={this._dislike}

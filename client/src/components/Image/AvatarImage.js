@@ -4,27 +4,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import ProgressImage from './ProgressImage';
+import Colors from '../../constants/Colors';
 
-const Color = {
-  white: 'white',
-  carrot: '#e67e22',
-  emerald: '#2ecc71',
-  peterRiver: '#3498db',
-  wisteria: '#8e44ad',
-  alizarin: '#e74c3c',
-  turquoise: '#1abc9c',
-  midnightBlue: '#2c3e50',
-};
-
-const {
-  carrot,
-  emerald,
-  peterRiver,
-  wisteria,
-  alizarin,
-  turquoise,
-  midnightBlue,
-} = Color;
 // TODO
 // 3 words name initials
 // handle only alpha numeric chars
@@ -49,13 +30,13 @@ export default class AvatarImage extends React.PureComponent {
     // inspired by https://github.com/wbinnssmith/react-user-avatar
     // colors from https://flatuicolors.com/
     const colors = [
-      carrot,
-      emerald,
-      peterRiver,
-      wisteria,
-      alizarin,
-      turquoise,
-      midnightBlue,
+      Colors.veryDarkDesaturatedLime,
+      Colors.veryDarkDesaturatedCyan,
+      Colors.veryDarkDesaturatedBlue,
+      Colors.veryDarkDesaturatedViolet,
+      Colors.veryDarkDesaturatedMagenta,
+      Colors.veryDarkDesaturatedPink,
+      Colors.veryDarkDesaturatedRed,
     ];
 
     this.avatarColor = colors[sumChars % colors.length];
@@ -175,12 +156,12 @@ const styles = {
     overflow: 'hidden',
   },
   avatarTransparent: {
-    backgroundColor: '#B8B8B8',
+    backgroundColor: Colors.gray,
   },
   textStyle: {
-    color: Color.white,
+    color: Colors.white,
     fontSize: 16,
-    backgroundColor: Color.backgroundTransparent,
+    backgroundColor: Colors.transparent,
     fontWeight: '100',
   },
 };

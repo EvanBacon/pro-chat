@@ -1,7 +1,8 @@
-import { dispatch } from '@rematch/core';
+import { dispatch } from '../rematch/dispatch';
 import Fire from '../Fire';
 import IdManager from '../IdManager';
 import moment from 'moment';
+import NavigationService from '../navigation/NavigationService';
 
 export function filterUser(user) {
   function isV(s) {
@@ -69,8 +70,9 @@ async function ensureUserIsLoadedAsync(uid, users, hours) {
   console.log('ensureUserIsLoadedAsync:A', !IdManager.isInteractable(uid));
 
   const storedUser = users[uid];
+  const shouldForceUpdate = hours !== undefined && hours === 0;
 
-  if (!IdManager.isInteractable(uid)) {
+  if (!shouldForceUpdate && !IdManager.isInteractable(uid)) {
     // The current user should always be loaded and up to date.
     return { user: storedUser };
   }
@@ -80,8 +82,6 @@ async function ensureUserIsLoadedAsync(uid, users, hours) {
     console.warn('Removed invalid user id', uid);
     return null;
   }
-
-  const shouldForceUpdate = hours !== undefined && hours === 0;
 
   console.log('ensureUserIsLoadedAsync: AA ', { shouldForceUpdate });
   if (shouldForceUpdate || !isValidUser(storedUser, hours)) {
@@ -157,12 +157,19 @@ const users = {
   },
   effects: {
     getAsync: async ({ uid }) => {},
-    ensureUserIsLoadedAsync: async ({ uid, callback }, { users }) => {
-      const cb = callback || function () {};
+    ensureUserIsLoadedAsync: async ({ uid, callback, hours }, { users }) => {
+      const cb = callback || function() {};
 
-      const payload = await ensureUserIsLoadedAsync(uid, users);
+      const payload = await ensureUserIsLoadedAsync(uid, users, hours);
       const { user, isRemoved } = payload || {};
       cb(user);
+    },
+    messageRandom: async (props, { users }) => {
+      const userIds = Object.keys(users);
+      if (userIds.length) {
+        const uid = userIds[Math.floor(Math.random() * userIds.length)];
+        NavigationService.navigateToUserSpecificScreen('Chat', uid);
+      }
     },
     getPaged: async ({ size, start }, { hasMoreUsers, isLoadingUsers }) => {
       // console.log('wait.getPaged', { hasMoreUsers, isLoadingUsers });
@@ -203,14 +210,20 @@ const users = {
       dispatch.isLoadingUsers.end();
     },
     refreshAsync: async ({ callback: _cb }, { users }) => {
-      const callback = _cb || function () {};
+      const callback = _cb || function() {};
       const _users = await refreshAsync(users);
       console.log('refreshAsync: refreshed users', _users);
       callback(_users);
     },
-    update: ({ uid, user }, { users }) => {
-      if (!uid || !user) {
-        throw new Error(`dispatch.users.update: You must pass in a valid uid and user: ${uid} - ${JSON.stringify(user || {})}`);
+    update: ({ uid: _uid, user = {} }, { users }) => {
+      const uid = _uid || user.uid;
+
+      if (!uid) {
+        throw new Error(
+          `dispatch.users.update: You must pass in a valid uid and user: ${uid} - ${JSON.stringify(
+            user || {},
+          )}`,
+        );
       }
       const currentUser = users[uid] || {};
       dispatch.users.set({ uid, user: { ...currentUser, ...user } });
@@ -224,12 +237,10 @@ const users = {
       });
     },
     getPropertyForUser: async (
-      {
-        propName, uid, forceUpdate, callback: _cb,
-      },
+      { propName, uid, forceUpdate, callback: _cb },
       { users },
     ) => {
-      const callback = _cb || function () {};
+      const callback = _cb || function() {};
       if (!IdManager.isValid(uid)) {
         console.warn('getPropertyForUser: Invalid Key', { uid });
         callback();

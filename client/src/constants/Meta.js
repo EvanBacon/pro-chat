@@ -11,8 +11,9 @@ export const strings = {
     no_location_action: 'Turn Location On',
 
     no_messages_title: 'No Messages Yet',
-    no_messages_subtitle: `Go back to the home screen and start looking for hot ${userPlural}`,
-    no_messages_action: 'Start Swiping',
+    // no_messages_subtitle: `Select a user above to back to the home screen and start looking for hot ${userPlural}`,
+    no_messages_subtitle: `Select a user above to start chatting.`,
+    no_messages_action: 'Start Messaging',
 
     no_matches_title: 'No Matches Yet',
     no_matches_subtitle: `Go back to the home screen and start looking for hot ${userPlural}`,
@@ -35,12 +36,12 @@ export const strings = {
     blocking_inward: `You cannot view this ${user}`,
 
     try_again: 'Try Again',
-    no_more_booty_title: `No ${userPlural} Around`,
-    no_more_booty_subtitle: `We cannot find any ${userPlural} in your area that you'd be interested in... Try again later, and invite your friends!`,
+    no_more_users_title: `No ${userPlural} Around`,
+    no_more_users_subtitle: `We cannot find any ${userPlural} in your area that you'd be interested in... Try again later, and invite your friends!`,
 
-    out_of_booty_title: `No More ${userPlural} Left`,
-    out_of_booty_subtitle: `You can swipe through them again, while we find more ${user}!`,
-    out_of_booty_action: 'Start Swiping',
+    out_of_users_title: `No More ${userPlural} Left`,
+    out_of_users_subtitle: `You can swipe through them again, while we find more ${user}!`,
+    out_of_users_action: 'Start Swiping',
 
     rated_as: 'Rated As',
     tap_to_get_rating: 'Tap to get a Rating!',
@@ -78,8 +79,8 @@ export const strings = {
 
     report_user_question: 'What Are You Reporting?',
 
-    report_photo_is_not_a_booty_title: `Photo is Not A ${user}`,
-    report_photo_is_not_a_booty_subtitle:
+    report_photo_is_not_a_users_title: `Photo is Not A ${user}`,
+    report_photo_is_not_a_users_subtitle:
       'What is the photo of? Our algorithm can better prevent this kind of image if you can be descriptive!',
 
     report_harassment_title: 'Harassment',
@@ -114,7 +115,7 @@ export const strings = {
     share_title: `${user} Alert!`,
     share_message: `I found a ${user} for you. Get on ${user} Alert and let me know what you think! 🍑`,
 
-    select_image_option_camera: 'Take Belfie',
+    select_image_option_camera: 'Take Selfie',
     select_image_option_library: 'Choose from Library',
     select_image_option_destructive: 'Cancel',
     select_image_option_facebook: 'Choose Photo from Facebook',
@@ -137,7 +138,7 @@ export const strings = {
     app_name: expoApp.name,
     settings_version: `Version ${expoApp.version}`,
     settigns_build: `Build 5 ${expoApp.build}`,
-    popular_title: `Popular ${user}`,
+    popular_title: `Popular ${userPlural}`,
     user_interests_title: 'Interests',
     matches: 'Matches',
     messages: 'Messages',

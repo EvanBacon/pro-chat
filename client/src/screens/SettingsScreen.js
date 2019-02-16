@@ -1,5 +1,5 @@
-import { dispatch } from '@rematch/core';
-import Expo, { Haptic } from 'expo';
+import { dispatch } from '../rematch/dispatch';
+import { Haptic, Util } from 'expo';
 import React from 'react';
 import {
   Animated,
@@ -16,14 +16,17 @@ import {
 import { Divider } from 'react-native-paper';
 import { connect } from 'react-redux';
 
-import Gradient from '../components/Gradient';
+import Gradient from '../components/primitives/Gradient';
 import Colors from '../constants/Colors';
 import Meta from '../constants/Meta';
 import Images from '../Images';
 import NavigationService from '../navigation/NavigationService';
 import firebase from '../universal/firebase';
 import emailSupport, { Subjects } from '../utils/sendEmailToSupport';
-import transformInterestTitle from '../utils/transformInterestTitle';
+import * as transformTitle from '../utils/transformTitle';
+import Links from '../constants/Links';
+import { SocialTypes } from '../rematch/auth';
+import Settings from '../constants/Settings';
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 const AnimatedText = Animated.createAnimatedComponent(Text);
@@ -40,27 +43,27 @@ const ModelInfo = () => (
   >
     <Text
       style={{
-        backgroundColor: 'transparent',
+        backgroundColor: Colors.transparent,
         fontSize: 16,
-        color: 'white',
+        color: Colors.white,
       }}
     >
       {Meta.app_name}
     </Text>
     <Text
       style={{
-        backgroundColor: 'transparent',
+        backgroundColor: Colors.transparent,
         fontSize: 16,
-        color: 'white',
+        color: Colors.white,
       }}
     >
       {Meta.version}
     </Text>
     <Text
       style={{
-        backgroundColor: 'transparent',
+        backgroundColor: Colors.transparent,
         fontSize: 16,
-        color: 'white',
+        color: Colors.white,
       }}
     >
       {Meta.settings_build}
@@ -82,9 +85,8 @@ class Carousel extends React.Component {
 
     const isHapticEnabled = Platform.OS === 'ios';
     if (isHapticEnabled) {
-      this.scroll.addListener( ({ value }) => {
-
-        const perc = (value / this.state.itemWidth) - 0.5;
+      this.scroll.addListener(({ value }) => {
+        const perc = value / this.state.itemWidth - 0.5;
         let page = Math.floor(perc);
 
         if (page !== this._currentPage) {
@@ -92,7 +94,7 @@ class Carousel extends React.Component {
           Haptic.selection();
         }
       });
-     }
+    }
   }
 
   componentWillUnmount() {
@@ -175,7 +177,7 @@ class Carousel extends React.Component {
 
     const animatedDot = {
       opacity: invertedOpacity,
-      backgroundColor: 'white',
+      backgroundColor: Colors.white,
       width: 16,
       height: 16,
       borderRadius: 8,
@@ -184,7 +186,9 @@ class Carousel extends React.Component {
 
     return (
       <Animated.View style={StyleSheet.flatten([animated, style])}>
-        <Text style={{ fontSize: 100, color: 'white', textAlign: 'center' }}>
+        <Text
+          style={{ fontSize: 100, color: Colors.white, textAlign: 'center' }}
+        >
           {item}
         </Text>
         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
@@ -194,7 +198,7 @@ class Carousel extends React.Component {
                 marginTop: -16,
                 fontSize: 16,
                 textAlign: 'center',
-                color: 'white',
+                color: Colors.white,
               },
               animatedText,
             ])}
@@ -214,7 +218,7 @@ class Carousel extends React.Component {
     );
   };
 
-  _onScrollEnd = (event) => {
+  _onScrollEnd = event => {
     const offset = { ...event.nativeEvent.contentOffset };
     const page = this._calculateCurrentPage(offset.x);
     // estimatedPage = page
@@ -225,7 +229,7 @@ class Carousel extends React.Component {
     //   Haptic.selection();
     // }
   };
-  _calculateCurrentPage = (offset) => {
+  _calculateCurrentPage = offset => {
     const { itemWidth } = this.state;
     return Math.floor(offset / itemWidth);
   };
@@ -310,7 +314,7 @@ class TableRowCell extends React.Component {
           <Text
             style={{
               fontSize: 16,
-              color: 'white',
+              color: Colors.white,
             }}
           >
             {title}
@@ -335,9 +339,8 @@ class SwitchCell extends React.Component {
     const switchComponent = (
       <Switch
         onValueChange={this.props.onValueChange}
-        onTintColor={Colors.white}
-        thumbTintColor={enabled ? Colors.tintColor : Colors.white}
-        tintColor={Colors.white}
+        trackColor={{ true: Colors.darkViolet }}
+        thumbColor={Colors.white}
         value={enabled}
       />
     );
@@ -351,38 +354,46 @@ class SwitchCell extends React.Component {
   }
 }
 
-const urls = {
-  support: 'issues',
-  privacy: 'blob/master/pages/PRIVACY.md',
-  terms: 'blob/master/pages/TERMS.md',
-  contact: 'blob/master/pages/CONTACT.md',
-  // licenses: "licenses",
-  eula: 'blob/master/pages/EULA.md',
-};
+function sleep(t) {
+  return new Promise(res => setTimeout(res, t));
+}
 
 class SettingsScreen extends React.Component {
-
-  static navigationOptions = { title: "Settings" }
+  static navigationOptions = { title: 'Settings' };
   ranges = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
 
   setCarousel = false;
   constructor(props) {
     super(props);
-    const { searchRange } = props;
-    const rangeIndex = this.ranges.indexOf(searchRange || 50);
-    this.state = {
-      searchRange: rangeIndex || this.ranges.length - 1,
-      notificationsEnabled: props.notificationsEnabled,
-    };
+    const { user } = props;
+    if (user) {
+      const rangeIndex = this.ranges.indexOf(user.searchRange || 50);
+      this.state = {
+        searchRange: rangeIndex || this.ranges.length - 1,
+        notificationsEnabled: props.notificationsEnabled,
+      };
+    } else {
+      /*
+       * Lets try and avoid hitting this page without a user.
+       * I would rather we fix navigation than make each prop here handle a missing user.
+       */
+      throw new Error(
+        'Attempting to access the settings page without a user loaded.',
+      );
+    }
   }
 
   componentWillReceiveProps(nextProps) {
-    if (
-      nextProps.interest != this.props.interest &&
-      this.props.interest &&
-      nextProps.interest
-    ) {
-      dispatch.location.getAsync();
+    const { user: nextUser } = nextProps;
+    const { user = {} } = this.props;
+    if (nextUser) {
+      if (
+        nextUser.interest != user.interest &&
+        user.interest &&
+        nextUser.interest
+      ) {
+        dispatch.location.getAsync();
+      }
     }
   }
 
@@ -394,27 +405,78 @@ class SettingsScreen extends React.Component {
 
   openWeb = (url, title) =>
     NavigationService.navigate('Website', {
-      url: `https://github.com/evanbacon/bute/${url}`,
+      url,
       title,
     });
 
+  get carouselScrollNode() {
+    if (this.scrollView && this.scrollView.getNode) {
+      const node = this.scrollView.getNode();
+      if (node.scrollToOffset) {
+        return node;
+      }
+    }
+    return null;
+  }
+
+  scrollCarouselToOffset = (offset, animated = true) => {
+    const node = this.carouselScrollNode;
+    if (node) {
+      node.scrollToOffset({
+        animated,
+        offset,
+      });
+    }
+  };
+
+  setCarouselRef = async val => {
+    this.scrollView = val;
+    if (val && !this.setCarousel) {
+      this.setCarousel = true;
+
+      await sleep(5);
+
+      const carouselOffset = this.state.searchRange * 130;
+
+      this.scrollCarouselToOffset(carouselOffset);
+    }
+  };
+
   render() {
+    const { user } = this.props;
+
+    if (!user) {
+      return null;
+    }
+
+    const isConnectedToFacebook = !!user.fbuid;
+
     const onPress = {
       privacy: () => {},
-      eula: () => this.openWeb(urls.eula, Meta.eula),
+      eula: () => this.openWeb(Links.eula, Meta.eula),
       team: () => {
         NavigationService.navigate('DevTeam');
       },
       interest: () => {
         NavigationService.navigate('ChooseInterest');
       },
+      gender: () => {
+        NavigationService.navigate('ChooseGender');
+      },
+      upgradeToFacebook: () => {
+        if (isConnectedToFacebook) {
+          //TODO: Bacon: Unlink Facebook
+        } else {
+          dispatch.auth.upgrade(SocialTypes.Facebook);
+        }
+      },
       logout: () => dispatch.auth.logoutAsync(),
       delete: () => {},
-      update: () => Expo.Util.reload(),
-      privacypolicy: () => this.openWeb(urls.privacy, Meta.privacy_policy),
-      tos: () => this.openWeb(urls.terms, Meta.terms_of_service),
+      update: Util.reload,
+      privacypolicy: () => this.openWeb(Links.privacy, Meta.privacy_policy),
+      tos: () => this.openWeb(Links.terms, Meta.terms_of_service),
       licenses: () => NavigationService.navigate('Licenses'),
-      help: () => this.openWeb(urls.contact, Meta.contact),
+      help: () => this.openWeb(Links.contact, Meta.contact),
       contact: () => emailSupport({ subject: Subjects.general }),
     };
 
@@ -425,59 +487,41 @@ class SettingsScreen extends React.Component {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 128 - 81 }}
         >
-          <Carousel
-            style={{ paddingBottom: 32 }}
-            data={this.ranges}
-            getRef={(val) => {
-              const milesIndex = 2; // / this.props.milesIndex;
-              this.scrollView = val;
-              if (val && !this.setCarousel) {
-                this.setCarousel = true;
-
-                setTimeout(() => {
-                  const node = ((val || {}).getNode && val.getNode()) || {};
-                  node.scrollToOffset &&
-                    node.scrollToOffset({
-                      animated: true,
-                      offset: this.state.searchRange * 130,
-                    });
-                }, 5);
+          {!Settings.isInAppleReview && (
+            <Carousel
+              style={{ paddingBottom: 32 }}
+              data={this.ranges}
+              getRef={this.setCarouselRef}
+              onSelectIndex={(index, searchRange) =>
+                dispatch.user.updateUserProfile({ searchRange })
               }
-            }}
-            onSelectIndex={(index, searchRange) =>
-              dispatch.user.updateUserProfile({ searchRange })
-            }
-          />
-          {/* {<View style={{justifyContent: 'center', alignItems: 'center'}}>
-
-            <Button.Outline
-              style={{}}
-              onPress={_ => {
-
-              }}>Select Range<Button.Outline>
-
-          </View>} */}
+            />
+          )}
           <Divider />
-          {/* <ArrowCell title={"Privacy Settings"} onPress={onPress.privacy} /> */}
-          <SwitchCell
-            title={Meta.notifications}
-            onValueChange={(notificationsEnabled) => {
+          {!Settings.isInAppleReview && (
+            <SwitchCell
+              title={Meta.notifications}
+              onValueChange={notificationsEnabled => {
+                if (Platform.OS === 'ios') {
+                  Haptic.selection();
+                }
+                if (notificationsEnabled) {
+                  dispatch.notifications.registerAsync();
+                  dispatch.iid.setAsync();
+                }
 
-              if (Platform.OS === "ios") {
-                Haptic.selection();
-              }
-              if (notificationsEnabled) {
-                firebase.messaging().requestPermissions();
-              }
+                this.setState({ notificationsEnabled }, _ =>
+                  dispatch.user.updateUserProfile({ notificationsEnabled }),
+                );
+              }}
+              onPress={null}
+              enabled={user.notificationsEnabled}
+            />
+          )}
 
-              this.setState({ notificationsEnabled }, _ =>
-                dispatch.user.updateUserProfile({ notificationsEnabled }));
-            }}
-            onPress={null}
-            enabled={this.state.notificationsEnabled}
-          />
-
-          <ArrowCell title={Meta.the_team} onPress={onPress.team} />
+          {!Settings.isInAppleReview && (
+            <ArrowCell title={Meta.the_team} onPress={onPress.team} />
+          )}
           <ArrowCell title={Meta.eula} onPress={onPress.eula} />
           <ArrowCell
             title={Meta.privacy_policy}
@@ -488,22 +532,64 @@ class SettingsScreen extends React.Component {
 
           <ArrowCell title={Meta.help_support} onPress={onPress.help} />
 
-          <TableRowCell
-            title={Meta.interested_in}
-            onPress={onPress.interest}
-            accessoryView={
-              <Text
-                style={{
-                  fontFamily: 'DINPro-Light',
-                  color: 'white',
-                  fontSize: 16,
-                  textAlign: 'right',
-                }}
-              >
-                {transformInterestTitle(this.props.interest || '')}
-              </Text>
-            }
-          />
+          {!Settings.isInAppleReview && (
+            <TableRowCell
+              title={'Link to Facebook'}
+              onPress={onPress.upgradeToFacebook}
+              accessoryView={
+                isConnectedToFacebook ? (
+                  <Text
+                    style={{
+                      fontFamily: 'DINPro-Light',
+                      color: 'white',
+                      fontSize: 16,
+                      textAlign: 'right',
+                    }}
+                  >
+                    Linked
+                  </Text>
+                ) : null
+              }
+            />
+          )}
+
+          {!Settings.isInAppleReview && (
+            <TableRowCell
+              title={'Select Gender'}
+              onPress={onPress.gender}
+              accessoryView={
+                <Text
+                  style={{
+                    fontFamily: 'DINPro-Light',
+                    color: 'white',
+                    fontSize: 16,
+                    textAlign: 'right',
+                  }}
+                >
+                  {transformTitle.gender(user.gender || '')}
+                </Text>
+              }
+            />
+          )}
+
+          {!Settings.isInAppleReview && (
+            <TableRowCell
+              title={Meta.interested_in}
+              onPress={onPress.interest}
+              accessoryView={
+                <Text
+                  style={{
+                    fontFamily: 'DINPro-Light',
+                    color: 'white',
+                    fontSize: 16,
+                    textAlign: 'right',
+                  }}
+                >
+                  {transformTitle.interest(user.interest || '')}
+                </Text>
+              }
+            />
+          )}
 
           <Divider />
           {/* <ArrowCell title={"Check Updates"} onPress={onPress.update} /> */}
@@ -521,36 +607,10 @@ class SettingsScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: '#fff',
     paddingTop: 64,
   },
 });
 
-// const mergeProps = (state, actions, localProps) => {
-//   // const { uid } = Fire.shared;
-
-//   // const { user = {}, ...props } = state;
-
-//   // const user = users[uid] || {};
-//   // const image = images[uid];
-
-//   const userProps = {
-//     // ...user,
-//     // interest: user.interest,
-//     // searchRange: user.searchRange,
-//     // notificationsEnabled: user.notificationsEnabled,
-//   };
-
-//   return {
-//     ...localProps,
-//     ...state,
-//     ...actions,
-//     ...userProps,
-//   };
-// };
-
-export default connect(
-  ({ user = {} }) => ({
-    user,
-  })
-)(SettingsScreen);
+export default connect(({ user }) => ({
+  user,
+}))(SettingsScreen);

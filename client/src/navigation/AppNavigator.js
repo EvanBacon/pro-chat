@@ -7,9 +7,9 @@ import {
 } from 'react-navigation';
 
 import Button from '../components/Button';
-import ChooseInterestScreen from '../components/ChooseInterest';
-import Header from '../components/Header';
-import LicensesScreen from '../components/Licenses';
+import ChooseInterest from '../screens/ChooseInterestScreen';
+import Header from '../components/primitives/Header';
+import LicensesScreen from '../components/licenses/Licenses';
 import MessageScreen from '../components/MessageList';
 import { BAR_HEIGHT } from '../components/styles';
 import Colors from '../constants/Colors';
@@ -17,7 +17,6 @@ import Settings from '../constants/Settings';
 import AccountUnderReviewScreen from '../screens/AccountUnderReviewScreen';
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 import ChatScreen from '../screens/ChatScreen';
-import CommunicationsScreen from '../screens/CommunicationsScreen';
 import DevTeamScreen from '../screens/DevTeamScreen';
 import HomeScreen from '../screens/HomeScreen';
 import MatchesScreen from '../screens/MatchesScreen';
@@ -27,21 +26,24 @@ import SignInScreen from '../screens/SignInScreen';
 import UnderAgeScreen from '../screens/UnderAgeScreen';
 import WebsiteScreen from '../screens/WebsiteScreen';
 import NavigationService from './NavigationService';
+import OnBoarding from '../screens/OnBoardingScreen';
 
+import ChooseGender from '../screens/ChooseGenderScreen';
 // import CameraScreen from '../screens/CameraScreen';
-// import ReportScreen from '../screens/ReportScreen';
+import ReportScreen from '../screens/ReportScreen';
+import Fire from '../Fire';
 // const { tintColor } = Constants.manifest;
 const tintColor = '#52416A';
 
 const MainTab = createMaterialTopTabNavigator(
   {
-    MainProfile: ProfileScreen,
-    Main: HomeScreen,
+    // MainProfile: ProfileScreen,
+    // Main: HomeScreen,
     Messages: MessageScreen,
-    Matches: MatchesScreen,
   },
   {
-    initialRouteName: 'Main',
+    tabBarComponent: null,
+    // initialRouteName: 'Main',
     cardStyle: {},
     navigationOptions: () => ({
       swipeEnabled: false,
@@ -82,7 +84,7 @@ const MainTab = createMaterialTopTabNavigator(
 );
 
 MainTab.navigationOptions = {
-  title: Settings.hideBooty ? 'Beauty' : 'Būte',
+  title: Settings.isInAppleReview ? 'Expo Chat' : 'Būte',
   headerRight: (
     <View style={{ marginRight: 24 }}>
       <Button.Settings
@@ -93,27 +95,36 @@ MainTab.navigationOptions = {
       />
     </View>
   ),
+  headerLeft: (
+    <View style={{ marginLeft: 24 }}>
+      <Button.Profile
+        selected={false}
+        onPress={() => {
+          NavigationService.navigateToUserSpecificScreen(
+            'Profile',
+            Fire.shared.uid,
+          );
+          // NavigationService.navigate('Profile');
+        }}
+      />
+    </View>
+  ),
 };
 
-let _MainTab;
-if (Settings.isInAppleReview) {
-  _MainTab = CommunicationsScreen;
-} else {
-  _MainTab = MainTab;
-}
 const AppStack = createStackNavigator(
   {
-    MainTab: _MainTab,
+    MainTab: MainTab,
+    ChooseGender,
     AccountUnderReview: AccountUnderReviewScreen,
     Chat: ChatScreen,
-    Communications: CommunicationsScreen,
     Profile: ProfileScreen,
     Licenses: LicensesScreen,
-    ChooseInterest: ChooseInterestScreen,
+    ChooseInterest,
     // Camera: CameraScreen,
     DevTeam: DevTeamScreen,
     // Explore: ExploreScreen,
-    // Report: ReportScreen,
+    ReportUser: ReportScreen,
+    BlockUser: ReportScreen,
     Settings: SettingsScreen,
     UnderAge: UnderAgeScreen,
     Website: WebsiteScreen,
@@ -121,15 +132,18 @@ const AppStack = createStackNavigator(
   {
     initialRouteName: Settings.mainInitialRouteName,
     cardStyle: {
-      marginTop: BAR_HEIGHT - 30,
+      marginTop: BAR_HEIGHT - (Settings.isTablet ? 45 : 30),
     },
     navigationOptions: {
+      // headerStyle: {
+      //   backgroundColor: Colors.veryDarkDesaturatedViolet,
+      // },
       headerTransparent: true,
+      headerBackground: <Header />,
       tintColor: 'white',
       headerTintColor: 'white',
-      headerBackground: <Header />,
       headerTitleStyle: {
-        fontFamily: 'DINPro-Regular',
+        // fontFamily: 'DINPro-Regular',
         fontSize: 20,
         color: Colors.white,
       },
@@ -148,6 +162,7 @@ export default createSwitchNavigator(
     AuthLoading: AuthLoadingScreen,
     App: AppStack,
     Auth: AuthStack,
+    OnBoarding: OnBoarding,
   },
   {
     initialRouteName: 'AuthLoading',

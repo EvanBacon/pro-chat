@@ -5,3 +5,8 @@ secret
 ios/fastlane/screenshots/en-US/preview.mp4
 *.sketch
 archive
+*.p12
+*.pem
+*.pkey
+client/ios/b-t-.xcworkspace/xcuserdata/evanbacon.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist
+firestore.rules

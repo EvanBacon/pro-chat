@@ -1,6 +1,6 @@
 import { ImagePicker, Permissions } from 'expo';
 // import firebase from 'expo-firebase-app';
-import firebase from 'firebase';
+import firebase from '../../universal/firebase';
 import React, { Component } from 'react';
 import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
 
@@ -9,6 +9,7 @@ import getPermissionAsync from '../../utils/getPermission';
 import shrinkImageAsync from '../../utils/shrinkImageAsync';
 import uploadImageAsync from '../../utils/uploadImageAsync';
 import AvatarImage from './AvatarImage';
+import { dispatch } from '../../rematch/dispatch';
 
 export default class ProfileImage extends React.Component {
   state = {
@@ -36,18 +37,20 @@ export default class ProfileImage extends React.Component {
     }
   };
 
-  _setNewPhoto = async (uri) => {
+  _setNewPhoto = async uri => {
     if (!uri || uri === '') return;
     this.setState({ isUploadingImage: true, progress: 0, image: uri });
     const { uri: reducedImageUri } = await shrinkImageAsync(uri);
     try {
-      await uploadImageAsync(
+      const downloadURL = await uploadImageAsync(
         reducedImageUri,
         this.storagePath,
         this._onProgressUpdated,
       );
+      dispatch.user.updateUserProfile({ image: downloadURL });
     } catch ({ code, message }) {
-      console.warn('ProfileImage: Error: ', message);
+      console.log('ProfileImage: Error: ', message);
+      alert(message);
     } finally {
       this.setState({ isUploadingImage: false, progress: 0 });
     }
@@ -72,46 +75,55 @@ export default class ProfileImage extends React.Component {
   _takePictureAsync = async () => {
     const permission = await getPermissionAsync(Permissions.CAMERA);
     if (!permission) return;
-    const { uri } = await ImagePicker.launchCameraAsync();
+    const { uri } = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+    });
     return this._setNewPhoto(uri);
   };
 
   _selectPictureAsync = async () => {
     const permission = await getPermissionAsync(Permissions.CAMERA_ROLL);
     if (!permission) return;
-    const { uri } = await ImagePicker.launchImageLibraryAsync();
+    const { uri } = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+    });
     return this._setNewPhoto(uri);
   };
 
   onPress = () => {
-    if (!this.currentUser) return;
-
-    Alert.alert('Profile Picture', 'Select a new image', [
-      {
-        text: 'Camera',
-        onPress: this._takePictureAsync,
-      },
-      {
-        text: 'Library',
-        onPress: this._selectPictureAsync,
-      },
-    ]);
+    if (this.props.isUser) {
+      /* TODO: Bacon: A better UX for changing User Profile Image */
+      Alert.alert('Profile Picture', 'Select a new image', [
+        {
+          text: 'Camera',
+          onPress: this._takePictureAsync,
+        },
+        {
+          text: 'Library',
+          onPress: this._selectPictureAsync,
+        },
+      ]);
+    } else {
+      /* TODO: Bacon: Add light box for other users */
+    }
   };
 
   render() {
     const { size } = this.props;
 
-    let containerStyle = styles.container;
+    let containerStyle = styles.container || {};
     if (size) {
-      containerStyle = {
-        ...containerStyle,
-        minWidth: size,
-        maxWidth: size,
-        minHeight: size,
-        maxHeight: size,
-        borderRadius: size / 2,
-        overflow: 'hidden',
-      };
+      containerStyle = StyleSheet.flatten([
+        containerStyle,
+        {
+          minWidth: size,
+          maxWidth: size,
+          minHeight: size,
+          maxHeight: size,
+          borderRadius: size / 2,
+          overflow: 'hidden',
+        },
+      ]);
     }
 
     return (

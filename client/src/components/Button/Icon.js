@@ -3,13 +3,14 @@ import React, { Component } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 
 import TouchableBounce from '../../universal/TouchableBounce'; // eslint-disable-line
+import Colors from '../../constants/Colors';
 
 export default class Icon extends Component {
   static defaultProps = {
     soundIn: 'button_in',
     soundOut: 'button_out',
     size: 24,
-    color: '#ffffff',
+    color: Colors.white,
     onPress: () => {},
   };
 

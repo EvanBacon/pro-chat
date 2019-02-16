@@ -1,0 +1,1 @@
+../../../../../node_modules/expo-firebase-instance-id/ios/EXFirebaseInstanceID/EXFirebaseInstanceID.h

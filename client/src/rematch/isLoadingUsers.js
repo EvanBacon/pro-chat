@@ -1,4 +1,4 @@
-import { dispatch } from '@rematch/core';
+import { dispatch } from './dispatch';
 
 let _timeout;
 export default {

@@ -1,0 +1,26 @@
+{
+  "name": "EXPaymentsStripe",
+  "version": "1.1.0",
+  "summary": "Expo Payments Module",
+  "description": "Expo Payments Module",
+  "license": "MIT",
+  "authors": "650 Industries, Inc.",
+  "homepage": "https://docs.expo.io/",
+  "platforms": {
+    "ios": "10.0"
+  },
+  "source": {
+    "git": "https://github.com/expo/expo.git"
+  },
+  "source_files": "EXPaymentsStripe/**/*.{h,m,mm}",
+  "preserve_paths": "EXPaymentsStripe/**/*.{h,m,mm}",
+  "requires_arc": true,
+  "dependencies": {
+    "EXCore": [
+
+    ],
+    "Stripe": [
+      "~> 13.0.3"
+    ]
+  }
+}

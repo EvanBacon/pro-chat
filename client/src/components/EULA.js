@@ -1,57 +1,22 @@
-import firebase from 'firebase';
 import React from 'react';
-import { Alert, Linking, Text } from 'react-native';
+import { Alert, Linking, StyleSheet, Text } from 'react-native';
 
 import Meta from '../constants/Meta';
+import firebase from 'expo-firebase-app';
+import Links from '../constants/Links';
 
-export default class EULA extends React.Component {
+export default class EULA extends React.PureComponent {
   render() {
     const { style } = this.props;
 
     return (
-      <Text
-        style={[
-          style,
-          {
-            backgroundColor: 'transparent',
-            fontSize: 12,
-            textAlign: 'center',
-            color: '#ddd',
-          },
-        ]}
-      >
+      <Text style={[style, styles.text]}>
         {Meta.eula_statement}
-        <Text
-          onPress={async () => {
-            const url = 'http://bootyalert.net/terms'; // / <- Refactor this if its not EULA dont link it to there
-            firebase.analytics().logEvent('opened_terms');
-            const supported = await Linking.canOpenURL(url);
-            if (supported) return Linking.openURL(url);
-            return null;
-          }}
-          style={{ color: 'white', fontSize: 13 }}
-        >
+        <Text onPress={openTermsOfServiceAsync} style={styles.subtext}>
           {Meta.terms_of_service}
         </Text>
         {Meta.and_our}
-        <Text
-          onPress={() => {
-            const url = 'http://bootyalert.net/privacy'; // / <- Refactor this if its not EULA dont link it to there
-            firebase.analytics().logEvent('opened_privacy');
-            Linking.canOpenURL(url)
-              .then((supported) => {
-                if (supported) {
-                  return Linking.openURL(url);
-                }
-                return null;
-              })
-              .catch((err) => {
-                Alert.alert(Meta.privacy_policy_error);
-                console.error('An error occurred', err);
-              });
-          }}
-          style={{ color: 'white', fontSize: 13 }}
-        >
+        <Text onPress={openPrivacyAsync} style={styles.subtext}>
           {Meta.privacy_policy}
         </Text>
         .
@@ -59,3 +24,42 @@ export default class EULA extends React.Component {
     );
   }
 }
+
+async function openPrivacyAsync() {
+  const url = Links.privacy;
+  firebase.analytics().logEvent('opened_privacy');
+  try {
+    openUrlAsync(Links.privacy);
+  } catch (error) {
+    Alert.alert(Meta.privacy_policy_error);
+  }
+}
+
+async function openTermsOfServiceAsync() {
+  firebase.analytics().logEvent('opened_terms');
+  try {
+    openUrlAsync(Links.terms);
+  } catch (error) {
+    Alert.alert(Meta.terms_of_service_error);
+  }
+}
+
+async function openUrlAsync(url) {
+  const supported = await Linking.canOpenURL(url);
+  if (supported) {
+    await Linking.openURL(url);
+  }
+}
+
+const styles = StyleSheet.create({
+  text: {
+    backgroundColor: 'transparent',
+    fontSize: 12,
+    textAlign: 'center',
+    color: '#ddd',
+  },
+  subtext: {
+    color: 'white',
+    fontSize: 13,
+  },
+});

@@ -1,0 +1,1 @@
+../../../../../node_modules/expo-firebase-remote-config/ios/EXFirebaseRemoteConfig/EXFirebaseRemoteConfig.h

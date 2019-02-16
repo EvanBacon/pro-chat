@@ -48,8 +48,13 @@ function getExpireDate(expireInMinutes) {
   return expireTime;
 }
 
+function clearPantry(urlAsKey) {
+  return AsyncStorage.removeItem(urlAsKey);
+}
+
 export default {
   setItemWithExpiration,
   getItemWithExpiration,
   getExpireDate,
+  clearPantry,
 };

@@ -1,10 +1,12 @@
 import React from 'react';
-import { Text, TouchableHighlight, View } from 'react-native';
+import { Text, Alert, TouchableHighlight, View } from 'react-native';
 
 import UserImage from './UserImage';
 import IdManager from '../IdManager';
 import NavigationService from '../navigation/NavigationService';
-import { dispatch } from '@rematch/core';
+import { dispatch } from '../rematch/dispatch';
+import { FontAwesome } from '@expo/vector-icons';
+import Colors from '../constants/Colors';
 
 export default class MessageRow extends React.PureComponent {
   onPress = () => {
@@ -18,17 +20,26 @@ export default class MessageRow extends React.PureComponent {
   };
 
   onLongPress = () => {
-    console.warn('TODO: MessageRow.onLongPress');
-    dispatch.chats.deleteChannel(this.props.groupId);
+    Alert.alert(
+      `Are you sure you want to delete this chat group?`,
+      `This cannot be undone.`,
+      [
+        {
+          text: 'Delete',
+          onPress: () => dispatch.chats.deleteChannel(this.props.groupId),
+        },
+        { text: 'Nevermind', onPress: () => {}, style: 'cancel' },
+      ],
+      { cancelable: true },
+    );
   };
 
   render() {
-    const {
-      name, image, isSeen, isSent, message, timeAgo,
-    } = this.props;
+    const { name, image, isSeen, isOutgoing, message, timeAgo } = this.props;
     return (
       <TouchableHighlight
-        underlayColor="#ddd"
+        style={{ backgroundColor: Colors.lightGrayishBlue }}
+        underlayColor={Colors.lightishGrayBlue}
         onPress={this.onPress}
         onLongPress={this.onLongPress}
       >
@@ -49,7 +60,8 @@ export default class MessageRow extends React.PureComponent {
               style={{ marginRight: 14 }}
               isNew={isSeen === false}
             />
-            <Message title={name} subtitle={message} />
+
+            <Message isOutgoing={isOutgoing} title={name} subtitle={message} />
           </View>
           <Timestamp>{timeAgo}</Timestamp>
         </View>
@@ -59,12 +71,29 @@ export default class MessageRow extends React.PureComponent {
 }
 
 export const Timestamp = ({ children }) => (
-  <Text style={{ textAlign: 'right' }}>{children}</Text>
+  <Text style={{ textAlign: 'right', opacity: 0.8 }}>{children}</Text>
 );
 
-export const Message = ({ title, subtitle }) => (
+export const Message = ({ title, isOutgoing, subtitle }) => (
   <View>
-    <Text numberOfLines={1}>{title}</Text>
-    <Text numberOfLines={2}>{subtitle}</Text>
+    <Text
+      numberOfLines={1}
+      style={{ fontWeight: 'bold', color: Colors.veryDarkGrayishBlue }}
+    >
+      {title}
+    </Text>
+    <View style={{ flexDirection: 'row' }}>
+      {isOutgoing && (
+        <FontAwesome
+          name="reply"
+          size={10}
+          color={Colors.veryDarkGrayishBlue}
+          style={{ marginRight: 4, alignSelf: 'center' }}
+        />
+      )}
+      <Text style={{ color: Colors.veryDarkGrayishBlue }} numberOfLines={2}>
+        {subtitle}
+      </Text>
+    </View>
   </View>
 );
