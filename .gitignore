@@ -10,3 +10,6 @@ archive
 *.pkey
 client/ios/b-t-.xcworkspace/xcuserdata/evanbacon.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist
 firestore.rules
+
+GoogleService-Info.plist
+client/**/GoogleService-Info.plist
